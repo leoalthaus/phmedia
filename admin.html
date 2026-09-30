@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo | PH Media</title>
+  
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .admin-container {
+      width: 100%;
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 0 16px;
+    }
+    .admin-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .admin-title {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .badge-status {
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-novo { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+    .badge-contato { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.4); }
+    .badge-fechado { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+    
+    .leads-table-wrap {
+      overflow-x: auto;
+    }
+    .leads-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+    .leads-table th, .leads-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .leads-table th {
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+    .lead-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-action {
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-action.wa {
+      background: var(--accent-green);
+      border-color: var(--accent-green);
+      color: #000;
+      font-weight: 700;
+    }
+    .btn-action:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .btn-action.wa:hover {
+      background: var(--accent-green-hover);
+      color: #fff;
+    }
+    .login-box {
+      max-width: 380px;
+      margin: 80px auto;
+      text-align: center;
+    }
+  </style>
+</head>
+<body class="dark-theme">
+
+  <!-- Admin Login Screen -->
+  <div class="login-box glass-card" id="adminLoginView">
+    <div class="brand-logo" style="justify-content: center; margin-bottom: 20px;">
+      <h2 style="font-family: var(--font-heading); letter-spacing: 2px;">PH MEDIA</h2>
+    </div>
+    <h3 style="font-size: 18px; margin-bottom: 8px;">Área Restrita</h3>
+    <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">Digite a senha de acesso (Padrão: 1234):</p>
+    
+    <form id="adminLoginForm">
+      <div class="input-wrap" style="margin-bottom: 16px;">
+        <i class="fa-solid fa-key"></i>
+        <input type="password" id="adminPin" placeholder="Senha do Administrador" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn-primary full-width">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        <span>Entrar no Painel</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- Admin Dashboard Screen (Hidden until logged in) -->
+  <div class="admin-container hidden" id="adminDashboardView">
+    
+    <div class="admin-card">
+      <div class="admin-header">
+        <div>
+          <h1 class="admin-title">Painel de Leads & Orçamentos</h1>
+          <p style="font-size: 13px; color: var(--text-secondary);">Gerenciamento de solicitações da PH Media</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <a href="index.html" class="btn-action">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Ver Site</span>
+          </a>
+          <button id="adminLogoutBtn" class="btn-action" style="color: #f87171;">
+            <i class="fa-solid fa-power-off"></i>
+            <span>Sair</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <div class="glass-card" style="padding: 16px; text-align: center;">
+          <span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">Total de Leads</span>
+          <h3 style="font-size: 32px; font-weight: 800; margin-top: 4px;" id="metricTotal">0</h3>
+        </div>
+        <div class="glass-card" style="padding: 16px; text-align: center;">
+          <span style="font-size: 12px; color: #60a5fa; text-transform: uppercase;">Novos / Pendentes</span>
+          <h3 style="font-size: 32px; font-weight: 800; margin-top: 4px; color: #60a5fa;" id="metricNovos">0</h3>
+        </div>
+        <div class="glass-card" style="padding: 16px; text-align: center;">
+          <span style="font-size: 12px; color: #4ade80; text-transform: uppercase;">Propostas Fechadas</span>
+          <h3 style="font-size: 32px; font-weight: 800; margin-top: 4px; color: #4ade80;" id="metricFechados">0</h3>
+        </div>
+      </div>
+
+      <!-- Actions Bar -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; gap: 8px;">
+          <button id="btnFilterAll" class="btn-action">Todos</button>
+          <button id="btnFilterNovos" class="btn-action">Novos</button>
+          <button id="btnFilterFechados" class="btn-action">Fechados</button>
+        </div>
+        <div>
+          <button id="btnExportCsv" class="btn-action">
+            <i class="fa-solid fa-file-csv"></i>
+            <span>Exportar CSV</span>
+          </button>
+          <button id="btnRefreshLeads" class="btn-action">
+            <i class="fa-solid fa-rotate"></i>
+            <span>Atualizar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Leads Table -->
+      <div class="leads-table-wrap">
+        <table class="leads-table">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Nome / Cliente</th>
+              <th>WhatsApp</th>
+              <th>Serviço</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="leadsTableBody">
+            <tr>
+              <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                Carregando registros...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script type="module" src="assets/js/admin.js"></script>
+</body>
+</html>

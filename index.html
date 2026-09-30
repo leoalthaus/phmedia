@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>PH Media | Pedro Henrique - Direção Audiovisual & Criador de Conteúdo</title>
+  
+  <!-- SEO & Social Meta -->
+  <meta name="description" content="PH Media por Pedro Henrique. Produção audiovisual, gestão de conteúdo para redes sociais, videomaker, storymaker e fotografia em Ponta Grossa - PR.">
+  <meta name="keywords" content="PH Media, Pedro Henrique, Videomaker Ponta Grossa, Social Media Paraná, Storymaker, Audiovisual, Fotografia">
+  <meta property="og:title" content="PH Media | Pedro Henrique - Produção Audiovisual">
+  <meta property="og:description" content="Transforme sua marca com produções audiovisuais de alto padrão, estética apurada e estratégia.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#09090b">
+
+  <!-- Favicon / Apple Touch Icon -->
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+
+  <!-- Google Fonts: Plus Jakarta Sans & Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons & Custom Stylesheet -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="dark-theme">
+
+  <!-- Background Ambient Glow & Mesh -->
+  <div class="ambient-glow glow-top" aria-hidden="true"></div>
+  <div class="ambient-glow glow-bottom" aria-hidden="true"></div>
+
+  <!-- Main Container (Mobile-first focused with desktop luxury framing) -->
+  <div class="app-layout">
+    
+    <!-- Top Sticky Header -->
+    <header class="main-header glass-header" id="mainHeader">
+      <div class="header-inner">
+        <a href="#hero" class="brand-logo" aria-label="PH Media Início">
+          <svg class="logo-svg" viewBox="0 0 160 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g class="logo-group">
+              <!-- 'ph' typography -->
+              <text x="0" y="32" font-family="'Space Grotesk', 'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="34" fill="#FFFFFF" letter-spacing="-1.5">ph</text>
+              <!-- Camera aperture shutter for 'o' -->
+              <g transform="translate(48, 12)">
+                <circle cx="11" cy="11" r="10" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+                <path d="M11 2 L17 11 L14 19 L6 18 L3 10 L10 3" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round" fill="none" class="aperture-blades"/>
+                <circle cx="11" cy="11" r="3.5" fill="#FFFFFF" class="aperture-core"/>
+              </g>
+              <!-- 'media' underline text -->
+              <text x="2" y="48" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="14" fill="#FFFFFF" letter-spacing="4">MEDIA</text>
+            </g>
+          </svg>
+        </a>
+
+        <div class="header-actions">
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="icon-btn" title="Instagram" aria-label="Instagram">
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+          <a href="#orcamento" class="btn-sm btn-glass">
+            <span>Orçamento</span>
+          </a>
+          <a href="admin.html" class="icon-btn admin-link" title="Painel Admin" aria-label="Painel Administrativo">
+            <i class="fa-solid fa-lock"></i>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Flow -->
+    <main class="main-content">
+
+      <!-- HERO SECTION (Matches Reference 1) -->
+      <section class="hero-section" id="hero">
+        <div class="hero-portrait-container">
+          <!-- Portrait with radial / linear mask -->
+          <div class="portrait-wrapper">
+            <img src="assets/images/pedro.jpg" alt="Pedro Henrique - PH Media" class="portrait-img" id="heroPortrait" loading="eager">
+            <div class="portrait-overlay-gradient"></div>
+          </div>
+        </div>
+
+        <div class="hero-content">
+          <span class="hero-intro-label">OLÁ, EU SOU O</span>
+          <h1 class="hero-name">Pedro Henrique</h1>
+          <p class="hero-bio">
+            Diretor audiovisual e criador de conteúdo à frente da <strong>PH Media</strong>. Trabalho com produção audiovisual, conteúdo para redes sociais, fotografia mobile e cobertura de momentos especiais, buscando unir criatividade, estética e profissionalismo em cada projeto.
+          </p>
+
+          <div class="hero-cta-wrapper">
+            <a href="#servicos" class="hero-cta-btn" id="btnServicos">
+              <span>SERVIÇOS E VALORES</span>
+              <i class="fa-solid fa-arrow-down"></i>
+            </a>
+          </div>
+
+          <div class="location-badge">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>PONTA GROSSA – PARANÁ</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- SERVICES SELECTOR & CARDS (Matches Reference 2 & 3 with Dynamic Tabs & Animations) -->
+      <section class="services-section" id="servicos">
+        <div class="section-header">
+          <span class="section-tag">SOLUÇÕES AUDIOVISUAIS</span>
+          <h2 class="section-title">Serviços & Pacotes</h2>
+          <p class="section-subtitle">Selecione uma especialidade abaixo para conferir os detalhes e investimentos:</p>
+        </div>
+
+        <!-- Service Category Pill Buttons (Reference 2) -->
+        <div class="service-pills-nav" role="tablist" id="servicesNav">
+          <button class="service-pill-btn active" role="tab" aria-selected="true" data-service="social-media" id="tab-social-media">
+            <i class="fa-solid fa-hashtag"></i>
+            <span>SOCIAL MEDIA</span>
+          </button>
+          <button class="service-pill-btn" role="tab" aria-selected="false" data-service="videomaker" id="tab-videomaker">
+            <i class="fa-solid fa-video"></i>
+            <span>VIDEOMAKER</span>
+          </button>
+          <button class="service-pill-btn" role="tab" aria-selected="false" data-service="storymaker" id="tab-storymaker">
+            <i class="fa-solid fa-bolt"></i>
+            <span>STORYMAKER</span>
+          </button>
+          <button class="service-pill-btn" role="tab" aria-selected="false" data-service="fotografia" id="tab-fotografia">
+            <i class="fa-solid fa-camera"></i>
+            <span>FOTOGRAFIA & ENSAIOS</span>
+          </button>
+        </div>
+
+        <!-- Dynamic Service Showcase Card (Reference 3) -->
+        <div class="service-display-card glass-card" id="serviceCard">
+          <div class="card-ambient-backdrop" id="cardBackdrop"></div>
+          
+          <div class="service-card-body">
+            <div class="service-icon-badge" id="serviceIconBadge">
+              <i class="fa-solid fa-hashtag"></i>
+            </div>
+            <h3 class="service-card-title" id="serviceTitle">SOCIAL MEDIA</h3>
+            <p class="service-card-desc" id="serviceDescription">
+              Criação e gestão de conteúdo para redes sociais, do planejamento à produção, unindo estratégia, audiovisual e criatividade para transformar ideias em conteúdo que comunica.
+            </p>
+
+            <div class="service-features" id="serviceFeatures">
+              <div class="feature-item"><i class="fa-solid fa-check"></i> Planejamento estratégico mensal</div>
+              <div class="feature-item"><i class="fa-solid fa-check"></i> Roteirização e captação de vídeos dinâmicos</div>
+              <div class="feature-item"><i class="fa-solid fa-check"></i> Edição com sound design e legendas dinâmicas</div>
+              <div class="feature-item"><i class="fa-solid fa-check"></i> Relatório de métricas e alcance</div>
+            </div>
+
+            <div class="service-pricing-box">
+              <span class="pricing-label" id="pricingType">Investimento mensal</span>
+              <div class="pricing-value-row">
+                <span class="currency">R$</span>
+                <span class="price-number" id="servicePrice">400,00</span>
+              </div>
+              <span class="pricing-sub" id="pricingSubtext">ou sob demanda personalizada</span>
+            </div>
+
+            <div class="service-cta-container">
+              <span class="contact-hint">Entre em contato</span>
+              <a href="#" target="_blank" rel="noopener noreferrer" class="whatsapp-cta-btn" id="serviceWhatsappBtn">
+                <i class="fa-brands fa-whatsapp"></i>
+                <span>Clique aqui</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- INTERACTIVE BUDGET CALCULATOR -->
+      <section class="calculator-section glass-card" id="orcamento">
+        <div class="section-header">
+          <span class="section-tag">SIMULE ONLINE</span>
+          <h2 class="section-title">Calculadora de Investimento</h2>
+          <p class="section-subtitle">Monte seu combo ideal e receba uma proposta personalizada na hora:</p>
+        </div>
+
+        <div class="calculator-grid">
+          <div class="calc-options-group">
+            <label class="calc-option">
+              <input type="checkbox" name="calc-addon" value="400" data-name="Social Media Completo" checked>
+              <div class="calc-option-box">
+                <div class="option-info">
+                  <span class="option-title">Social Media Mensal</span>
+                  <span class="option-desc">Gestão, roteiro, postagens & reels semanais</span>
+                </div>
+                <span class="option-price">+ R$ 400</span>
+              </div>
+            </label>
+
+            <label class="calc-option">
+              <input type="checkbox" name="calc-addon" value="350" data-name="Storymaker em Eventos">
+              <div class="calc-option-box">
+                <div class="option-info">
+                  <span class="option-title">Cobertura Storymaker (Evento)</span>
+                  <span class="option-desc">Cobertura em tempo real com entrega imediata</span>
+                </div>
+                <span class="option-price">+ R$ 350</span>
+              </div>
+            </label>
+
+            <label class="calc-option">
+              <input type="checkbox" name="calc-addon" value="300" data-name="Vídeo Comercial 4K">
+              <div class="calc-option-box">
+                <div class="option-info">
+                  <span class="option-title">Reel / Comercial Cinematográfico 4K</span>
+                  <span class="option-desc">Captação com gimbal, iluminação de estúdio & drone</span>
+                </div>
+                <span class="option-price">+ R$ 300</span>
+              </div>
+            </label>
+
+            <label class="calc-option">
+              <input type="checkbox" name="calc-addon" value="250" data-name="Ensaio Fotográfico Mobile/Pro">
+              <div class="calc-option-box">
+                <div class="option-info">
+                  <span class="option-title">Ensaio Fotográfico de Marca/Perfil</span>
+                  <span class="option-desc">20 fotos tratadas em alta resolução</span>
+                </div>
+                <span class="option-price">+ R$ 250</span>
+              </div>
+            </label>
+          </div>
+
+          <div class="calc-summary-card">
+            <span class="summary-label">Estimativa do Combo</span>
+            <div class="summary-total">
+              <span class="currency">R$</span>
+              <span class="total-value" id="calcTotalValue">400,00</span>
+            </div>
+            <p class="summary-note">*Valores base sujeitos a ajuste de deslocamento e escopo detalhado.</p>
+            <button type="button" class="btn-primary full-width" id="btnApplyCombo">
+              <i class="fa-brands fa-whatsapp"></i>
+              <span>Solicitar Este Combo no WhatsApp</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PORTFOLIO SHOWCASE -->
+      <section class="portfolio-section" id="portfolio">
+        <div class="section-header">
+          <span class="section-tag">TRABALHOS RECENTES</span>
+          <h2 class="section-title">Portfólio & Bastidores</h2>
+          <p class="section-subtitle">Estética cinematográfica pensada para encantar e converter</p>
+        </div>
+
+        <div class="portfolio-grid">
+          <div class="portfolio-card" data-video="bastidores-comercial">
+            <div class="portfolio-img-wrap">
+              <img src="assets/images/reel-1.jpg" alt="Produção Audiovisual PH Media" loading="lazy">
+              <div class="portfolio-badge">AUDIOVISUAL</div>
+              <div class="play-overlay">
+                <i class="fa-solid fa-play"></i>
+              </div>
+            </div>
+            <div class="portfolio-info">
+              <h4>Campanha Comercial & Fashion</h4>
+              <p>Direção de cena, iluminação e captação multi-câmera</p>
+            </div>
+          </div>
+
+          <div class="portfolio-card" data-video="equipamentos-gimbal">
+            <div class="portfolio-img-wrap">
+              <img src="assets/images/reel-2.jpg" alt="Videomaker com Gimbal 4K" loading="lazy">
+              <div class="portfolio-badge">CINEMATIC</div>
+              <div class="play-overlay">
+                <i class="fa-solid fa-play"></i>
+              </div>
+            </div>
+            <div class="portfolio-info">
+              <h4>Comercial de Luxo & Produto</h4>
+              <p>Estabilização gimbal Ronin e pós-produção avançada</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT & LEAD CAPTURE (Integrated with Firebase Firestore) -->
+      <section class="contact-section glass-card" id="contato">
+        <div class="section-header">
+          <span class="section-tag">VAMOS CRIAR JUNTOS?</span>
+          <h2 class="section-title">Solicitar Proposta</h2>
+          <p class="section-subtitle">Preencha os dados abaixo que entraremos em contato com você o quanto antes:</p>
+        </div>
+
+        <form class="lead-form" id="leadForm">
+          <div class="form-group">
+            <label for="leadName">Seu Nome / Marca</label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-user"></i>
+              <input type="text" id="leadName" name="name" placeholder="Ex: João da Silva / Loja XYZ" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="leadPhone">Seu WhatsApp (com DDD)</label>
+            <div class="input-wrap">
+              <i class="fa-brands fa-whatsapp"></i>
+              <input type="tel" id="leadPhone" name="phone" placeholder="(42) 99999-9999" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="leadService">Serviço Desejado</label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-layer-group"></i>
+              <select id="leadService" name="service" required>
+                <option value="Social Media Mensal">Social Media Mensal (a partir de R$ 400)</option>
+                <option value="Videomaker / Comercial">Videomaker / Comercial 4K (a partir de R$ 650)</option>
+                <option value="Storymaker em Eventos">Storymaker em Eventos (a partir de R$ 350)</option>
+                <option value="Fotografia / Ensaio">Fotografia / Ensaio Profissional (a partir de R$ 300)</option>
+                <option value="Pacote Personalizado">Pacote Personalizado / Outros</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="leadMessage">Detalhes do Projeto (Opcional)</label>
+            <div class="input-wrap textarea-wrap">
+              <i class="fa-solid fa-comment-dots"></i>
+              <textarea id="leadMessage" name="message" rows="3" placeholder="Conte um pouco sobre sua ideia, datas ou necessidades..."></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary full-width submit-lead-btn" id="submitLeadBtn">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Enviar Solicitação</span>
+          </button>
+        </form>
+
+        <div class="form-feedback hidden" id="formFeedback"></div>
+      </section>
+
+      <!-- FAQ & DIFFERENTIALS ACCORDION -->
+      <section class="faq-section">
+        <div class="section-header">
+          <span class="section-tag">DÚVIDAS FREQUENTES</span>
+          <h2 class="section-title">Como Funciona o Processo</h2>
+        </div>
+
+        <div class="accordion-list">
+          <details class="accordion-item glass-card">
+            <summary class="accordion-summary">
+              <span>Como é feito o planejamento de conteúdo?</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </summary>
+            <div class="accordion-content">
+              <p>Realizamos um briefing completo para entender seu público e objetivos. Em seguida, definimos o calendário editorial, datas de gravação e alinhamos as referências visuais antes de produzir.</p>
+            </div>
+          </details>
+
+          <details class="accordion-item glass-card">
+            <summary class="accordion-summary">
+              <span>Qual é o prazo de entrega dos vídeos e fotos?</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </summary>
+            <div class="accordion-content">
+              <p>Para coberturas Storymaker em eventos, o envio ocorre em tempo real ou em até 24h. Para vídeos comerciais e ensaios fotográficos com pós-produção detalhada, o prazo médio é de 3 a 5 dias úteis.</p>
+            </div>
+          </details>
+
+          <details class="accordion-item glass-card">
+            <summary class="accordion-summary">
+              <span>Atende fora de Ponta Grossa?</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </summary>
+            <div class="accordion-content">
+              <p>Sim! Atendemos em toda a região dos Campos Gerais e Paraná mediante cálculo prévio de deslocamento e diária técnica.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      <div class="footer-brand">
+        <span class="footer-logo-text">PH MEDIA</span>
+        <p>Criatividade, estética e profissionalismo audiovisual.</p>
+      </div>
+
+      <div class="footer-socials">
+        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://wa.me/5542999999999" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© <span id="currentYear"></span> PH Media por Pedro Henrique. Todos os direitos reservados.</p>
+        <p class="tech-tag">Ponta Grossa – PR | Desenvolvido com tecnologia de alta performance</p>
+      </div>
+    </footer>
+
+    <!-- Floating WhatsApp Action Button for Quick Chat -->
+    <a href="https://wa.me/5542999999999?text=Olá%20Pedro!%20Vim%20pelo%20site%20da%20PH%20Media%20e%20gostaria%20de%20um%20orçamento." target="_blank" rel="noopener noreferrer" class="floating-whatsapp" id="floatingWhatsapp" aria-label="Falar no WhatsApp">
+      <i class="fa-brands fa-whatsapp"></i>
+      <span class="floating-tooltip">Fale com o Pedro</span>
+    </a>
+
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script type="module" src="assets/js/firebase-config.js"></script>
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>
