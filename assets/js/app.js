@@ -512,27 +512,15 @@ function initScrollAnimations() {
       }
     });
 
-    // 8.1. SERVICE & COMBO CTA BUTTONS: Lateral Emergence
+    // 8.1. KEEP THE TWO PRICING PACKAGE BUTTONS FIXED / CENTERED (No lateral shift)
     const serviceWaBtn = document.getElementById("serviceWhatsappBtn");
     if (serviceWaBtn) {
-      const rect = serviceWaBtn.getBoundingClientRect();
-      if (rect.bottom >= -60 && rect.top <= windowHeight + 60) {
-        const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
-        const normDist = Math.min(Math.max(centerOffset / (windowHeight / 2), -1.2), 1.2);
-        const waShiftX = normDist * 35;
-        serviceWaBtn.style.transform = `translateX(${waShiftX.toFixed(1)}px) scale(${(1.02 - Math.abs(normDist) * 0.04).toFixed(3)})`;
-      }
+      serviceWaBtn.style.transform = "";
     }
 
     const applyComboBtn = document.getElementById("btnApplyCombo");
     if (applyComboBtn) {
-      const rect = applyComboBtn.getBoundingClientRect();
-      if (rect.bottom >= -60 && rect.top <= windowHeight + 60) {
-        const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
-        const normDist = Math.min(Math.max(centerOffset / (windowHeight / 2), -1.2), 1.2);
-        const comboShiftX = -normDist * 35;
-        applyComboBtn.style.transform = `translateX(${comboShiftX.toFixed(1)}px) scale(${(1.02 - Math.abs(normDist) * 0.04).toFixed(3)})`;
-      }
+      applyComboBtn.style.transform = "";
     }
 
     // 9. FLOATING WHATSAPP BUTTON: Reactive Velocity Pulse
