@@ -109,6 +109,44 @@ body {
   flex-direction: column;
 }
 
+/* ==========================================================================
+   VERTICAL CAROUSEL FADE OVERLAYS (Center-Stage Spotlight)
+   ========================================================================== */
+.carousel-fade-top {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--app-max-width);
+  height: 140px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.92) 45%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+  z-index: 40;
+  transition: opacity 0.3s ease;
+}
+
+.carousel-fade-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--app-max-width);
+  height: 140px;
+  background: linear-gradient(to top, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.92) 45%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+  z-index: 40;
+  transition: opacity 0.3s ease;
+}
+
+/* Dynamic Focus Stage for Main Sections */
+.main-content > section,
+.main-footer {
+  will-change: opacity, transform, filter;
+  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), filter 0.22s ease;
+}
+
 @media (min-width: 860px) {
   body {
     padding: 24px 0;
