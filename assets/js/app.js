@@ -6,8 +6,8 @@ import { saveLead } from "./firebase-config.js";
 
 // Configurable Studio Phone & Data
 const STUDIO_CONFIG = {
-  whatsappNumber: "5542999999999", // Change to Pedro's official number
-  instagram: "phmedia",
+  whatsappNumber: "5542988640610", // Pedro Henrique - PH Media
+  instagram: "https://www.instagram.com/phmedia.br?stkn=bnYxbzBpYTVlNGl6",
   location: "Ponta Grossa – PR"
 };
 
