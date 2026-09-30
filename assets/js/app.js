@@ -435,7 +435,7 @@ function initScrollAnimations() {
     applyHighImpactPhysics(serviceCard, true);
     applyHighImpactPhysics(calcCard, false);
 
-    // 6. CALCULATOR OPTIONS: Simultaneous Opposing Lateral Surge
+    // 6. CALCULATOR OPTIONS: 3D Depth Wave & Kinetic Elevation Pop (No lateral translation)
     const currentCalcOptions = document.querySelectorAll(".calc-option-box");
     currentCalcOptions.forEach((optBox, idx) => {
       const rect = optBox.getBoundingClientRect();
@@ -445,12 +445,16 @@ function initScrollAnimations() {
         const clampedNorm = Math.min(Math.max(normDist, -1.2), 1.2);
         const absDist = Math.abs(clampedNorm);
 
-        // Even options come from Left (-), Odd options come from Right (+)
-        const direction = (idx % 2 === 0) ? -1 : 1;
-        const shiftX = direction * clampedNorm * 38;
-        const optScale = 1.02 - absDist * 0.03;
+        // 3D Perspective Tilt and Smooth Elevation Pop (Kept centered without lateral shift)
+        const tiltX = clampedNorm * -4.0;
+        const elevationZ = (1 - absDist) * 14;
+        const optScale = 1.03 - absDist * 0.035;
+        const shadowY = Math.max(8 - absDist * 5, 2);
+        const shadowBlur = Math.max(20 - absDist * 12, 4);
+        const shadowOpacity = Math.max(0.12 - absDist * 0.08, 0.02);
 
-        optBox.style.transform = `translateX(${shiftX.toFixed(1)}px) scale(${optScale.toFixed(3)})`;
+        optBox.style.transform = `perspective(600px) rotateX(${tiltX.toFixed(2)}deg) translateZ(${elevationZ.toFixed(1)}px) scale(${optScale.toFixed(3)})`;
+        optBox.style.boxShadow = `0 ${shadowY}px ${shadowBlur}px rgba(0, 0, 0, ${shadowOpacity.toFixed(3)})`;
       }
     });
 
