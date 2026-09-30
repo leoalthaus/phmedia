@@ -409,6 +409,92 @@ document.addEventListener("DOMContentLoaded", () => {
     await loadPortfolioData();
   });
 
+  // =========================================================================
+  // 5. DÚVIDAS FREQUENTES (FAQ)
+  // =========================================================================
+  let currentFaqs = [];
+
+  async function loadFaqsData() {
+    currentFaqs = await getFaqs();
+    renderFaqsEditor();
+  }
+
+  function renderFaqsEditor() {
+    const container = document.getElementById("faqsEditGrid");
+    if (!container) return;
+    container.innerHTML = currentFaqs.map((faq, index) => {
+      return `
+        <div class="admin-edit-card" data-index="${index}">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 800; font-size: 13px;">Pergunta #${index + 1}</span>
+            <button type="button" class="btn-action btn-delete-faq" data-index="${index}" style="color: #b91c1c;">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+          <div class="admin-input-group">
+            <label>Pergunta / Título</label>
+            <input type="text" class="faq-question" value="${escapeHtml(faq.question)}">
+          </div>
+          <div class="admin-input-group">
+            <label>Resposta Detalhada</label>
+            <textarea rows="3" class="faq-answer">${escapeHtml(faq.answer)}</textarea>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    container.querySelectorAll(".btn-delete-faq").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = parseInt(btn.getAttribute("data-index"));
+        currentFaqs.splice(idx, 1);
+        renderFaqsEditor();
+      });
+    });
+  }
+
+  const addFaqBtn = document.getElementById("btnAddFaq");
+  if (addFaqBtn) {
+    addFaqBtn.addEventListener("click", () => {
+      currentFaqs.push({
+        id: "faq_" + Date.now(),
+        question: "Nova Pergunta Frequente",
+        answer: "Digite a resposta detalhada aqui para orientar o cliente."
+      });
+      renderFaqsEditor();
+    });
+  }
+
+  const saveFaqsBtn = document.getElementById("btnSaveFaqs");
+  if (saveFaqsBtn) {
+    saveFaqsBtn.addEventListener("click", async () => {
+      const cards = document.querySelectorAll("#faqsEditGrid .admin-edit-card");
+      const updated = [];
+
+      cards.forEach((card, index) => {
+        const original = currentFaqs[index] || { id: "faq_" + Date.now() };
+        const question = card.querySelector(".faq-question").value.trim();
+        const answer = card.querySelector(".faq-answer").value.trim();
+
+        updated.push({
+          ...original,
+          question,
+          answer
+        });
+      });
+
+      await saveFaqs(updated);
+      alert("✅ Perguntas Frequentes (FAQ) salvas com sucesso! O site foi atualizado.");
+      await loadFaqsData();
+    });
+  }
+
+  // Load FAQ on dashboard init
+  const origShowDash = showDashboard;
+  showDashboard = function() {
+    origShowDash();
+    loadFaqsData();
+  };
+
   function escapeHtml(text) {
     const div = document.createElement("div");
     div.textContent = text || "";

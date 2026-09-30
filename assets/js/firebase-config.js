@@ -320,3 +320,56 @@ export async function savePortfolioItems(portfolioArray) {
   localStorage.setItem("phmedia_portfolio", JSON.stringify(portfolioArray));
   return true;
 }
+
+// ==========================================
+// 5. DÚVIDAS FREQUENTES (FAQ)
+// ==========================================
+
+export const DEFAULT_FAQS = [
+  {
+    id: "faq_1",
+    question: "Como é feito o planejamento de conteúdo?",
+    answer: "Realizamos um briefing completo para entender seu público e objetivos. Em seguida, definimos o calendário editorial, datas de gravação e alinhamos as referências visuais antes de produzir."
+  },
+  {
+    id: "faq_2",
+    question: "Qual é o prazo de entrega dos vídeos e fotos?",
+    answer: "Para coberturas Storymaker em eventos, o envio ocorre em tempo real ou em até 24h. Para vídeos comerciais e ensaios fotográficos com pós-produção detalhada, o prazo médio é de 3 a 5 dias úteis."
+  },
+  {
+    id: "faq_3",
+    question: "Atende fora de Ponta Grossa?",
+    answer: "Sim! Atendemos em toda a região dos Campos Gerais e Paraná mediante cálculo prévio de deslocamento e diária técnica."
+  }
+];
+
+export async function getFaqs() {
+  if (isFirebaseReady && db) {
+    try {
+      const snap = await getDocs(collection(db, "faqs"));
+      const items = [];
+      snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+      if (items.length > 0) return items;
+    } catch (e) {
+      console.warn("Firestore FAQ fetch error:", e);
+    }
+  }
+
+  const local = localStorage.getItem("phmedia_faqs");
+  return local ? JSON.parse(local) : DEFAULT_FAQS;
+}
+
+export async function saveFaqs(faqsArray) {
+  if (isFirebaseReady && db) {
+    try {
+      for (const f of faqsArray) {
+        await setDoc(doc(db, "faqs", f.id), f);
+      }
+    } catch (e) {
+      console.warn("Firestore FAQ save error:", e);
+    }
+  }
+  localStorage.setItem("phmedia_faqs", JSON.stringify(faqsArray));
+  return true;
+}
+

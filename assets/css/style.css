@@ -150,18 +150,36 @@ body {
   display: flex;
   align-items: center;
   text-decoration: none;
+  position: relative;
 }
 
 .logo-img {
-  height: 38px;
+  height: 48px;
   width: auto;
   object-fit: contain;
-  will-change: transform;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, filter;
+  animation: logoConstantBreathing 3.6s ease-in-out infinite;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
+}
+
+@keyframes logoConstantBreathing {
+  0% {
+    transform: scale(1) translateY(0);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.04));
+  }
+  50% {
+    transform: scale(1.05) translateY(-1.5px);
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.12));
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.04));
+  }
 }
 
 .brand-logo:hover .logo-img {
-  transform: scale(1.05);
+  transform: scale(1.08) translateY(-2px);
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.18));
 }
 
 .header-actions {

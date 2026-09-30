@@ -6,7 +6,8 @@ import {
   saveLead, 
   getServicesConfig, 
   getCalcOptions, 
-  getPortfolioItems 
+  getPortfolioItems,
+  getFaqs
 } from "./firebase-config.js";
 
 // Configurable Studio Phone & Data
@@ -20,6 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await initServicesShowcase();
   await initCalculator();
   await initPortfolioShowcase();
+  await initFaqShowcase();
   initLeadForm();
   initScrollAnimations();
   initDateYear();
@@ -191,7 +193,29 @@ async function initPortfolioShowcase() {
 }
 
 /**
- * 4. Lead Capture Form with Firebase & Direct Toast Feedback
+ * 4. FAQ / Dúvidas Frequentes Dinâmicas
+ */
+async function initFaqShowcase() {
+  const accordionList = document.querySelector(".accordion-list");
+  const faqs = await getFaqs();
+
+  if (accordionList && faqs && faqs.length > 0) {
+    accordionList.innerHTML = faqs.map(f => `
+      <details class="accordion-item glass-card">
+        <summary class="accordion-summary">
+          <span>${f.question}</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </summary>
+        <div class="accordion-content">
+          <p>${f.answer}</p>
+        </div>
+      </details>
+    `).join("");
+  }
+}
+
+/**
+ * 5. Lead Capture Form with Firebase & Direct Toast Feedback
  */
 function initLeadForm() {
   const form = document.getElementById("leadForm");

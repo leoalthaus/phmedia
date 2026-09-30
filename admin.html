@@ -250,6 +250,10 @@
           <i class="fa-solid fa-images"></i>
           <span>Portfólio & Pastas de Vídeos</span>
         </button>
+        <button class="admin-tab-btn" data-tab="faqsView">
+          <i class="fa-solid fa-circle-question"></i>
+          <span>Dúvidas Frequentes (FAQ)</span>
+        </button>
       </nav>
 
       <!-- TAB 1: LEADS & ORÇAMENTOS -->
@@ -375,6 +379,30 @@
         </div>
 
         <div class="admin-item-grid" id="portfolioEditGrid">
+          <!-- Rendered dynamically via JS -->
+        </div>
+      </div>
+
+      <!-- TAB 5: DÚVIDAS FREQUENTES (FAQ) -->
+      <div id="faqsView" class="admin-tab-content hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div>
+            <h3 style="font-size: 18px; font-weight: 800; color: #000;">Dúvidas Frequentes • FAQ</h3>
+            <p style="font-size: 13px; color: var(--text-secondary);">Personalize as perguntas e respostas exibidas na sanfona do site</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button id="btnAddFaq" class="btn-action">
+              <i class="fa-solid fa-plus"></i>
+              <span>Adicionar Pergunta</span>
+            </button>
+            <button id="btnSaveFaqs" class="btn-primary">
+              <i class="fa-solid fa-floppy-disk"></i>
+              <span>Salvar FAQ</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-item-grid" id="faqsEditGrid">
           <!-- Rendered dynamically via JS -->
         </div>
       </div>
