@@ -255,8 +255,8 @@ body {
 }
 
 .btn-glass {
-  padding: 6px 14px;
-  border-radius: var(--radius-full);
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
   background: #000000;
   border: 1px solid #000000;
   color: #ffffff;
@@ -394,7 +394,7 @@ body {
   background: #000000;
   color: #ffffff;
   border: 1px solid #000000;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   font-family: var(--font-heading);
   font-size: 16px;
   font-weight: 700;
@@ -494,7 +494,7 @@ body {
   gap: 12px;
   width: 100%;
   padding: 16px 20px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   background: #222226;
   border: 1px solid #222226;
   color: #ffffff;
@@ -717,7 +717,7 @@ body {
   background: #ffffff;
   color: #000000;
   border: 2px solid #000000;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   font-family: var(--font-heading);
   font-size: 16px;
   font-weight: 700;
@@ -875,7 +875,7 @@ body {
   background: #000000;
   color: #ffffff;
   border: 1px solid #000000;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   font-family: var(--font-heading);
   font-size: 15px;
   font-weight: 700;
@@ -950,7 +950,7 @@ body {
   padding: 4px 10px;
   background: rgba(0, 0, 0, 0.8);
   color: #ffffff;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-sm);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 1.5px;
@@ -1257,8 +1257,8 @@ body {
   right: 68px;
   background: #000000;
   color: #ffffff;
-  padding: 6px 12px;
-  border-radius: var(--radius-full);
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
@@ -1290,7 +1290,7 @@ body {
   background: #000000;
   color: #ffffff;
   padding: 12px 20px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   font-size: 13px;
   font-weight: 600;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
