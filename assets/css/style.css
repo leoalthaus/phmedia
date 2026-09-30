@@ -437,95 +437,128 @@ body {
   opacity: 0.9;
 }
 
-/* Dynamic Showcase Card (Reference 3 with Scroll-Driven 3D Effects) */
+/* Dynamic Showcase Card (High-Impact 3D Spatial Physics & Light Sheen) */
 .glass-card {
   background: #ffffff;
-  border: 1px solid var(--border-subtle);
+  border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: 24px;
+  padding: 26px;
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-card);
-  will-change: transform, box-shadow;
-  transform: translateZ(0);
+  will-change: transform, box-shadow, border-color;
+  transform-style: preserve-3d;
+  transition: border-color 0.3s ease;
+}
+
+/* Dynamic Specular Light Sweep on Scroll */
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.8) 0%, rgba(240, 240, 245, 0.3) 30%, transparent 60%);
+  opacity: var(--sheen-opacity, 0.4);
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.3s ease;
 }
 
 .service-display-card {
   text-align: center;
-  transition: opacity 0.3s ease, border-color 0.3s ease;
+  position: relative;
+  z-index: 2;
+  transform-style: preserve-3d;
+}
+
+.service-card-body {
+  position: relative;
+  z-index: 3;
+  transform-style: preserve-3d;
 }
 
 .service-icon-badge {
-  width: 54px;
-  height: 54px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
   background: #000000;
   color: #ffffff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 22px;
   margin-bottom: 16px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  will-change: transform;
+  transform: translateZ(35px);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .service-card-title {
   font-family: var(--font-heading);
-  font-size: 26px;
-  font-weight: 700;
+  font-size: 28px;
+  font-weight: 800;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: #000000;
   margin-bottom: 14px;
+  transform: translateZ(25px);
 }
 
 .service-card-desc {
   font-size: 14px;
-  line-height: 1.6;
+  line-height: 1.65;
   color: var(--text-secondary);
   margin-bottom: 20px;
+  transform: translateZ(15px);
 }
 
 .service-features {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   text-align: left;
   background: var(--bg-card-subtle);
-  padding: 14px 16px;
+  padding: 16px 18px;
   border-radius: var(--radius-md);
   margin-bottom: 24px;
   border: 1px solid var(--border-subtle);
+  transform: translateZ(20px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .feature-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 13px;
+  font-size: 13.5px;
   color: var(--text-primary);
+  font-weight: 500;
 }
 
 .feature-item i {
   color: var(--accent-green);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .service-pricing-box {
   margin-bottom: 24px;
-  padding: 16px 0;
+  padding: 18px 0;
   border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
+  transform: translateZ(30px);
 }
 
 .pricing-label {
   display: block;
   font-family: var(--font-heading);
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-muted);
   margin-bottom: 6px;
+  letter-spacing: 0.5px;
 }
 
 .pricing-value-row {
@@ -533,21 +566,24 @@ body {
   align-items: baseline;
   justify-content: center;
   gap: 6px;
+  will-change: transform;
 }
 
 .pricing-value-row .currency {
   font-family: var(--font-heading);
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 26px;
+  font-weight: 700;
   color: #000000;
 }
 
 .pricing-value-row .price-number {
   font-family: var(--font-heading);
-  font-size: 48px;
+  font-size: 52px;
   font-weight: 800;
-  letter-spacing: -1px;
+  letter-spacing: -1.5px;
   color: #000000;
+  line-height: 1;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .pricing-sub {

@@ -265,12 +265,14 @@ export function showToast(message, type = "info") {
 }
 
 /**
- * 5. Dynamic Scroll Zoom & Package Cards Physics Engine
+ * 5. Dynamic High-Impact Scroll Physics Engine
  */
 function initScrollAnimations() {
   const heroPortrait = document.getElementById("heroPortrait");
   const serviceCard = document.getElementById("serviceCard");
   const calcCard = document.getElementById("orcamento");
+  const servicePrice = document.getElementById("servicePrice");
+  const serviceBadge = document.getElementById("serviceIconBadge");
   const portfolioImgs = document.querySelectorAll(".portfolio-card img");
   const animatedElements = document.querySelectorAll(".hero-content, .portfolio-card, .contact-section, .faq-section");
 
@@ -292,56 +294,78 @@ function initScrollAnimations() {
     observer.observe(el);
   });
 
-  // Continuous Dynamic Scroll Physics with requestAnimationFrame
+  // Continuous High-Impact Scroll Physics with requestAnimationFrame
   let ticking = false;
 
   function onScrollPhysics() {
     const scrollY = window.pageYOffset || document.documentElement.scrollTop;
     const windowHeight = window.innerHeight;
 
-    // 1. HERO PORTRAIT: Pronounced Dynamic Cinematic Zoom (from 1.0x up to 1.48x)
+    // 1. HERO PORTRAIT: Pronounced Dynamic Cinematic Zoom (from 1.0x up to 1.52x)
     if (heroPortrait) {
-      // Scales over first 550px of scroll
-      const progress = Math.min(Math.max(scrollY / 450, 0), 1);
-      // Zoom from 1.0 to 1.46
-      const scale = 1 + Math.pow(progress, 0.85) * 0.46;
-      const translateY = progress * 24;
+      const progress = Math.min(Math.max(scrollY / 420, 0), 1);
+      const scale = 1 + Math.pow(progress, 0.8) * 0.52;
+      const translateY = progress * 28;
       heroPortrait.style.transform = `scale(${scale.toFixed(4)}) translateY(${translateY.toFixed(1)}px)`;
     }
 
-    // Helper to calculate scroll progress of an element relative to screen center
-    function applyCardScrollPhysics(cardElement) {
+    // High-Impact 3D Card Physics Function
+    function applyHighImpactPhysics(cardElement, isServiceShowcase = false) {
       if (!cardElement) return;
       const rect = cardElement.getBoundingClientRect();
-      // Check if visible in viewport
-      if (rect.bottom >= -50 && rect.top <= windowHeight + 50) {
+      
+      if (rect.bottom >= -80 && rect.top <= windowHeight + 80) {
         const cardCenter = rect.top + rect.height / 2;
         const screenCenter = windowHeight / 2;
-        // Normalized distance from -1 (above center) to 1 (below center)
+        // Normalized offset from center: -1.0 (above center) to +1.0 (below center)
         const offset = (cardCenter - screenCenter) / (windowHeight / 2);
         const clampedOffset = Math.min(Math.max(offset, -1.2), 1.2);
         const absOffset = Math.abs(clampedOffset);
 
-        // 3D tilt angle based on scroll direction & position (-4deg to +4deg)
-        const rotateX = clampedOffset * -4.5;
-        // Scale: 1.035 at exact center, smoothly scaling down to 0.975 when far
-        const scale = 1.035 - absOffset * 0.055;
-        // Dynamic elevation shadow that deepens at the center
-        const shadowBlur = Math.max(38 - absOffset * 22, 10);
-        const shadowOpacity = Math.max(0.16 - absOffset * 0.10, 0.04);
-        const borderGlow = Math.max(0.25 - absOffset * 0.20, 0.08);
+        // High-impact 3D tilt: up to 8.5 degrees
+        const rotateX = clampedOffset * -8.5;
+        // Dynamic scale: 1.065 at the center, 0.94 when entering/leaving
+        const scale = 1.065 - absOffset * 0.085;
+        // Depth translation
+        const translateZ = (1 - absOffset) * 20;
 
-        cardElement.style.transform = `perspective(1100px) rotateX(${rotateX.toFixed(2)}deg) scale(${scale.toFixed(4)})`;
-        cardElement.style.boxShadow = `0 ${Math.round(shadowBlur * 0.6)}px ${Math.round(shadowBlur)}px rgba(0, 0, 0, ${shadowOpacity.toFixed(3)})`;
-        cardElement.style.borderColor = `rgba(0, 0, 0, ${borderGlow.toFixed(2)})`;
+        // Dynamic shadow elevation
+        const shadowBlur = Math.max(50 - absOffset * 30, 10);
+        const shadowY = Math.max(25 - absOffset * 15, 6);
+        const shadowOpacity = Math.max(0.18 - absOffset * 0.12, 0.03);
+        const borderColor = `rgba(0, 0, 0, ${Math.max(0.35 - absOffset * 0.25, 0.08).toFixed(2)})`;
+
+        // Specular light sweep position (moves dynamically across the surface)
+        const sheenX = ((1 - clampedOffset) * 50 + 25).toFixed(1) + "%";
+        const sheenY = ((clampedOffset + 1) * 40 + 10).toFixed(1) + "%";
+        const sheenOpacity = Math.max(0.65 - absOffset * 0.45, 0.1).toFixed(2);
+
+        cardElement.style.setProperty("--mouse-x", sheenX);
+        cardElement.style.setProperty("--mouse-y", sheenY);
+        cardElement.style.setProperty("--sheen-opacity", sheenOpacity);
+
+        cardElement.style.transform = `perspective(900px) rotateX(${rotateX.toFixed(2)}deg) translateZ(${translateZ.toFixed(1)}px) scale(${scale.toFixed(4)})`;
+        cardElement.style.boxShadow = `0 ${shadowY}px ${shadowBlur}px rgba(0, 0, 0, ${shadowOpacity.toFixed(3)})`;
+        cardElement.style.borderColor = borderColor;
+
+        // Internal Element Parallax Pop for Service Showcase
+        if (isServiceShowcase) {
+          if (servicePrice) {
+            const pricePop = 1 + (1 - absOffset) * 0.08;
+            servicePrice.style.transform = `scale(${Math.max(pricePop, 1).toFixed(3)})`;
+          }
+          if (serviceBadge) {
+            const badgeRotate = clampedOffset * -15;
+            const badgePop = 35 + (1 - absOffset) * 15;
+            serviceBadge.style.transform = `translateZ(${badgePop}px) rotate(${badgeRotate.toFixed(1)}deg)`;
+          }
+        }
       }
     }
 
-    // 2. QUADRO 1: Showcase de Pacote Ativo (#serviceCard)
-    applyCardScrollPhysics(serviceCard);
-
-    // 3. QUADRO 2: Calculadora / Montador de Combo (#orcamento)
-    applyCardScrollPhysics(calcCard);
+    // Apply High-Impact physics to Card 1 and Card 2
+    applyHighImpactPhysics(serviceCard, true);
+    applyHighImpactPhysics(calcCard, false);
 
     // 4. PORTFOLIO CARDS: Continuous Zoom as you scroll
     portfolioImgs.forEach((img) => {
@@ -350,7 +374,7 @@ function initScrollAnimations() {
         const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
         const normDistance = Math.abs(centerOffset) / (windowHeight / 2);
         const clampedDist = Math.min(Math.max(normDistance, 0), 1);
-        const cardZoom = 1.15 - clampedDist * 0.12;
+        const cardZoom = 1.18 - clampedDist * 0.14;
         img.style.transform = `scale(${cardZoom.toFixed(4)})`;
       }
     });
