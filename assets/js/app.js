@@ -363,20 +363,24 @@ function initScrollAnimations() {
       }
     }
 
-    // 4. SERVICE PILL BUTTONS (Quadro 1 Nav): Dynamic Kinetic Stagger Wave
-    servicePills.forEach((pill, idx) => {
+    // 4. SIMULTANEOUS OPPOSING LATERAL SURGE FOR BUTTONS & CONTROLS
+    // (Even items surge from Left-to-Right, Odd items surge from Right-to-Left simultaneously as you scroll)
+    const currentServicePills = document.querySelectorAll(".service-pill-btn");
+    currentServicePills.forEach((pill, idx) => {
       const rect = pill.getBoundingClientRect();
-      if (rect.bottom >= 0 && rect.top <= windowHeight) {
+      if (rect.bottom >= -60 && rect.top <= windowHeight + 60) {
         const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
-        const normDist = Math.abs(centerOffset) / (windowHeight / 2);
-        const clampedDist = Math.min(Math.max(normDist, 0), 1);
-        
-        const waveScale = 1.04 - clampedDist * 0.06;
-        const waveX = (1 - clampedDist) * (idx % 2 === 0 ? 3 : -3);
-        
-        if (!pill.classList.contains("active")) {
-          pill.style.transform = `translateX(${waveX.toFixed(1)}px) scale(${waveScale.toFixed(3)})`;
-        }
+        const normDist = centerOffset / (windowHeight / 2);
+        const clampedNorm = Math.min(Math.max(normDist, -1.2), 1.2);
+        const absDist = Math.abs(clampedNorm);
+
+        // Direction: Even (0, 2) comes from Left (-), Odd (1, 3) comes from Right (+)
+        const direction = (idx % 2 === 0) ? -1 : 1;
+        const maxShift = 46;
+        const translateX = direction * clampedNorm * maxShift;
+        const scale = pill.classList.contains("active") ? 1.02 : (1.03 - absDist * 0.05);
+
+        pill.style.transform = `translateX(${translateX.toFixed(1)}px) scale(${scale.toFixed(3)})`;
       }
     });
 
@@ -431,15 +435,22 @@ function initScrollAnimations() {
     applyHighImpactPhysics(serviceCard, true);
     applyHighImpactPhysics(calcCard, false);
 
-    // 6. CALCULATOR OPTIONS: Interactive Micro-Tilt on Scroll
-    calcOptions.forEach((optBox) => {
+    // 6. CALCULATOR OPTIONS: Simultaneous Opposing Lateral Surge
+    const currentCalcOptions = document.querySelectorAll(".calc-option-box");
+    currentCalcOptions.forEach((optBox, idx) => {
       const rect = optBox.getBoundingClientRect();
-      if (rect.bottom >= 0 && rect.top <= windowHeight) {
+      if (rect.bottom >= -60 && rect.top <= windowHeight + 60) {
         const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
-        const normDist = Math.abs(centerOffset) / (windowHeight / 2);
-        const clampedDist = Math.min(Math.max(normDist, 0), 1);
-        const optScale = 1.02 - clampedDist * 0.03;
-        optBox.style.transform = `scale(${optScale.toFixed(3)})`;
+        const normDist = centerOffset / (windowHeight / 2);
+        const clampedNorm = Math.min(Math.max(normDist, -1.2), 1.2);
+        const absDist = Math.abs(clampedNorm);
+
+        // Even options come from Left (-), Odd options come from Right (+)
+        const direction = (idx % 2 === 0) ? -1 : 1;
+        const shiftX = direction * clampedNorm * 38;
+        const optScale = 1.02 - absDist * 0.03;
+
+        optBox.style.transform = `translateX(${shiftX.toFixed(1)}px) scale(${optScale.toFixed(3)})`;
       }
     });
 
@@ -465,24 +476,64 @@ function initScrollAnimations() {
       }
     });
 
-    // 8. PORTFOLIO CARDS & IMAGES: Continuous Zoom & Parallax Lift
-    portfolioCards.forEach((card) => {
+    // 8. PORTFOLIO CARDS & IMAGE BUTTONS / BADGES: Simultaneous Lateral Surge & Zoom
+    const currentPortfolioCards = document.querySelectorAll(".portfolio-card");
+    currentPortfolioCards.forEach((card, idx) => {
       const rect = card.getBoundingClientRect();
-      if (rect.bottom >= 0 && rect.top <= windowHeight) {
+      if (rect.bottom >= -80 && rect.top <= windowHeight + 80) {
         const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
-        const normDist = Math.abs(centerOffset) / (windowHeight / 2);
-        const clampedDist = Math.min(Math.max(normDist, 0), 1);
+        const normDist = centerOffset / (windowHeight / 2);
+        const clampedNorm = Math.min(Math.max(normDist, -1.2), 1.2);
+        const absDist = Math.abs(clampedNorm);
 
+        const direction = (idx % 2 === 0) ? -1 : 1;
+        const cardShift = direction * clampedNorm * 18;
+        const badge = card.querySelector(".portfolio-badge");
+        const playBtn = card.querySelector(".play-overlay");
         const img = card.querySelector("img");
+
         if (img) {
-          const cardZoom = 1.20 - clampedDist * 0.16;
+          const cardZoom = 1.20 - absDist * 0.16;
           img.style.transform = `scale(${cardZoom.toFixed(4)})`;
         }
 
-        const cardTilt = (centerOffset / (windowHeight / 2)) * -4;
-        card.style.transform = `perspective(800px) rotateX(${cardTilt.toFixed(1)}deg) translateY(${(-clampedDist * 4).toFixed(1)}px)`;
+        const cardTilt = clampedNorm * -4;
+        card.style.transform = `perspective(800px) rotateX(${cardTilt.toFixed(1)}deg) translateX(${cardShift.toFixed(1)}px)`;
+
+        // Image badge & play button surge simultaneously from opposite sides
+        if (badge) {
+          const badgeX = direction * clampedNorm * 42;
+          badge.style.transform = `translateX(${badgeX.toFixed(1)}px)`;
+        }
+        if (playBtn) {
+          const playX = (-direction) * clampedNorm * 38;
+          playBtn.style.transform = `translate(-50%, -50%) translateX(${playX.toFixed(1)}px) scale(${Math.max(1 - absDist * 0.3, 0.75).toFixed(2)})`;
+        }
       }
     });
+
+    // 8.1. SERVICE & COMBO CTA BUTTONS: Lateral Emergence
+    const serviceWaBtn = document.getElementById("serviceWhatsappBtn");
+    if (serviceWaBtn) {
+      const rect = serviceWaBtn.getBoundingClientRect();
+      if (rect.bottom >= -60 && rect.top <= windowHeight + 60) {
+        const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
+        const normDist = Math.min(Math.max(centerOffset / (windowHeight / 2), -1.2), 1.2);
+        const waShiftX = normDist * 35;
+        serviceWaBtn.style.transform = `translateX(${waShiftX.toFixed(1)}px) scale(${(1.02 - Math.abs(normDist) * 0.04).toFixed(3)})`;
+      }
+    }
+
+    const applyComboBtn = document.getElementById("btnApplyCombo");
+    if (applyComboBtn) {
+      const rect = applyComboBtn.getBoundingClientRect();
+      if (rect.bottom >= -60 && rect.top <= windowHeight + 60) {
+        const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
+        const normDist = Math.min(Math.max(centerOffset / (windowHeight / 2), -1.2), 1.2);
+        const comboShiftX = -normDist * 35;
+        applyComboBtn.style.transform = `translateX(${comboShiftX.toFixed(1)}px) scale(${(1.02 - Math.abs(normDist) * 0.04).toFixed(3)})`;
+      }
+    }
 
     // 9. FLOATING WHATSAPP BUTTON: Reactive Velocity Pulse
     if (floatingWa) {
