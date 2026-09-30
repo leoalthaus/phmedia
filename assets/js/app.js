@@ -267,48 +267,96 @@ export function showToast(message, type = "info") {
 }
 
 /**
- * 5. Dynamic High-Impact Scroll Physics Engine
+ * 5. Full-Site Dynamic Scroll Kinetic & Physics Engine
  */
 function initScrollAnimations() {
+  const header = document.getElementById("mainHeader");
+  const logoImg = document.querySelector(".logo-img");
   const heroPortrait = document.getElementById("heroPortrait");
+  const heroContent = document.querySelector(".hero-content");
+  const heroName = document.querySelector(".hero-name");
+  const heroCtaBtn = document.querySelector(".hero-cta-btn");
+  const locationBadge = document.querySelector(".location-badge");
+  const servicePills = document.querySelectorAll(".service-pill-btn");
   const serviceCard = document.getElementById("serviceCard");
   const calcCard = document.getElementById("orcamento");
   const servicePrice = document.getElementById("servicePrice");
   const serviceBadge = document.getElementById("serviceIconBadge");
-  const animatedElements = document.querySelectorAll(".hero-content, .portfolio-card, .contact-section, .faq-section");
+  const sectionHeaders = document.querySelectorAll(".section-header");
+  const calcOptions = document.querySelectorAll(".calc-option-box");
+  const floatingWa = document.getElementById("floatingWhatsapp");
+  const portfolioCards = document.querySelectorAll(".portfolio-card");
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = "1";
-        entry.target.style.transform = "translateY(0)";
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 });
-
-  animatedElements.forEach(el => {
-    el.style.opacity = "0";
-    el.style.transform = "translateY(24px)";
-    el.style.transition = "opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)";
-    observer.observe(el);
-  });
-
+  let lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
   let ticking = false;
 
-  function onScrollPhysics() {
+  function onFullSiteScroll() {
     const scrollY = window.pageYOffset || document.documentElement.scrollTop;
     const windowHeight = window.innerHeight;
+    const scrollDelta = scrollY - lastScrollY;
+    const scrollSpeed = Math.min(Math.abs(scrollDelta), 50);
+    const scrollDir = scrollDelta >= 0 ? 1 : -1; // 1 = down, -1 = up
 
-    // 1. HERO PORTRAIT: Pronounced Dynamic Cinematic Zoom (up to 1.52x)
+    // 1. TOP HEADER & LOGO REACTIVITY
+    if (header) {
+      if (scrollY > 30) {
+        header.classList.add("scrolled");
+      } else {
+        header.classList.remove("scrolled");
+      }
+    }
+    if (logoImg) {
+      const logoScale = 1 + Math.min(scrollSpeed * 0.002, 0.08);
+      logoImg.style.transform = `scale(${logoScale.toFixed(3)})`;
+    }
+
+    // 2. HERO PORTRAIT: Pronounced Dynamic Cinematic Zoom (from 1.0x up to 1.55x)
     if (heroPortrait) {
       const progress = Math.min(Math.max(scrollY / 420, 0), 1);
-      const scale = 1 + Math.pow(progress, 0.8) * 0.52;
-      const translateY = progress * 28;
+      const scale = 1 + Math.pow(progress, 0.8) * 0.55;
+      const translateY = progress * 30;
       heroPortrait.style.transform = `scale(${scale.toFixed(4)}) translateY(${translateY.toFixed(1)}px)`;
     }
 
-    // High-Impact 3D Card Physics Function
+    // 3. HERO TEXTS & MAIN BUTTON: Kinetic Parallax & Float
+    if (heroContent) {
+      const heroOffset = Math.min(scrollY * 0.18, 90);
+      const heroOpacity = Math.max(1 - scrollY / 650, 0);
+      heroContent.style.transform = `translateY(${heroOffset.toFixed(1)}px)`;
+      heroContent.style.opacity = heroOpacity.toFixed(3);
+
+      if (heroName) {
+        const letterSpacing = -0.5 + Math.min(scrollY * 0.004, 3);
+        heroName.style.letterSpacing = `${letterSpacing.toFixed(2)}px`;
+      }
+      if (heroCtaBtn) {
+        const btnScale = 1 + Math.min(scrollY * 0.0003, 0.05);
+        heroCtaBtn.style.transform = `scale(${btnScale.toFixed(3)})`;
+      }
+      if (locationBadge) {
+        const pinRotate = scrollDir * Math.min(scrollSpeed * 0.4, 12);
+        locationBadge.style.transform = `rotate(${pinRotate.toFixed(1)}deg)`;
+      }
+    }
+
+    // 4. SERVICE PILL BUTTONS (Quadro 1 Nav): Dynamic Kinetic Stagger Wave
+    servicePills.forEach((pill, idx) => {
+      const rect = pill.getBoundingClientRect();
+      if (rect.bottom >= 0 && rect.top <= windowHeight) {
+        const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
+        const normDist = Math.abs(centerOffset) / (windowHeight / 2);
+        const clampedDist = Math.min(Math.max(normDist, 0), 1);
+        
+        const waveScale = 1.04 - clampedDist * 0.06;
+        const waveX = (1 - clampedDist) * (idx % 2 === 0 ? 3 : -3);
+        
+        if (!pill.classList.contains("active")) {
+          pill.style.transform = `translateX(${waveX.toFixed(1)}px) scale(${waveScale.toFixed(3)})`;
+        }
+      }
+    });
+
+    // 5. HIGH-IMPACT 3D CARD PHYSICS (Quadro 1 & Quadro 2)
     function applyHighImpactPhysics(cardElement, isServiceShowcase = false) {
       if (!cardElement) return;
       const rect = cardElement.getBoundingClientRect();
@@ -320,9 +368,10 @@ function initScrollAnimations() {
         const clampedOffset = Math.min(Math.max(offset, -1.2), 1.2);
         const absOffset = Math.abs(clampedOffset);
 
-        const rotateX = clampedOffset * -8.5;
+        const inertiaTilt = scrollDir * Math.min(scrollSpeed * 0.15, 3);
+        const rotateX = (clampedOffset * -8.5) + inertiaTilt;
         const scale = 1.065 - absOffset * 0.085;
-        const translateZ = (1 - absOffset) * 20;
+        const translateZ = (1 - absOffset) * 22;
 
         const shadowBlur = Math.max(50 - absOffset * 30, 10);
         const shadowY = Math.max(25 - absOffset * 15, 6);
@@ -343,12 +392,12 @@ function initScrollAnimations() {
 
         if (isServiceShowcase) {
           if (servicePrice) {
-            const pricePop = 1 + (1 - absOffset) * 0.08;
+            const pricePop = 1 + (1 - absOffset) * 0.10;
             servicePrice.style.transform = `scale(${Math.max(pricePop, 1).toFixed(3)})`;
           }
           if (serviceBadge) {
-            const badgeRotate = clampedOffset * -15;
-            const badgePop = 35 + (1 - absOffset) * 15;
+            const badgeRotate = clampedOffset * -18;
+            const badgePop = 35 + (1 - absOffset) * 18;
             serviceBadge.style.transform = `translateZ(${badgePop}px) rotate(${badgeRotate.toFixed(1)}deg)`;
           }
         }
@@ -358,30 +407,78 @@ function initScrollAnimations() {
     applyHighImpactPhysics(serviceCard, true);
     applyHighImpactPhysics(calcCard, false);
 
-    // Dynamic zoom on portfolio items
-    const portfolioImgs = document.querySelectorAll(".portfolio-card img");
-    portfolioImgs.forEach((img) => {
-      const rect = img.getBoundingClientRect();
+    // 6. CALCULATOR OPTIONS: Interactive Micro-Tilt on Scroll
+    calcOptions.forEach((optBox) => {
+      const rect = optBox.getBoundingClientRect();
       if (rect.bottom >= 0 && rect.top <= windowHeight) {
         const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
-        const normDistance = Math.abs(centerOffset) / (windowHeight / 2);
-        const clampedDist = Math.min(Math.max(normDistance, 0), 1);
-        const cardZoom = 1.18 - clampedDist * 0.14;
-        img.style.transform = `scale(${cardZoom.toFixed(4)})`;
+        const normDist = Math.abs(centerOffset) / (windowHeight / 2);
+        const clampedDist = Math.min(Math.max(normDist, 0), 1);
+        const optScale = 1.02 - clampedDist * 0.03;
+        optBox.style.transform = `scale(${optScale.toFixed(3)})`;
       }
     });
 
+    // 7. SECTION HEADERS & TITLES: Dynamic Tracking Expansion
+    sectionHeaders.forEach((sh) => {
+      const rect = sh.getBoundingClientRect();
+      if (rect.bottom >= 0 && rect.top <= windowHeight) {
+        const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
+        const normDist = Math.abs(centerOffset) / (windowHeight / 2);
+        const clampedDist = Math.min(Math.max(normDist, 0), 1);
+        
+        const titleTag = sh.querySelector(".section-tag");
+        const titleH2 = sh.querySelector(".section-title");
+        
+        if (titleTag) {
+          const letterSpacing = 2.5 + (1 - clampedDist) * 1.5;
+          titleTag.style.letterSpacing = `${letterSpacing.toFixed(1)}px`;
+        }
+        if (titleH2) {
+          const titleScale = 1.03 - clampedDist * 0.04;
+          titleH2.style.transform = `scale(${titleScale.toFixed(3)})`;
+        }
+      }
+    });
+
+    // 8. PORTFOLIO CARDS & IMAGES: Continuous Zoom & Parallax Lift
+    portfolioCards.forEach((card) => {
+      const rect = card.getBoundingClientRect();
+      if (rect.bottom >= 0 && rect.top <= windowHeight) {
+        const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
+        const normDist = Math.abs(centerOffset) / (windowHeight / 2);
+        const clampedDist = Math.min(Math.max(normDist, 0), 1);
+
+        const img = card.querySelector("img");
+        if (img) {
+          const cardZoom = 1.20 - clampedDist * 0.16;
+          img.style.transform = `scale(${cardZoom.toFixed(4)})`;
+        }
+
+        const cardTilt = (centerOffset / (windowHeight / 2)) * -4;
+        card.style.transform = `perspective(800px) rotateX(${cardTilt.toFixed(1)}deg) translateY(${(-clampedDist * 4).toFixed(1)}px)`;
+      }
+    });
+
+    // 9. FLOATING WHATSAPP BUTTON: Reactive Velocity Pulse
+    if (floatingWa) {
+      const waPulse = 1 + Math.min(scrollSpeed * 0.005, 0.18);
+      const waRotate = scrollDir * Math.min(scrollSpeed * 0.35, 15);
+      floatingWa.style.transform = `scale(${waPulse.toFixed(3)}) rotate(${waRotate.toFixed(1)}deg)`;
+    }
+
+    lastScrollY = scrollY;
     ticking = false;
   }
 
   window.addEventListener("scroll", () => {
     if (!ticking) {
-      window.requestAnimationFrame(onScrollPhysics);
+      window.requestAnimationFrame(onFullSiteScroll);
       ticking = true;
     }
   }, { passive: true });
 
-  onScrollPhysics();
+  onFullSiteScroll();
 }
 
 /**
