@@ -2,7 +2,12 @@
  * PH MEDIA - Main Interactive Client Application
  */
 
-import { saveLead } from "./firebase-config.js";
+import { 
+  saveLead, 
+  getServicesConfig, 
+  getCalcOptions, 
+  getPortfolioItems 
+} from "./firebase-config.js";
 
 // Configurable Studio Phone & Data
 const STUDIO_CONFIG = {
@@ -11,87 +16,20 @@ const STUDIO_CONFIG = {
   location: "Ponta Grossa – PR"
 };
 
-// Services Data Catalog
-const SERVICES_CATALOG = {
-  "social-media": {
-    id: "social-media",
-    title: "SOCIAL MEDIA",
-    icon: "fa-hashtag",
-    description: "Criação e gestão de conteúdo para redes sociais, do planejamento à produção, unindo estratégia, audiovisual e criatividade para transformar ideias em conteúdo que comunica.",
-    features: [
-      "Planejamento estratégico & calendário mensal",
-      "Roteirização e captação de reels dinâmicos",
-      "Edição profissional com legendas e sound design",
-      "Análise de métricas, alcance e engajamento"
-    ],
-    pricingType: "Investimento mensal",
-    price: "400,00",
-    subtext: "ou pacote trimestral com condições especiais",
-    whatsappText: "Olá Pedro! Tenho interesse no serviço de *Social Media Mensal* (R$ 400,00) para minha marca. Como podemos iniciar?"
-  },
-  "videomaker": {
-    id: "videomaker",
-    title: "VIDEOMAKER",
-    icon: "fa-video",
-    description: "Captação, direção e edição de vídeos cinematográficos em alta definição (4K), comerciais para marcas, cobertura de lançamentos e reels com alta retenção.",
-    features: [
-      "Captação 4K com estabilização gimbal profissional",
-      "Iluminação de estúdio e captação de áudio sem fio",
-      "Color grading cinematográfico & efeitos visuais",
-      "Formatos otimizados para Reels, TikTok e YouTube"
-    ],
-    pricingType: "Investimento por projeto",
-    price: "650,00",
-    subtext: "diária de gravação inclusa",
-    whatsappText: "Olá Pedro! Gostaria de um orçamento para produção de vídeo *Videomaker Cinematográfico 4K*. Podemos conversar?"
-  },
-  "storymaker": {
-    id: "storymaker",
-    title: "STORYMAKER",
-    icon: "fa-bolt",
-    description: "Cobertura em tempo real para eventos, inaugurações, bastidores e lançamentos de produtos com fotos e vídeos verticais dinâmicos e entrega imediata.",
-    features: [
-      "Cobertura ao vivo direto nos stories da sua marca",
-      "Edição ágil no local para postagens imediatas",
-      "Captação de momentos espontâneos e depoimentos",
-      "Entrega de todo o material bruto organizado"
-    ],
-    pricingType: "Investimento por evento",
-    price: "350,00",
-    subtext: "pacote base de até 4 horas de evento",
-    whatsappText: "Olá Pedro! Gostaria de contratar a cobertura *Storymaker em Tempo Real* para o meu evento. Está com a agenda aberta?"
-  },
-  "fotografia": {
-    id: "fotografia",
-    title: "FOTOGRAFIA & ENSAIOS",
-    icon: "fa-camera",
-    description: "Ensaios fotográficos conceituais para profissionais, marcas, produtos e eventos. Direção de poses e pós-produção refinada com identidade visual marcante.",
-    features: [
-      "Direção de poses e enquadramentos modernos",
-      "Até 25 fotos selecionadas com tratamento premium",
-      "Ensaio em estúdio ou locação externa",
-      "Galeria digital privada para download em alta resolução"
-    ],
-    pricingType: "Investimento a partir de",
-    price: "300,00",
-    subtext: "com pós-produção inclusa",
-    whatsappText: "Olá Pedro! Tenho interesse em agendar um *Ensaio Fotográfico / Fotos de Marca*. Quais são as próximas datas?"
-  }
-};
-
-document.addEventListener("DOMContentLoaded", () => {
-  initServicesShowcase();
-  initCalculator();
+document.addEventListener("DOMContentLoaded", async () => {
+  await initServicesShowcase();
+  await initCalculator();
+  await initPortfolioShowcase();
   initLeadForm();
   initScrollAnimations();
   initDateYear();
 });
 
 /**
- * 1. Dynamic Services Showcase & Pill Navigation
+ * 1. Dynamic Services Showcase & Pill Navigation (Quadro 1)
  */
-function initServicesShowcase() {
-  const pills = document.querySelectorAll(".service-pill-btn");
+async function initServicesShowcase() {
+  const navContainer = document.getElementById("servicesNav");
   const card = document.getElementById("serviceCard");
   const titleEl = document.getElementById("serviceTitle");
   const descEl = document.getElementById("serviceDescription");
@@ -102,8 +40,21 @@ function initServicesShowcase() {
   const subtextEl = document.getElementById("pricingSubtext");
   const waBtn = document.getElementById("serviceWhatsappBtn");
 
+  const services = await getServicesConfig();
+  if (!services || services.length === 0) return;
+
+  // Render Pill Navigation dynamically
+  if (navContainer) {
+    navContainer.innerHTML = services.map((s, idx) => `
+      <button class="service-pill-btn ${idx === 0 ? 'active' : ''}" role="tab" aria-selected="${idx === 0}" data-service="${s.id}" id="tab-${s.id}">
+        <i class="fa-solid ${s.icon || 'fa-star'}"></i>
+        <span>${s.title}</span>
+      </button>
+    `).join("");
+  }
+
   function renderService(serviceKey) {
-    const data = SERVICES_CATALOG[serviceKey];
+    const data = services.find(s => s.id === serviceKey) || services[0];
     if (!data) return;
 
     // Smooth card transition
@@ -113,16 +64,17 @@ function initServicesShowcase() {
     setTimeout(() => {
       titleEl.textContent = data.title;
       descEl.textContent = data.description;
-      iconBadgeEl.innerHTML = `<i class="fa-solid ${data.icon}"></i>`;
-      priceTypeEl.textContent = data.pricingType;
+      iconBadgeEl.innerHTML = `<i class="fa-solid ${data.icon || 'fa-star'}"></i>`;
+      priceTypeEl.textContent = data.pricingType || "Investimento";
       priceEl.textContent = data.price;
-      subtextEl.textContent = data.subtext;
+      subtextEl.textContent = data.subtext || "";
 
-      featuresEl.innerHTML = data.features
+      featuresEl.innerHTML = (data.features || [])
         .map(feat => `<div class="feature-item"><i class="fa-solid fa-check"></i> ${feat}</div>`)
         .join("");
 
-      const waUrl = `https://wa.me/${STUDIO_CONFIG.whatsappNumber}?text=${encodeURIComponent(data.whatsappText)}`;
+      const msg = data.whatsappText || `Olá Pedro! Tenho interesse no serviço de *${data.title}* (R$ ${data.price}). Podemos conversar?`;
+      const waUrl = `https://wa.me/${STUDIO_CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`;
       waBtn.href = waUrl;
 
       card.style.opacity = "1";
@@ -130,6 +82,7 @@ function initServicesShowcase() {
     }, 150);
   }
 
+  const pills = navContainer.querySelectorAll(".service-pill-btn");
   pills.forEach(pill => {
     pill.addEventListener("click", () => {
       pills.forEach(p => {
@@ -145,17 +98,35 @@ function initServicesShowcase() {
     });
   });
 
-  // Initialize with first service
-  renderService("social-media");
+  // Render first item
+  renderService(services[0].id);
 }
 
 /**
- * 2. Interactive Budget Simulator
+ * 2. Interactive Budget Simulator (Quadro 2)
  */
-function initCalculator() {
-  const checkboxes = document.querySelectorAll('input[name="calc-addon"]');
+async function initCalculator() {
+  const optionsContainer = document.querySelector(".calc-options-group");
   const totalValueEl = document.getElementById("calcTotalValue");
   const applyBtn = document.getElementById("btnApplyCombo");
+
+  const options = await getCalcOptions();
+  if (optionsContainer && options && options.length > 0) {
+    optionsContainer.innerHTML = options.map((opt, idx) => `
+      <label class="calc-option">
+        <input type="checkbox" name="calc-addon" value="${opt.price}" data-name="${opt.name}" ${idx === 0 || opt.checked ? 'checked' : ''}>
+        <div class="calc-option-box">
+          <div class="option-info">
+            <span class="option-title">${opt.name}</span>
+            <span class="option-desc">${opt.desc || ''}</span>
+          </div>
+          <span class="option-price">+ R$ ${opt.price}</span>
+        </div>
+      </label>
+    `).join("");
+  }
+
+  const checkboxes = document.querySelectorAll('input[name="calc-addon"]');
 
   function calculateTotal() {
     let total = 0;
@@ -180,22 +151,54 @@ function initCalculator() {
     cb.addEventListener("change", calculateTotal);
   });
 
-  applyBtn.addEventListener("click", () => {
-    const { total, selectedItems } = calculateTotal();
-    const itemsList = selectedItems.length > 0 ? selectedItems.join(", ") : "Serviços sob consulta";
-    const text = `Olá Pedro! Montei uma simulação no site da PH Media com os seguintes serviços:\n- *Itens:* ${itemsList}\n- *Valor estimado:* R$ ${total.toFixed(2)}\n\nGostaria de confirmar a disponibilidade e fechar a proposta!`;
-    const waUrl = `https://wa.me/${STUDIO_CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
-    window.open(waUrl, "_blank");
-  });
+  if (applyBtn) {
+    applyBtn.addEventListener("click", () => {
+      const { total, selectedItems } = calculateTotal();
+      const itemsList = selectedItems.length > 0 ? selectedItems.join(", ") : "Serviços sob consulta";
+      const text = `Olá Pedro! Montei uma simulação no site da PH Media com os seguintes serviços:\n- *Itens:* ${itemsList}\n- *Valor estimado:* R$ ${total.toFixed(2)}\n\nGostaria de confirmar a disponibilidade e fechar a proposta!`;
+      const waUrl = `https://wa.me/${STUDIO_CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
+      window.open(waUrl, "_blank");
+    });
+  }
+
+  calculateTotal();
 }
 
 /**
- * 3. Lead Capture Form with Firebase & Direct Toast Feedback
+ * 3. Portfolio Showcase (Pastas & Projetos)
+ */
+async function initPortfolioShowcase() {
+  const portfolioGrid = document.querySelector(".portfolio-grid");
+  const items = await getPortfolioItems();
+
+  if (portfolioGrid && items && items.length > 0) {
+    portfolioGrid.innerHTML = items.map(p => `
+      <div class="portfolio-card">
+        <div class="portfolio-img-wrap">
+          <img src="${p.image}" alt="${p.title}" loading="lazy">
+          <div class="portfolio-badge">${p.category || 'AUDIOVISUAL'}</div>
+          <div class="play-overlay">
+            <i class="fa-solid fa-play"></i>
+          </div>
+        </div>
+        <div class="portfolio-info">
+          <h4>${p.title}</h4>
+          <p>${p.desc || ''}</p>
+        </div>
+      </div>
+    `).join("");
+  }
+}
+
+/**
+ * 4. Lead Capture Form with Firebase & Direct Toast Feedback
  */
 function initLeadForm() {
   const form = document.getElementById("leadForm");
   const submitBtn = document.getElementById("submitLeadBtn");
   const feedbackEl = document.getElementById("formFeedback");
+
+  if (!form) return;
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -213,7 +216,7 @@ function initLeadForm() {
     feedbackEl.classList.add("hidden");
 
     try {
-      const result = await saveLead(leadData);
+      await saveLead(leadData);
       showToast("✨ Solicitação enviada com sucesso! Falaremos com você em breve.", "success");
 
       form.reset();
@@ -221,7 +224,6 @@ function initLeadForm() {
       feedbackEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Proposta recebida! Você também pode nos chamar diretamente no WhatsApp para agilizar o atendimento.`;
       feedbackEl.classList.remove("hidden");
 
-      // Auto-prompt WhatsApp fast-track
       setTimeout(() => {
         const quickPrompt = confirm("Deseja abrir o WhatsApp agora mesmo para falar diretamente com o Pedro?");
         if (quickPrompt) {
@@ -244,7 +246,7 @@ function initLeadForm() {
 }
 
 /**
- * 4. Toast Notifications
+ * Toast Notifications
  */
 export function showToast(message, type = "info") {
   const container = document.getElementById("toastContainer");
@@ -273,10 +275,8 @@ function initScrollAnimations() {
   const calcCard = document.getElementById("orcamento");
   const servicePrice = document.getElementById("servicePrice");
   const serviceBadge = document.getElementById("serviceIconBadge");
-  const portfolioImgs = document.querySelectorAll(".portfolio-card img");
   const animatedElements = document.querySelectorAll(".hero-content, .portfolio-card, .contact-section, .faq-section");
 
-  // Entrance reveal observer for other sections
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -294,14 +294,13 @@ function initScrollAnimations() {
     observer.observe(el);
   });
 
-  // Continuous High-Impact Scroll Physics with requestAnimationFrame
   let ticking = false;
 
   function onScrollPhysics() {
     const scrollY = window.pageYOffset || document.documentElement.scrollTop;
     const windowHeight = window.innerHeight;
 
-    // 1. HERO PORTRAIT: Pronounced Dynamic Cinematic Zoom (from 1.0x up to 1.52x)
+    // 1. HERO PORTRAIT: Pronounced Dynamic Cinematic Zoom (up to 1.52x)
     if (heroPortrait) {
       const progress = Math.min(Math.max(scrollY / 420, 0), 1);
       const scale = 1 + Math.pow(progress, 0.8) * 0.52;
@@ -317,25 +316,19 @@ function initScrollAnimations() {
       if (rect.bottom >= -80 && rect.top <= windowHeight + 80) {
         const cardCenter = rect.top + rect.height / 2;
         const screenCenter = windowHeight / 2;
-        // Normalized offset from center: -1.0 (above center) to +1.0 (below center)
         const offset = (cardCenter - screenCenter) / (windowHeight / 2);
         const clampedOffset = Math.min(Math.max(offset, -1.2), 1.2);
         const absOffset = Math.abs(clampedOffset);
 
-        // High-impact 3D tilt: up to 8.5 degrees
         const rotateX = clampedOffset * -8.5;
-        // Dynamic scale: 1.065 at the center, 0.94 when entering/leaving
         const scale = 1.065 - absOffset * 0.085;
-        // Depth translation
         const translateZ = (1 - absOffset) * 20;
 
-        // Dynamic shadow elevation
         const shadowBlur = Math.max(50 - absOffset * 30, 10);
         const shadowY = Math.max(25 - absOffset * 15, 6);
         const shadowOpacity = Math.max(0.18 - absOffset * 0.12, 0.03);
         const borderColor = `rgba(0, 0, 0, ${Math.max(0.35 - absOffset * 0.25, 0.08).toFixed(2)})`;
 
-        // Specular light sweep position (moves dynamically across the surface)
         const sheenX = ((1 - clampedOffset) * 50 + 25).toFixed(1) + "%";
         const sheenY = ((clampedOffset + 1) * 40 + 10).toFixed(1) + "%";
         const sheenOpacity = Math.max(0.65 - absOffset * 0.45, 0.1).toFixed(2);
@@ -348,7 +341,6 @@ function initScrollAnimations() {
         cardElement.style.boxShadow = `0 ${shadowY}px ${shadowBlur}px rgba(0, 0, 0, ${shadowOpacity.toFixed(3)})`;
         cardElement.style.borderColor = borderColor;
 
-        // Internal Element Parallax Pop for Service Showcase
         if (isServiceShowcase) {
           if (servicePrice) {
             const pricePop = 1 + (1 - absOffset) * 0.08;
@@ -363,11 +355,11 @@ function initScrollAnimations() {
       }
     }
 
-    // Apply High-Impact physics to Card 1 and Card 2
     applyHighImpactPhysics(serviceCard, true);
     applyHighImpactPhysics(calcCard, false);
 
-    // 4. PORTFOLIO CARDS: Continuous Zoom as you scroll
+    // Dynamic zoom on portfolio items
+    const portfolioImgs = document.querySelectorAll(".portfolio-card img");
     portfolioImgs.forEach((img) => {
       const rect = img.getBoundingClientRect();
       if (rect.bottom >= 0 && rect.top <= windowHeight) {
@@ -389,7 +381,6 @@ function initScrollAnimations() {
     }
   }, { passive: true });
 
-  // Initial trigger
   onScrollPhysics();
 }
 

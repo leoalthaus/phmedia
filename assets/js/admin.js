@@ -1,8 +1,18 @@
 /**
- * PH MEDIA - Admin Dashboard Controller
+ * PH MEDIA - Complete Admin Dashboard Controller
  */
 
-import { getLeads, updateLeadStatus, deleteLead } from "./firebase-config.js";
+import { 
+  getLeads, 
+  updateLeadStatus, 
+  deleteLead,
+  getServicesConfig,
+  saveServicesConfig,
+  getCalcOptions,
+  saveCalcOptions,
+  getPortfolioItems,
+  savePortfolioItems
+} from "./firebase-config.js";
 
 const DEFAULT_PIN = "1234";
 
@@ -12,11 +22,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("adminLoginForm");
   const pinInput = document.getElementById("adminPin");
   const logoutBtn = document.getElementById("adminLogoutBtn");
-  const refreshBtn = document.getElementById("btnRefreshLeads");
-  const exportBtn = document.getElementById("btnExportCsv");
 
   let allLeads = [];
   let currentFilter = "all";
+  let currentServices = [];
+  let currentCalcOptions = [];
+  let currentPortfolio = [];
 
   // Check login session
   if (sessionStorage.getItem("phmedia_admin_auth") === "true") {
@@ -41,9 +52,36 @@ document.addEventListener("DOMContentLoaded", () => {
     dashboardView.classList.add("hidden");
   });
 
-  refreshBtn.addEventListener("click", loadLeadsData);
+  // Tab switching
+  document.querySelectorAll(".admin-tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".admin-tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".admin-tab-content").forEach(c => c.classList.add("hidden"));
 
-  exportBtn.addEventListener("click", () => {
+      btn.classList.add("active");
+      const tabId = btn.getAttribute("data-tab");
+      document.getElementById(tabId).classList.remove("hidden");
+    });
+  });
+
+  function showDashboard() {
+    loginView.classList.add("hidden");
+    dashboardView.classList.remove("hidden");
+    loadLeadsData();
+    loadServicesData();
+    loadCalcData();
+    loadPortfolioData();
+  }
+
+  // =========================================================================
+  // 1. LEADS
+  // =========================================================================
+  document.getElementById("btnRefreshLeads").addEventListener("click", loadLeadsData);
+  document.getElementById("btnFilterAll").addEventListener("click", () => { currentFilter = "all"; renderLeadsTable(); });
+  document.getElementById("btnFilterNovos").addEventListener("click", () => { currentFilter = "Novo"; renderLeadsTable(); });
+  document.getElementById("btnFilterFechados").addEventListener("click", () => { currentFilter = "Fechado"; renderLeadsTable(); });
+
+  document.getElementById("btnExportCsv").addEventListener("click", () => {
     if (allLeads.length === 0) {
       alert("Nenhum lead para exportar.");
       return;
@@ -59,42 +97,27 @@ document.addEventListener("DOMContentLoaded", () => {
     ]);
 
     const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
-    const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    link.setAttribute("href", encodeURI(csvContent));
     link.setAttribute("download", `leads_phmedia_${new Date().toISOString().slice(0,10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   });
 
-  // Filters
-  document.getElementById("btnFilterAll").addEventListener("click", () => { currentFilter = "all"; renderTable(); });
-  document.getElementById("btnFilterNovos").addEventListener("click", () => { currentFilter = "Novo"; renderTable(); });
-  document.getElementById("btnFilterFechados").addEventListener("click", () => { currentFilter = "Fechado"; renderTable(); });
-
-  function showDashboard() {
-    loginView.classList.add("hidden");
-    dashboardView.classList.remove("hidden");
-    loadLeadsData();
-  }
-
   async function loadLeadsData() {
-    const tableBody = document.getElementById("leadsTableBody");
-    tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 20px;">Carregando registros...</td></tr>`;
-
     allLeads = await getLeads();
-    updateMetrics();
-    renderTable();
+    updateLeadMetrics();
+    renderLeadsTable();
   }
 
-  function updateMetrics() {
+  function updateLeadMetrics() {
     document.getElementById("metricTotal").textContent = allLeads.length;
     document.getElementById("metricNovos").textContent = allLeads.filter(l => (l.status || "Novo") === "Novo").length;
     document.getElementById("metricFechados").textContent = allLeads.filter(l => l.status === "Fechado").length;
   }
 
-  function renderTable() {
+  function renderLeadsTable() {
     const tableBody = document.getElementById("leadsTableBody");
     let filtered = allLeads;
 
@@ -110,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tableBody.innerHTML = filtered.map(lead => {
       const dateStr = lead.createdAt ? new Date(lead.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "-";
       const cleanPhone = (lead.phone || "").replace(/\D/g, "");
-      const waLink = cleanPhone ? `https://wa.me/55${cleanPhone}?text=${encodeURIComponent(`Olá ${lead.name}! Sou o Pedro da PH Media. Recebi sua mensagem sobre o serviço ${lead.service}.`)}` : "#";
+      const waLink = cleanPhone ? `https://wa.me/55${cleanPhone}?text=${encodeURIComponent(`Olá ${lead.name}! Sou o Pedro da PH Media. Recebi sua solicitação para ${lead.service}.`)}` : "#";
       const statusClass = lead.status === "Fechado" ? "badge-fechado" : lead.status === "Em Contato" ? "badge-contato" : "badge-novo";
 
       return `
@@ -124,38 +147,271 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="lead-actions">
               ${cleanPhone ? `<a href="${waLink}" target="_blank" class="btn-action wa" title="Abrir WhatsApp"><i class="fa-brands fa-whatsapp"></i> Conversar</a>` : ""}
               <button class="btn-action btn-toggle-status" data-id="${lead.id}" data-current="${lead.status || 'Novo'}">Alterar Status</button>
-              <button class="btn-action btn-delete-lead" data-id="${lead.id}" style="color: #f87171;"><i class="fa-solid fa-trash"></i></button>
+              <button class="btn-action btn-delete-lead" data-id="${lead.id}" style="color: #b91c1c;"><i class="fa-solid fa-trash"></i></button>
             </div>
           </td>
         </tr>
       `;
     }).join("");
 
-    // Bind action events
     tableBody.querySelectorAll(".btn-toggle-status").forEach(btn => {
       btn.addEventListener("click", async () => {
         const id = btn.getAttribute("data-id");
         const current = btn.getAttribute("data-current");
-        const nextStatus = current === "Novo" ? "Em Contato" : current === "Em Contato" ? "Fechado" : "Novo";
-        await updateLeadStatus(id, nextStatus);
+        const next = current === "Novo" ? "Em Contato" : current === "Em Contato" ? "Fechado" : "Novo";
+        await updateLeadStatus(id, next);
         await loadLeadsData();
       });
     });
 
     tableBody.querySelectorAll(".btn-delete-lead").forEach(btn => {
       btn.addEventListener("click", async () => {
-        if (confirm("Tem certeza que deseja remover este registro?")) {
-          const id = btn.getAttribute("data-id");
-          await deleteLead(id);
+        if (confirm("Remover este lead?")) {
+          await deleteLead(btn.getAttribute("data-id"));
           await loadLeadsData();
         }
       });
     });
   }
 
+  // =========================================================================
+  // 2. SERVIÇOS (QUADRO 1)
+  // =========================================================================
+  async function loadServicesData() {
+    currentServices = await getServicesConfig();
+    renderServicesEditor();
+  }
+
+  function renderServicesEditor() {
+    const container = document.getElementById("servicesEditGrid");
+    container.innerHTML = currentServices.map((svc, index) => {
+      const featuresText = (svc.features || []).join("\n");
+      return `
+        <div class="admin-edit-card" data-index="${index}">
+          <div class="admin-input-group">
+            <label>Título do Botão / Serviço</label>
+            <input type="text" class="svc-title" value="${escapeHtml(svc.title)}">
+          </div>
+          <div class="admin-input-group">
+            <label>Tipo de Cobrança (Ex: Investimento mensal)</label>
+            <input type="text" class="svc-pricing-type" value="${escapeHtml(svc.pricingType || 'Investimento mensal')}">
+          </div>
+          <div class="admin-input-group">
+            <label>Valor (Ex: 400,00 ou 650,00)</label>
+            <input type="text" class="svc-price" value="${escapeHtml(svc.price)}">
+          </div>
+          <div class="admin-input-group">
+            <label>Subtexto do Preço</label>
+            <input type="text" class="svc-subtext" value="${escapeHtml(svc.subtext || '')}">
+          </div>
+          <div class="admin-input-group">
+            <label>Descrição do Serviço</label>
+            <textarea rows="3" class="svc-desc">${escapeHtml(svc.description)}</textarea>
+          </div>
+          <div class="admin-input-group">
+            <label>Itens Inclusos (1 por linha)</label>
+            <textarea rows="4" class="svc-features">${escapeHtml(featuresText)}</textarea>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  document.getElementById("btnSaveServices").addEventListener("click", async () => {
+    const cards = document.querySelectorAll("#servicesEditGrid .admin-edit-card");
+    const updated = [];
+
+    cards.forEach((card, index) => {
+      const original = currentServices[index];
+      const title = card.querySelector(".svc-title").value.trim();
+      const pricingType = card.querySelector(".svc-pricing-type").value.trim();
+      const price = card.querySelector(".svc-price").value.trim();
+      const subtext = card.querySelector(".svc-subtext").value.trim();
+      const description = card.querySelector(".svc-desc").value.trim();
+      const features = card.querySelector(".svc-features").value.split("\n").map(f => f.trim()).filter(f => f.length > 0);
+
+      updated.push({
+        ...original,
+        title,
+        pricingType,
+        price,
+        subtext,
+        description,
+        features,
+        whatsappText: `Olá Pedro! Tenho interesse no serviço de *${title}* (R$ ${price}). Podemos conversar?`
+      });
+    });
+
+    await saveServicesConfig(updated);
+    alert("✅ Serviços e preços salvos com sucesso! O site principal foi atualizado.");
+    await loadServicesData();
+  });
+
+  // =========================================================================
+  // 3. CALCULADORA (QUADRO 2)
+  // =========================================================================
+  async function loadCalcData() {
+    currentCalcOptions = await getCalcOptions();
+    renderCalcEditor();
+  }
+
+  function renderCalcEditor() {
+    const container = document.getElementById("calcEditGrid");
+    container.innerHTML = currentCalcOptions.map((opt, index) => {
+      return `
+        <div class="admin-edit-card" data-index="${index}">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 800; font-size: 13px;">Opção #${index + 1}</span>
+            <button type="button" class="btn-action btn-delete-calc" data-index="${index}" style="color: #b91c1c;">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+          <div class="admin-input-group">
+            <label>Nome da Opção</label>
+            <input type="text" class="calc-name" value="${escapeHtml(opt.name)}">
+          </div>
+          <div class="admin-input-group">
+            <label>Descrição do Adicional</label>
+            <input type="text" class="calc-desc" value="${escapeHtml(opt.desc || '')}">
+          </div>
+          <div class="admin-input-group">
+            <label>Valor Adicionado (R$ número)</label>
+            <input type="number" class="calc-price" value="${opt.price}">
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    container.querySelectorAll(".btn-delete-calc").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = parseInt(btn.getAttribute("data-index"));
+        currentCalcOptions.splice(idx, 1);
+        renderCalcEditor();
+      });
+    });
+  }
+
+  document.getElementById("btnAddCalcOption").addEventListener("click", () => {
+    currentCalcOptions.push({
+      id: "calc_" + Date.now(),
+      name: "Novo Adicional",
+      desc: "Descrição do serviço",
+      price: 150,
+      checked: false
+    });
+    renderCalcEditor();
+  });
+
+  document.getElementById("btnSaveCalc").addEventListener("click", async () => {
+    const cards = document.querySelectorAll("#calcEditGrid .admin-edit-card");
+    const updated = [];
+
+    cards.forEach((card, index) => {
+      const original = currentCalcOptions[index] || { id: "calc_" + Date.now() };
+      const name = card.querySelector(".calc-name").value.trim();
+      const desc = card.querySelector(".calc-desc").value.trim();
+      const price = parseFloat(card.querySelector(".calc-price").value) || 0;
+
+      updated.push({
+        ...original,
+        name,
+        desc,
+        price
+      });
+    });
+
+    await saveCalcOptions(updated);
+    alert("✅ Calculadora de combos salva com sucesso!");
+    await loadCalcData();
+  });
+
+  // =========================================================================
+  // 4. PORTFÓLIO & PASTAS DE VÍDEOS/FOTOS
+  // =========================================================================
+  async function loadPortfolioData() {
+    currentPortfolio = await getPortfolioItems();
+    renderPortfolioEditor();
+  }
+
+  function renderPortfolioEditor() {
+    const container = document.getElementById("portfolioEditGrid");
+    container.innerHTML = currentPortfolio.map((item, index) => {
+      return `
+        <div class="admin-edit-card" data-index="${index}">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 800; font-size: 13px;">Projeto #${index + 1}</span>
+            <button type="button" class="btn-action btn-delete-portfolio" data-index="${index}" style="color: #b91c1c;">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+          <div class="admin-input-group">
+            <label>Título do Projeto / Campanha</label>
+            <input type="text" class="port-title" value="${escapeHtml(item.title)}">
+          </div>
+          <div class="admin-input-group">
+            <label>Etiqueta / Categoria (Ex: AUDIOVISUAL, REELS, EVENTO)</label>
+            <input type="text" class="port-category" value="${escapeHtml(item.category || 'AUDIOVISUAL')}">
+          </div>
+          <div class="admin-input-group">
+            <label>Caminho ou Link da Imagem / Capa</label>
+            <input type="text" class="port-image" value="${escapeHtml(item.image)}">
+          </div>
+          <div class="admin-input-group">
+            <label>Descrição Curta</label>
+            <input type="text" class="port-desc" value="${escapeHtml(item.desc || '')}">
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    container.querySelectorAll(".btn-delete-portfolio").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = parseInt(btn.getAttribute("data-index"));
+        currentPortfolio.splice(idx, 1);
+        renderPortfolioEditor();
+      });
+    });
+  }
+
+  document.getElementById("btnAddPortfolioItem").addEventListener("click", () => {
+    currentPortfolio.push({
+      id: "port_" + Date.now(),
+      title: "Novo Trabalho Audiovisual",
+      category: "AUDIOVISUAL",
+      desc: "Direção de vídeo e produção de conteúdo",
+      image: "assets/images/reel-1.jpg"
+    });
+    renderPortfolioEditor();
+  });
+
+  document.getElementById("btnSavePortfolio").addEventListener("click", async () => {
+    const cards = document.querySelectorAll("#portfolioEditGrid .admin-edit-card");
+    const updated = [];
+
+    cards.forEach((card, index) => {
+      const original = currentPortfolio[index] || { id: "port_" + Date.now() };
+      const title = card.querySelector(".port-title").value.trim();
+      const category = card.querySelector(".port-category").value.trim().toUpperCase();
+      const image = card.querySelector(".port-image").value.trim();
+      const desc = card.querySelector(".port-desc").value.trim();
+
+      updated.push({
+        ...original,
+        title,
+        category,
+        image,
+        desc
+      });
+    });
+
+    await savePortfolioItems(updated);
+    alert("✅ Galeria de portfólio salva com sucesso! O site foi atualizado.");
+    await loadPortfolioData();
+  });
+
   function escapeHtml(text) {
     const div = document.createElement("div");
-    div.textContent = text;
+    div.textContent = text || "";
     return div.innerHTML;
   }
 });
