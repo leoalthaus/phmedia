@@ -530,7 +530,7 @@ function initScrollAnimations() {
       floatingWa.style.transform = `scale(${waPulse.toFixed(3)}) rotate(${waRotate.toFixed(1)}deg)`;
     }
 
-    // 10. VERTICAL CAROUSEL CENTER-STAGE SPOTLIGHT (Focus in center, white fade at borders)
+    // 10. VERTICAL CAROUSEL CENTER-STAGE SPOTLIGHT (Wider focus, subtle edge transition)
     const mainSections = document.querySelectorAll(".main-content > section, .main-footer");
     mainSections.forEach((sec) => {
       const rect = sec.getBoundingClientRect();
@@ -547,25 +547,18 @@ function initScrollAnimations() {
         const screenCenter = windowHeight / 2;
         const distNorm = Math.abs(secCenter - screenCenter) / (windowHeight / 2);
 
-        // Core spotlight focus: center is 1.0, falls off toward 0.30 at borders
+        // Core spotlight focus: wide center zone (up to 0.55), only smooth softening near borders (min 0.55)
         let focusOpacity = 1;
-        if (distNorm > 0.30) {
-          focusOpacity = Math.max(1 - (distNorm - 0.30) * 1.35, 0.30);
+        if (distNorm > 0.55) {
+          focusOpacity = Math.max(1 - (distNorm - 0.55) * 1.0, 0.55);
         }
 
-        // Subtly scale down towards top & bottom borders (1.0 -> 0.955)
-        const stageScale = Math.max(1 - Math.min(distNorm * 0.045, 0.045), 0.955);
-        
-        // Edge blur for depth-of-field carousel effect
-        const blurAmount = distNorm > 0.75 ? Math.min((distNorm - 0.75) * 3.5, 2.0) : 0;
+        // Subtly scale down towards top & bottom borders (1.0 -> 0.97)
+        const stageScale = Math.max(1 - Math.min(distNorm * 0.03, 0.03), 0.97);
 
         sec.style.opacity = focusOpacity.toFixed(3);
         sec.style.transform = `scale(${stageScale.toFixed(3)})`;
-        if (blurAmount > 0.1) {
-          sec.style.filter = `blur(${blurAmount.toFixed(1)}px)`;
-        } else {
-          sec.style.filter = "none";
-        }
+        sec.style.filter = "none";
       }
     });
 
