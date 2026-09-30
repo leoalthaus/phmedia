@@ -265,11 +265,14 @@ export function showToast(message, type = "info") {
 }
 
 /**
- * 5. Scroll Animations (IntersectionObserver)
+ * 5. Dynamic Scroll Zoom & Parallax Engine
  */
 function initScrollAnimations() {
+  const heroPortrait = document.getElementById("heroPortrait");
+  const portfolioImgs = document.querySelectorAll(".portfolio-card img");
   const animatedElements = document.querySelectorAll(".hero-content, .service-display-card, .calculator-section, .portfolio-card, .contact-section");
-  
+
+  // Entrance reveal observer
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -278,7 +281,7 @@ function initScrollAnimations() {
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.15 });
+  }, { threshold: 0.12 });
 
   animatedElements.forEach(el => {
     el.style.opacity = "0";
@@ -286,6 +289,50 @@ function initScrollAnimations() {
     el.style.transition = "opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)";
     observer.observe(el);
   });
+
+  // Dynamic Scroll Zoom with requestAnimationFrame
+  let ticking = false;
+
+  function onScrollZoom() {
+    const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+    const windowHeight = window.innerHeight;
+
+    // 1. Hero Portrait Dynamic Zoom on scroll down
+    if (heroPortrait) {
+      // Zoom from 1.0 to 1.22 over first 600px of scroll
+      const progress = Math.min(Math.max(scrollY / 500, 0), 1);
+      const scale = 1 + progress * 0.18;
+      const translateY = progress * 15;
+      heroPortrait.style.transform = `scale(${scale.toFixed(4)}) translateY(${translateY.toFixed(1)}px)`;
+    }
+
+    // 2. Portfolio Images Dynamic Zoom when passing through viewport
+    portfolioImgs.forEach((img) => {
+      const rect = img.getBoundingClientRect();
+      // Check if image is in viewport
+      if (rect.bottom >= 0 && rect.top <= windowHeight) {
+        const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
+        const normDistance = Math.abs(centerOffset) / (windowHeight / 2);
+        const clampedDist = Math.min(Math.max(normDistance, 0), 1);
+        
+        // Closer to center = max zoom (1.14), far from center = 1.0
+        const cardZoom = 1.14 - clampedDist * 0.12;
+        img.style.transform = `scale(${cardZoom.toFixed(4)})`;
+      }
+    });
+
+    ticking = false;
+  }
+
+  window.addEventListener("scroll", () => {
+    if (!ticking) {
+      window.requestAnimationFrame(onScrollZoom);
+      ticking = true;
+    }
+  }, { passive: true });
+
+  // Initial trigger
+  onScrollZoom();
 }
 
 /**

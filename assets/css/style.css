@@ -226,7 +226,7 @@ body {
 }
 
 /* ==========================================================================
-   HERO SECTION (Reference 1 Match)
+   HERO SECTION (Reference 1 Match with Dynamic Scroll Zoom)
    ========================================================================== */
 .hero-section {
   display: flex;
@@ -235,6 +235,7 @@ body {
   text-align: center;
   padding-top: 10px;
   position: relative;
+  perspective: 1000px;
 }
 
 .hero-portrait-container {
@@ -243,14 +244,17 @@ body {
   position: relative;
   display: flex;
   justify-content: center;
+  overflow: hidden;
 }
 
 .portrait-wrapper {
   position: relative;
   width: 100%;
   max-width: 320px;
-  border-radius: 18px;
+  border-radius: 20px;
   overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  transform: translateZ(0);
 }
 
 .portrait-img {
@@ -259,19 +263,21 @@ body {
   display: block;
   object-fit: cover;
   filter: grayscale(100%) contrast(108%);
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+  transform-origin: center 30%;
+  will-change: transform, filter;
+  transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1), filter 0.5s ease;
 }
 
 .portrait-wrapper:hover .portrait-img {
-  transform: scale(1.02);
   filter: grayscale(85%) contrast(110%);
 }
 
 .portrait-overlay-gradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent 65%, var(--bg-main) 98%);
+  background: linear-gradient(to bottom, transparent 60%, var(--bg-main) 98%);
   pointer-events: none;
+  z-index: 1;
 }
 
 .hero-content {
@@ -756,12 +762,12 @@ body {
 }
 
 /* ==========================================================================
-   PORTFOLIO SECTION
+   PORTFOLIO SECTION (With Scroll Zoom & Dynamic Parallax)
    ========================================================================== */
 .portfolio-grid {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 }
 
 .portfolio-card {
@@ -769,14 +775,15 @@ body {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: all var(--transition-smooth);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
   cursor: pointer;
+  position: relative;
 }
 
 .portfolio-card:hover {
   border-color: var(--border-strong);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-card);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65), 0 0 30px rgba(255, 255, 255, 0.06);
 }
 
 .portfolio-img-wrap {
@@ -784,6 +791,7 @@ body {
   width: 100%;
   aspect-ratio: 16/10;
   overflow: hidden;
+  background: #000000;
 }
 
 .portfolio-img-wrap img {
@@ -791,12 +799,17 @@ body {
   height: 100%;
   object-fit: cover;
   filter: grayscale(100%);
-  transition: transform 0.6s ease, filter 0.6s ease;
+  transform-origin: center center;
+  will-change: transform, filter;
+  transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1), filter 0.6s ease;
 }
 
 .portfolio-card:hover .portfolio-img-wrap img {
-  transform: scale(1.05);
-  filter: grayscale(40%);
+  filter: grayscale(20%) contrast(110%);
+}
+
+.portfolio-card.in-view .portfolio-img-wrap img {
+  /* will be dynamically transformed by scroll listener */
 }
 
 .portfolio-badge {
