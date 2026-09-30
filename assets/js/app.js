@@ -265,14 +265,16 @@ export function showToast(message, type = "info") {
 }
 
 /**
- * 5. Dynamic Scroll Zoom & Parallax Engine
+ * 5. Dynamic Scroll Zoom & Package Cards Physics Engine
  */
 function initScrollAnimations() {
   const heroPortrait = document.getElementById("heroPortrait");
+  const serviceCard = document.getElementById("serviceCard");
+  const calcCard = document.getElementById("orcamento");
   const portfolioImgs = document.querySelectorAll(".portfolio-card img");
-  const animatedElements = document.querySelectorAll(".hero-content, .service-display-card, .calculator-section, .portfolio-card, .contact-section");
+  const animatedElements = document.querySelectorAll(".hero-content, .portfolio-card, .contact-section, .faq-section");
 
-  // Entrance reveal observer
+  // Entrance reveal observer for other sections
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -281,7 +283,7 @@ function initScrollAnimations() {
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.1 });
 
   animatedElements.forEach(el => {
     el.style.opacity = "0";
@@ -290,33 +292,65 @@ function initScrollAnimations() {
     observer.observe(el);
   });
 
-  // Dynamic Scroll Zoom with requestAnimationFrame
+  // Continuous Dynamic Scroll Physics with requestAnimationFrame
   let ticking = false;
 
-  function onScrollZoom() {
+  function onScrollPhysics() {
     const scrollY = window.pageYOffset || document.documentElement.scrollTop;
     const windowHeight = window.innerHeight;
 
-    // 1. Hero Portrait Dynamic Zoom on scroll down
+    // 1. HERO PORTRAIT: Pronounced Dynamic Cinematic Zoom (from 1.0x up to 1.48x)
     if (heroPortrait) {
-      // Zoom from 1.0 to 1.22 over first 600px of scroll
-      const progress = Math.min(Math.max(scrollY / 500, 0), 1);
-      const scale = 1 + progress * 0.18;
-      const translateY = progress * 15;
+      // Scales over first 550px of scroll
+      const progress = Math.min(Math.max(scrollY / 450, 0), 1);
+      // Zoom from 1.0 to 1.46
+      const scale = 1 + Math.pow(progress, 0.85) * 0.46;
+      const translateY = progress * 24;
       heroPortrait.style.transform = `scale(${scale.toFixed(4)}) translateY(${translateY.toFixed(1)}px)`;
     }
 
-    // 2. Portfolio Images Dynamic Zoom when passing through viewport
+    // Helper to calculate scroll progress of an element relative to screen center
+    function applyCardScrollPhysics(cardElement) {
+      if (!cardElement) return;
+      const rect = cardElement.getBoundingClientRect();
+      // Check if visible in viewport
+      if (rect.bottom >= -50 && rect.top <= windowHeight + 50) {
+        const cardCenter = rect.top + rect.height / 2;
+        const screenCenter = windowHeight / 2;
+        // Normalized distance from -1 (above center) to 1 (below center)
+        const offset = (cardCenter - screenCenter) / (windowHeight / 2);
+        const clampedOffset = Math.min(Math.max(offset, -1.2), 1.2);
+        const absOffset = Math.abs(clampedOffset);
+
+        // 3D tilt angle based on scroll direction & position (-4deg to +4deg)
+        const rotateX = clampedOffset * -4.5;
+        // Scale: 1.035 at exact center, smoothly scaling down to 0.975 when far
+        const scale = 1.035 - absOffset * 0.055;
+        // Dynamic elevation shadow that deepens at the center
+        const shadowBlur = Math.max(38 - absOffset * 22, 10);
+        const shadowOpacity = Math.max(0.16 - absOffset * 0.10, 0.04);
+        const borderGlow = Math.max(0.25 - absOffset * 0.20, 0.08);
+
+        cardElement.style.transform = `perspective(1100px) rotateX(${rotateX.toFixed(2)}deg) scale(${scale.toFixed(4)})`;
+        cardElement.style.boxShadow = `0 ${Math.round(shadowBlur * 0.6)}px ${Math.round(shadowBlur)}px rgba(0, 0, 0, ${shadowOpacity.toFixed(3)})`;
+        cardElement.style.borderColor = `rgba(0, 0, 0, ${borderGlow.toFixed(2)})`;
+      }
+    }
+
+    // 2. QUADRO 1: Showcase de Pacote Ativo (#serviceCard)
+    applyCardScrollPhysics(serviceCard);
+
+    // 3. QUADRO 2: Calculadora / Montador de Combo (#orcamento)
+    applyCardScrollPhysics(calcCard);
+
+    // 4. PORTFOLIO CARDS: Continuous Zoom as you scroll
     portfolioImgs.forEach((img) => {
       const rect = img.getBoundingClientRect();
-      // Check if image is in viewport
       if (rect.bottom >= 0 && rect.top <= windowHeight) {
         const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
         const normDistance = Math.abs(centerOffset) / (windowHeight / 2);
         const clampedDist = Math.min(Math.max(normDistance, 0), 1);
-        
-        // Closer to center = max zoom (1.14), far from center = 1.0
-        const cardZoom = 1.14 - clampedDist * 0.12;
+        const cardZoom = 1.15 - clampedDist * 0.12;
         img.style.transform = `scale(${cardZoom.toFixed(4)})`;
       }
     });
@@ -326,13 +360,13 @@ function initScrollAnimations() {
 
   window.addEventListener("scroll", () => {
     if (!ticking) {
-      window.requestAnimationFrame(onScrollZoom);
+      window.requestAnimationFrame(onScrollPhysics);
       ticking = true;
     }
   }, { passive: true });
 
   // Initial trigger
-  onScrollZoom();
+  onScrollPhysics();
 }
 
 /**

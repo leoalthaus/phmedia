@@ -214,7 +214,7 @@ body {
 }
 
 /* ==========================================================================
-   HERO SECTION (Pure White Style - Reference 1)
+   HERO SECTION (Pure White Style - Reference 1 with Dramatic Scroll Zoom)
    ========================================================================== */
 .hero-section {
   display: flex;
@@ -223,6 +223,7 @@ body {
   text-align: center;
   padding-top: 16px;
   position: relative;
+  perspective: 1000px;
 }
 
 .hero-portrait-container {
@@ -238,9 +239,10 @@ body {
   position: relative;
   width: 100%;
   max-width: 320px;
-  border-radius: 20px;
+  border-radius: 22px;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 40%, #e9ecef 0%, #f8f9fa 70%);
+  background: radial-gradient(circle at 50% 40%, #e5e8ec 0%, #f8f9fa 70%);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
 }
 
 .portrait-img {
@@ -249,16 +251,17 @@ body {
   display: block;
   object-fit: cover;
   filter: grayscale(100%) contrast(108%);
-  transform-origin: center 30%;
+  transform-origin: center 25%;
   will-change: transform;
-  transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1);
+  transition: transform 0.08s linear;
 }
 
 .portrait-overlay-gradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent 60%, #ffffff 98%);
+  background: linear-gradient(to bottom, transparent 55%, #ffffff 98%);
   pointer-events: none;
+  z-index: 2;
 }
 
 .hero-content {
@@ -434,7 +437,7 @@ body {
   opacity: 0.9;
 }
 
-/* Dynamic Showcase Card (Reference 3) */
+/* Dynamic Showcase Card (Reference 3 with Scroll-Driven 3D Effects) */
 .glass-card {
   background: #ffffff;
   border: 1px solid var(--border-subtle);
@@ -443,16 +446,18 @@ body {
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-card);
+  will-change: transform, box-shadow;
+  transform: translateZ(0);
 }
 
 .service-display-card {
   text-align: center;
-  transition: all var(--transition-smooth);
+  transition: opacity 0.3s ease, border-color 0.3s ease;
 }
 
 .service-icon-badge {
-  width: 52px;
-  height: 52px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   background: #000000;
   color: #ffffff;
@@ -461,6 +466,8 @@ body {
   justify-content: center;
   font-size: 20px;
   margin-bottom: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .service-card-title {
