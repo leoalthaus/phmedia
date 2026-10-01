@@ -18,13 +18,42 @@ const STUDIO_CONFIG = {
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await initServicesShowcase();
-  await initCalculator();
-  await initPortfolioShowcase();
-  await initFaqShowcase();
-  initLeadForm();
-  initScrollAnimations();
-  initDateYear();
+  // 1. Portfolio is top priority for visual rendering and lightbox click
+  try {
+    await initPortfolioShowcase();
+  } catch (e) {
+    console.error("Portfolio init error:", e);
+  }
+
+  // 2. Services Quadro 1
+  try {
+    await initServicesShowcase();
+  } catch (e) {
+    console.error("Services init error:", e);
+  }
+
+  // 3. Calculator Quadro 2
+  try {
+    await initCalculator();
+  } catch (e) {
+    console.error("Calculator init error:", e);
+  }
+
+  // 4. FAQ
+  try {
+    await initFaqShowcase();
+  } catch (e) {
+    console.error("FAQ init error:", e);
+  }
+
+  // 5. Forms, Scroll & Year
+  try {
+    initLeadForm();
+    initScrollAnimations();
+    initDateYear();
+  } catch (e) {
+    console.error("Core animations init error:", e);
+  }
 });
 
 /**
@@ -171,10 +200,13 @@ async function initCalculator() {
  */
 let currentModalProject = null;
 let currentModalPhotoIndex = 0;
+let cachedPortfolioItems = [];
 
 async function initPortfolioShowcase() {
   const portfolioGrid = document.querySelector(".portfolio-grid");
   const items = await getPortfolioItems();
+  cachedPortfolioItems = items || [];
+  window.loadedPortfolioItems = cachedPortfolioItems;
 
   if (portfolioGrid && items && items.length > 0) {
     portfolioGrid.innerHTML = items.map((p, index) => {
@@ -199,24 +231,25 @@ async function initPortfolioShowcase() {
       `;
     }).join("");
 
-    // Use delegated container click + direct listeners for 100% reliable trigger
+    // Delegated container click
     portfolioGrid.addEventListener("click", (e) => {
       const card = e.target.closest(".portfolio-card");
       if (card) {
         const index = parseInt(card.getAttribute("data-index"), 10);
-        if (items[index]) {
-          openPortfolioModal(items[index]);
+        if (cachedPortfolioItems[index]) {
+          openPortfolioModal(cachedPortfolioItems[index]);
         }
       }
     });
 
+    // Keyboard support (Enter / Space)
     portfolioGrid.querySelectorAll(".portfolio-card").forEach(card => {
       card.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           const index = parseInt(card.getAttribute("data-index"), 10);
-          if (items[index]) {
-            openPortfolioModal(items[index]);
+          if (cachedPortfolioItems[index]) {
+            openPortfolioModal(cachedPortfolioItems[index]);
           }
         }
       });
@@ -225,6 +258,14 @@ async function initPortfolioShowcase() {
 
   initModalEvents();
 }
+
+// Expose globally so inline clicks or external scripts can open it anytime
+window.openPortfolioModal = openPortfolioModal;
+window.openPortfolioModalByIndex = function(index) {
+  if (cachedPortfolioItems && cachedPortfolioItems[index]) {
+    openPortfolioModal(cachedPortfolioItems[index]);
+  }
+};
 
 function escapeHtml(text) {
   if (!text) return "";
@@ -343,17 +384,6 @@ function showModalPhoto(index) {
     mainImg.style.opacity = "1";
     mainImg.style.transform = "scale(1)";
   }
-
-  // Update active thumbnail
-  thumbs.forEach((th, idx) => {
-    if (idx === currentModalPhotoIndex) {
-      th.classList.add("active");
-      th.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-    } else {
-      th.classList.remove("active");
-    }
-  });
-}
 
   // Update active thumbnail
   thumbs.forEach((th, idx) => {

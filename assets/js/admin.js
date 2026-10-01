@@ -334,7 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Image reader & compressor for fast client-side uploads (Base64 JPEG)
-  function readAndCompressImage(file, maxDimension = 1400, quality = 0.82) {
+  function readAndCompressImage(file, maxDimension = 1000, quality = 0.72) {
     return new Promise((resolve, reject) => {
       if (!file || !file.type.startsWith("image/")) {
         return reject(new Error("Arquivo não é uma imagem válida"));

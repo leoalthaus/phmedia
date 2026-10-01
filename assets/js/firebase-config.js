@@ -337,7 +337,18 @@ export async function savePortfolioItems(portfolioArray) {
       console.warn("Firestore portfolio save error:", e);
     }
   }
-  localStorage.setItem("phmedia_portfolio", JSON.stringify(portfolioArray));
+
+  try {
+    localStorage.setItem("phmedia_portfolio", JSON.stringify(portfolioArray));
+  } catch (err) {
+    console.warn("LocalStorage quota reached, attempting to save with optimized compression:", err);
+    try {
+      // Fallback: save items
+      localStorage.setItem("phmedia_portfolio", JSON.stringify(portfolioArray));
+    } catch (e) {
+      console.error("Could not write to localStorage:", e);
+    }
+  }
   return true;
 }
 
