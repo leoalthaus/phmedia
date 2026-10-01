@@ -259,6 +259,32 @@ async function initPortfolioShowcase() {
   initModalEvents();
 }
 
+// Global click fallback for any .portfolio-card anywhere on the page
+document.addEventListener("click", (e) => {
+  const card = e.target.closest(".portfolio-card");
+  if (card) {
+    const idxAttr = card.getAttribute("data-index");
+    const index = idxAttr !== null ? parseInt(idxAttr, 10) : 0;
+    if (cachedPortfolioItems && cachedPortfolioItems[index]) {
+      openPortfolioModal(cachedPortfolioItems[index]);
+    }
+  }
+});
+
+// Real-time sync when saved from admin panel
+window.addEventListener("phmedia_portfolio_updated", (e) => {
+  if (e.detail && Array.isArray(e.detail)) {
+    cachedPortfolioItems = e.detail;
+    initPortfolioShowcase();
+  }
+});
+
+window.addEventListener("storage", (e) => {
+  if (e.key === "phmedia_portfolio" || e.key === "phmedia_portfolio_sync_time") {
+    initPortfolioShowcase();
+  }
+});
+
 // Expose globally so inline clicks or external scripts can open it anytime
 window.openPortfolioModal = openPortfolioModal;
 window.openPortfolioModalByIndex = function(index) {

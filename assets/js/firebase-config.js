@@ -271,8 +271,63 @@ export async function saveCalcOptions(optionsArray) {
 }
 
 // ==========================================
-// 4. PASTAS & ITENS DE PORTFÓLIO
+// 4. PASTAS & ITENS DE PORTFÓLIO (IndexedDB + LocalStorage + Firestore Sync)
 // ==========================================
+
+const IDB_NAME = "phmedia_db";
+const IDB_VERSION = 1;
+const IDB_STORE = "portfolio_store";
+
+function openIDB() {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined" || !window.indexedDB) return resolve(null);
+    try {
+      const request = indexedDB.open(IDB_NAME, IDB_VERSION);
+      request.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(IDB_STORE)) {
+          db.createObjectStore(IDB_STORE, { keyPath: "key" });
+        }
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => resolve(null);
+    } catch (err) {
+      resolve(null);
+    }
+  });
+}
+
+async function idbGet(key) {
+  try {
+    const db = await openIDB();
+    if (!db) return null;
+    return new Promise((resolve) => {
+      const tx = db.transaction(IDB_STORE, "readonly");
+      const store = tx.objectStore(IDB_STORE);
+      const req = store.get(key);
+      req.onsuccess = () => resolve(req.result ? req.result.val : null);
+      req.onerror = () => resolve(null);
+    });
+  } catch (e) {
+    return null;
+  }
+}
+
+async function idbSet(key, val) {
+  try {
+    const db = await openIDB();
+    if (!db) return false;
+    return new Promise((resolve) => {
+      const tx = db.transaction(IDB_STORE, "readwrite");
+      const store = tx.objectStore(IDB_STORE);
+      store.put({ key, val });
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => resolve(false);
+    });
+  } catch (e) {
+    return false;
+  }
+}
 
 export const DEFAULT_PORTFOLIO = [
   {
@@ -298,27 +353,68 @@ export const DEFAULT_PORTFOLIO = [
       "assets/images/reel-1.jpg",
       "assets/images/pedro.jpg"
     ]
+  },
+  {
+    id: "port_3",
+    title: "Cobertura de Eventos & Storymaker",
+    category: "REELS & SOCIAL",
+    desc: "Captação dinâmica em tempo real para eventos corporativos, lançamentos e marcas.",
+    image: "assets/images/pedro.jpg",
+    photos: [
+      "assets/images/pedro.jpg",
+      "assets/images/reel-1.jpg",
+      "assets/images/reel-2.jpg"
+    ]
   }
 ];
 
 export async function getPortfolioItems() {
-  let items = [];
-  if (isFirebaseReady && db) {
+  let items = null;
+
+  // 1. Try IndexedDB first (holds full-resolution images without size limits)
+  try {
+    const idbData = await idbGet("portfolio");
+    if (Array.isArray(idbData) && idbData.length > 0) {
+      items = idbData;
+    }
+  } catch (e) {
+    console.warn("IndexedDB read error:", e);
+  }
+
+  // 2. Try Firestore if configured
+  if ((!items || items.length === 0) && isFirebaseReady && db) {
     try {
       const snap = await getDocs(collection(db, "portfolio"));
-      snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+      const firestoreItems = [];
+      snap.forEach(d => firestoreItems.push({ id: d.id, ...d.data() }));
+      if (firestoreItems.length > 0) items = firestoreItems;
     } catch (e) {
       console.warn("Firestore portfolio fetch error:", e);
     }
   }
 
+  // 3. Try LocalStorage fallback
   if (!items || items.length === 0) {
-    const local = localStorage.getItem("phmedia_portfolio");
-    items = local ? JSON.parse(local) : DEFAULT_PORTFOLIO;
+    try {
+      const local = localStorage.getItem("phmedia_portfolio");
+      if (local) {
+        const parsed = JSON.parse(local);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          items = parsed;
+        }
+      }
+    } catch (e) {
+      console.warn("LocalStorage read error:", e);
+    }
+  }
+
+  // 4. Default 3 items fallback
+  if (!items || items.length === 0) {
+    items = DEFAULT_PORTFOLIO;
   }
 
   // Ensure every item has a valid photos array
-  return (items || []).map(p => {
+  return items.map(p => {
     let photos = p.photos;
     if (!Array.isArray(photos) || photos.length === 0) {
       photos = p.image ? [p.image] : ["assets/images/reel-1.jpg"];
@@ -328,6 +424,14 @@ export async function getPortfolioItems() {
 }
 
 export async function savePortfolioItems(portfolioArray) {
+  // 1. Save to high-capacity IndexedDB
+  try {
+    await idbSet("portfolio", portfolioArray);
+  } catch (e) {
+    console.warn("IndexedDB save error:", e);
+  }
+
+  // 2. Save to Firestore if connected
   if (isFirebaseReady && db) {
     try {
       for (const p of portfolioArray) {
@@ -338,17 +442,19 @@ export async function savePortfolioItems(portfolioArray) {
     }
   }
 
+  // 3. Save to LocalStorage (with quota safety)
   try {
     localStorage.setItem("phmedia_portfolio", JSON.stringify(portfolioArray));
   } catch (err) {
-    console.warn("LocalStorage quota reached, attempting to save with optimized compression:", err);
-    try {
-      // Fallback: save items
-      localStorage.setItem("phmedia_portfolio", JSON.stringify(portfolioArray));
-    } catch (e) {
-      console.error("Could not write to localStorage:", e);
-    }
+    console.warn("LocalStorage quota reached, saved to IndexedDB successfully.");
   }
+
+  // 4. Notify open tabs / main page
+  try {
+    localStorage.setItem("phmedia_portfolio_sync_time", Date.now().toString());
+    window.dispatchEvent(new CustomEvent("phmedia_portfolio_updated", { detail: portfolioArray }));
+  } catch (e) {}
+
   return true;
 }
 
