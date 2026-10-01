@@ -1,21 +1,7 @@
 /**
- * PH MEDIA - Firebase Firestore Configuration & Data Layer
+ * PH MEDIA - Firebase Firestore Configuration & High-Speed Data Layer
+ * Uses zero-blocking lazy loading for instant mobile performance
  */
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { 
-  getFirestore, 
-  collection, 
-  addDoc, 
-  getDocs, 
-  doc, 
-  setDoc,
-  updateDoc, 
-  deleteDoc, 
-  query, 
-  orderBy, 
-  serverTimestamp 
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // Your web app's Firebase configuration
 export const firebaseConfig = {
@@ -28,19 +14,28 @@ export const firebaseConfig = {
 };
 
 let db = null;
+let fbModule = null;
 let isFirebaseReady = false;
 
-try {
-  if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
+// Dynamic on-demand Firebase loader (Zero initial blocking payload on mobile)
+async function getFirestoreDB() {
+  if (isFirebaseReady && db) return { db, fb: fbModule };
+  if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "YOUR_API_KEY") {
+    return null;
+  }
+  try {
+    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+    const fb = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
     const app = initializeApp(firebaseConfig);
-    db = getFirestore(app);
+    db = fb.getFirestore(app);
+    fbModule = fb;
     isFirebaseReady = true;
     console.log("🔥 Firebase Firestore connected successfully!");
-  } else {
-    console.warn("⚠️ Firebase keys not configured yet. Operating in LocalStorage fallback mode.");
+    return { db, fb: fbModule };
+  } catch (err) {
+    console.warn("Firebase lazy load error:", err);
+    return null;
   }
-} catch (error) {
-  console.error("Firebase initialization failed:", error);
 }
 
 // ==========================================
@@ -54,11 +49,13 @@ export async function saveLead(leadData) {
     createdAt: new Date().toISOString()
   };
 
-  if (isFirebaseReady && db) {
+  const fbConn = await getFirestoreDB();
+  if (fbConn) {
     try {
-      const docRef = await addDoc(collection(db, "leads"), {
+      const { db, fb } = fbConn;
+      const docRef = await fb.addDoc(fb.collection(db, "leads"), {
         ...payload,
-        serverTime: serverTimestamp()
+        serverTime: fb.serverTimestamp()
       });
       return { success: true, id: docRef.id, source: "firestore" };
     } catch (e) {
@@ -74,10 +71,12 @@ export async function saveLead(leadData) {
 }
 
 export async function getLeads() {
-  if (isFirebaseReady && db) {
+  const fbConn = await getFirestoreDB();
+  if (fbConn) {
     try {
-      const q = query(collection(db, "leads"), orderBy("createdAt", "desc"));
-      const snapshot = await getDocs(q);
+      const { db, fb } = fbConn;
+      const q = fb.query(fb.collection(db, "leads"), fb.orderBy("createdAt", "desc"));
+      const snapshot = await fb.getDocs(q);
       const leads = [];
       snapshot.forEach(docSnap => {
         leads.push({ id: docSnap.id, ...docSnap.data() });
@@ -92,10 +91,12 @@ export async function getLeads() {
 }
 
 export async function updateLeadStatus(id, newStatus) {
-  if (isFirebaseReady && db && !id.startsWith("lead_")) {
+  const fbConn = await getFirestoreDB();
+  if (fbConn && !id.startsWith("lead_")) {
     try {
-      const leadRef = doc(db, "leads", id);
-      await updateDoc(leadRef, { status: newStatus });
+      const { db, fb } = fbConn;
+      const leadRef = fb.doc(db, "leads", id);
+      await fb.updateDoc(leadRef, { status: newStatus });
       return true;
     } catch (e) {
       console.error("Error updating lead in Firestore:", e);
@@ -113,9 +114,11 @@ export async function updateLeadStatus(id, newStatus) {
 }
 
 export async function deleteLead(id) {
-  if (isFirebaseReady && db && !id.startsWith("lead_")) {
+  const fbConn = await getFirestoreDB();
+  if (fbConn && !id.startsWith("lead_")) {
     try {
-      await deleteDoc(doc(db, "leads", id));
+      const { db, fb } = fbConn;
+      await fb.deleteDoc(fb.doc(db, "leads", id));
       return true;
     } catch (e) {
       console.error("Error deleting from Firestore:", e);
@@ -200,9 +203,11 @@ export const DEFAULT_SERVICES = [
 ];
 
 export async function getServicesConfig() {
-  if (isFirebaseReady && db) {
+  const fbConn = await getFirestoreDB();
+  if (fbConn) {
     try {
-      const snap = await getDocs(collection(db, "services"));
+      const { db, fb } = fbConn;
+      const snap = await fb.getDocs(fb.collection(db, "services"));
       const items = [];
       snap.forEach(d => items.push({ id: d.id, ...d.data() }));
       if (items.length > 0) return items;
@@ -216,10 +221,12 @@ export async function getServicesConfig() {
 }
 
 export async function saveServicesConfig(servicesArray) {
-  if (isFirebaseReady && db) {
+  const fbConn = await getFirestoreDB();
+  if (fbConn) {
     try {
+      const { db, fb } = fbConn;
       for (const s of servicesArray) {
-        await setDoc(doc(db, "services", s.id), s);
+        await fb.setDoc(fb.doc(db, "services", s.id), s);
       }
     } catch (e) {
       console.warn("Firestore services save error:", e);
@@ -241,9 +248,11 @@ export const DEFAULT_CALC_OPTIONS = [
 ];
 
 export async function getCalcOptions() {
-  if (isFirebaseReady && db) {
+  const fbConn = await getFirestoreDB();
+  if (fbConn) {
     try {
-      const snap = await getDocs(collection(db, "calc_options"));
+      const { db, fb } = fbConn;
+      const snap = await fb.getDocs(fb.collection(db, "calc_options"));
       const items = [];
       snap.forEach(d => items.push({ id: d.id, ...d.data() }));
       if (items.length > 0) return items;
@@ -257,10 +266,12 @@ export async function getCalcOptions() {
 }
 
 export async function saveCalcOptions(optionsArray) {
-  if (isFirebaseReady && db) {
+  const fbConn = await getFirestoreDB();
+  if (fbConn) {
     try {
+      const { db, fb } = fbConn;
       for (const o of optionsArray) {
-        await setDoc(doc(db, "calc_options", o.id), o);
+        await fb.setDoc(fb.doc(db, "calc_options", o.id), o);
       }
     } catch (e) {
       console.warn("Firestore calc save error:", e);
@@ -382,14 +393,18 @@ export async function getPortfolioItems() {
   }
 
   // 2. Try Firestore if configured
-  if ((!items || items.length === 0) && isFirebaseReady && db) {
-    try {
-      const snap = await getDocs(collection(db, "portfolio"));
-      const firestoreItems = [];
-      snap.forEach(d => firestoreItems.push({ id: d.id, ...d.data() }));
-      if (firestoreItems.length > 0) items = firestoreItems;
-    } catch (e) {
-      console.warn("Firestore portfolio fetch error:", e);
+  if (!items || items.length === 0) {
+    const fbConn = await getFirestoreDB();
+    if (fbConn) {
+      try {
+        const { db, fb } = fbConn;
+        const snap = await fb.getDocs(fb.collection(db, "portfolio"));
+        const firestoreItems = [];
+        snap.forEach(d => firestoreItems.push({ id: d.id, ...d.data() }));
+        if (firestoreItems.length > 0) items = firestoreItems;
+      } catch (e) {
+        console.warn("Firestore portfolio fetch error:", e);
+      }
     }
   }
 
@@ -432,10 +447,12 @@ export async function savePortfolioItems(portfolioArray) {
   }
 
   // 2. Save to Firestore if connected
-  if (isFirebaseReady && db) {
+  const fbConn = await getFirestoreDB();
+  if (fbConn) {
     try {
+      const { db, fb } = fbConn;
       for (const p of portfolioArray) {
-        await setDoc(doc(db, "portfolio", p.id), p);
+        await fb.setDoc(fb.doc(db, "portfolio", p.id), p);
       }
     } catch (e) {
       console.warn("Firestore portfolio save error:", e);
@@ -481,9 +498,11 @@ export const DEFAULT_FAQS = [
 ];
 
 export async function getFaqs() {
-  if (isFirebaseReady && db) {
+  const fbConn = await getFirestoreDB();
+  if (fbConn) {
     try {
-      const snap = await getDocs(collection(db, "faqs"));
+      const { db, fb } = fbConn;
+      const snap = await fb.getDocs(fb.collection(db, "faqs"));
       const items = [];
       snap.forEach(d => items.push({ id: d.id, ...d.data() }));
       if (items.length > 0) return items;
@@ -497,16 +516,17 @@ export async function getFaqs() {
 }
 
 export async function saveFaqs(faqsArray) {
-  if (isFirebaseReady && db) {
+  const fbConn = await getFirestoreDB();
+  if (fbConn) {
     try {
+      const { db, fb } = fbConn;
       for (const f of faqsArray) {
-        await setDoc(doc(db, "faqs", f.id), f);
+        await fb.setDoc(fb.doc(db, "faqs", f.id), f);
       }
     } catch (e) {
-      console.warn("Firestore FAQ save error:", e);
+      console.warn("Firestore faqs save error:", e);
     }
   }
   localStorage.setItem("phmedia_faqs", JSON.stringify(faqsArray));
   return true;
 }
-
