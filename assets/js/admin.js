@@ -378,80 +378,98 @@ document.addEventListener("DOMContentLoaded", () => {
       const count = photos.length;
 
       const galleryThumbsHtml = photos.map((ph, pIdx) => `
-        <div style="position: relative; width: 64px; height: 64px; border-radius: 8px; overflow: hidden; border: 1.5px solid #d4d4d8; background: #000; flex-shrink: 0;">
+        <div style="position: relative; width: 68px; height: 68px; border-radius: 8px; overflow: hidden; border: 2px solid #000; background: #000; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
           <img src="${ph}" alt="Foto ${pIdx + 1}" style="width: 100%; height: 100%; object-fit: cover;">
-          <button type="button" class="btn-remove-gallery-photo" data-proj-index="${index}" data-photo-index="${pIdx}" title="Remover Foto" style="position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; border-radius: 4px; background: rgba(185, 28, 28, 0.9); color: #fff; border: none; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-            <i class="fa-solid fa-xmark"></i>
+          <button type="button" class="btn-remove-gallery-photo" data-proj-index="${index}" data-photo-index="${pIdx}" title="Remover Foto" style="position: absolute; top: 2px; right: 2px; width: 22px; height: 22px; border-radius: 6px; background: rgba(220, 38, 38, 0.95); color: #fff; border: none; font-size: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <i class="fa-solid fa-trash"></i>
           </button>
         </div>
       `).join("");
 
       return `
-        <div class="admin-edit-card" data-index="${index}">
-          <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #e4e4e7;">
-            <span style="font-weight: 800; font-size: 14px;">Projeto #${index + 1} • <span style="color: var(--accent-green); font-weight: 700;">${count} foto(s)</span></span>
-            <button type="button" class="btn-action btn-delete-portfolio" data-index="${index}" style="color: #b91c1c;">
-              <i class="fa-solid fa-trash"></i> <span>Excluir Álbum</span>
+        <div class="admin-edit-card" data-index="${index}" style="background: #ffffff; border: 2px solid #e4e4e7; border-radius: 16px; padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.04);">
+          
+          <!-- Header -->
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1.5px solid #f0f0f2;">
+            <div>
+              <span style="font-weight: 800; font-size: 16px; color: #000;">Projeto #${index + 1}</span>
+              <span style="display: inline-block; margin-left: 8px; padding: 2px 8px; background: #dcfce7; color: #166534; border-radius: 6px; font-weight: 700; font-size: 12px;">${count} foto(s) na galeria</span>
+            </div>
+            <button type="button" class="btn-action btn-delete-portfolio" data-index="${index}" style="color: #dc2626; border-color: #fecaca; background: #fef2f2;">
+              <i class="fa-solid fa-trash"></i> <span>Excluir</span>
             </button>
           </div>
 
+          <!-- Título -->
           <div class="admin-input-group">
-            <label>Título do Projeto / Campanha</label>
-            <input type="text" class="port-title" value="${escapeHtml(item.title)}">
+            <label style="font-weight: 700; font-size: 12px; color: #374151;">TÍTULO DO PROJETO / CAMPANHA</label>
+            <input type="text" class="port-title" value="${escapeHtml(item.title)}" placeholder="Ex: Campanha Comercial & Fashion" style="font-weight: 600;">
           </div>
 
+          <!-- Categoria -->
           <div class="admin-input-group">
-            <label>Etiqueta / Categoria (Ex: AUDIOVISUAL, REELS, ENSAIO, EVENTO)</label>
-            <input type="text" class="port-category" value="${escapeHtml(item.category || 'AUDIOVISUAL')}">
+            <label style="font-weight: 700; font-size: 12px; color: #374151;">ETIQUETA / CATEGORIA (EX: AUDIOVISUAL, REELS, EVENTO)</label>
+            <input type="text" class="port-category" value="${escapeHtml(item.category || 'AUDIOVISUAL')}" placeholder="AUDIOVISUAL" style="font-weight: 700; text-transform: uppercase;">
           </div>
 
-          <!-- Cover Image with Upload Button -->
-          <div class="admin-input-group">
-            <label>Imagem da Capa Principal</label>
-            <div style="display: flex; gap: 10px; align-items: center; margin-top: 4px;">
-              <div style="width: 70px; height: 50px; border-radius: 8px; overflow: hidden; background: #000; border: 1.5px solid #d4d4d8; flex-shrink: 0;">
-                <img src="${item.image || 'assets/images/reel-1.jpg'}" alt="Capa" class="cover-preview-${index}" style="width: 100%; height: 100%; object-fit: cover;">
+          <!-- 1. IMAGEM DA CAPA + BOTÃO DE UPLOAD -->
+          <div class="admin-input-group" style="background: #f8f9fa; border: 1.5px solid #e4e4e7; border-radius: 12px; padding: 14px;">
+            <label style="font-weight: 800; font-size: 12px; color: #000; display: flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-image"></i> IMAGEM DA CAPA DO CARD
+            </label>
+            
+            <div style="display: flex; gap: 12px; align-items: center; margin-top: 8px;">
+              <div style="width: 80px; height: 60px; border-radius: 8px; overflow: hidden; background: #000; border: 1.5px solid #000; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+                <img src="${item.image || 'assets/images/reel-1.jpg'}" alt="Capa" style="width: 100%; height: 100%; object-fit: cover;">
               </div>
-              <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
-                <input type="text" class="port-image" value="${escapeHtml(item.image)}" placeholder="Link ou faça upload abaixo">
-                <label class="btn-action" style="cursor: pointer; align-self: flex-start;">
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                <input type="text" class="port-image" value="${escapeHtml(item.image)}" placeholder="Caminho ou link da capa">
+                
+                <!-- BOTÃO DE UPLOAD DA CAPA -->
+                <button type="button" class="btn-primary btn-upload-cover-trigger" data-index="${index}" style="padding: 10px 14px; font-size: 13px; font-weight: 700; justify-content: center; background: #000000; color: #ffffff; border-radius: 10px; cursor: pointer;">
                   <i class="fa-solid fa-upload"></i>
-                  <span>Upload da Capa</span>
-                  <input type="file" accept="image/*" class="port-cover-file" data-index="${index}" style="display: none;">
-                </label>
+                  <span>Clique para Fazer Upload da Imagem de Capa</span>
+                </button>
+                <input type="file" accept="image/*" class="port-cover-file" data-index="${index}" style="display: none !important;">
               </div>
             </div>
           </div>
 
-          <!-- Gallery Photos with Multi-Upload Button & Live Thumbnails -->
-          <div class="admin-input-group" style="background: #ffffff; border: 1px solid #e4e4e7; padding: 12px; border-radius: 10px;">
+          <!-- 2. FOTOS DA GALERIA (POPUP) + BOTÃO DE UPLOAD MÚLTIPLO -->
+          <div class="admin-input-group" style="background: #f8f9fa; border: 1.5px solid #e4e4e7; border-radius: 12px; padding: 14px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <label style="margin: 0; color: #000; font-weight: 700;">Fotos do Pop-up em Tela Cheia (${count})</label>
-              <label class="btn-action wa" style="cursor: pointer; font-size: 11.5px; padding: 5px 10px;">
-                <i class="fa-solid fa-cloud-arrow-up"></i>
-                <span>+ Upload Fotos</span>
-                <input type="file" accept="image/*" multiple class="port-photos-file" data-index="${index}" style="display: none;">
+              <label style="font-weight: 800; font-size: 12px; color: #000; display: flex; align-items: center; gap: 6px; margin: 0;">
+                <i class="fa-solid fa-images"></i> FOTOS DA GALERIA / POPUP (${count} fotos)
               </label>
             </div>
 
-            <!-- Thumbnails grid -->
-            <div style="display: flex; gap: 8px; overflow-x: auto; padding: 6px 0; min-height: 70px; align-items: center;">
-              ${galleryThumbsHtml.length > 0 ? galleryThumbsHtml : '<span style="font-size: 12px; color: var(--text-muted);">Nenhuma foto adicionada. Faça o upload acima!</span>'}
+            <!-- Miniaturas atuais com botão excluir -->
+            <div style="display: flex; gap: 8px; overflow-x: auto; padding: 8px 2px; min-height: 75px; align-items: center;">
+              ${galleryThumbsHtml.length > 0 ? galleryThumbsHtml : '<span style="font-size: 12.5px; color: var(--text-muted);">Nenhuma foto no álbum. Clique no botão verde abaixo para carregar fotos!</span>'}
             </div>
 
-            <label style="font-size: 11px; margin-top: 8px; color: var(--text-muted);">Links das fotos (1 por linha):</label>
+            <!-- BOTÃO DE UPLOAD MÚLTIPLAS FOTOS -->
+            <button type="button" class="btn-primary btn-upload-photos-trigger" data-index="${index}" style="margin-top: 8px; padding: 12px 16px; font-size: 13.5px; font-weight: 700; justify-content: center; background: #25d366; border-color: #25d366; color: #ffffff; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span>Clique para Fazer Upload das Fotos da Galeria (Múltiplas)</span>
+            </button>
+            <input type="file" accept="image/*" multiple class="port-photos-file" data-index="${index}" style="display: none !important;">
+
+            <label style="font-size: 11px; margin-top: 10px; color: #6b7280;">Links manuais das fotos (1 por linha):</label>
             <textarea rows="3" class="port-photos" placeholder="assets/images/reel-1.jpg&#10;assets/images/reel-2.jpg">${escapeHtml(photos.join("\n"))}</textarea>
           </div>
 
+          <!-- Descrição -->
           <div class="admin-input-group">
-            <label>Descrição do Projeto</label>
-            <input type="text" class="port-desc" value="${escapeHtml(item.desc || '')}">
+            <label style="font-weight: 700; font-size: 12px; color: #374151;">DESCRIÇÃO DO PROJETO</label>
+            <input type="text" class="port-desc" value="${escapeHtml(item.desc || '')}" placeholder="Direção de cena, iluminação e captação">
           </div>
+
         </div>
       `;
     }).join("");
 
-    // Delete Album
+    // Hook up Delete Album buttons
     container.querySelectorAll(".btn-delete-portfolio").forEach(btn => {
       btn.addEventListener("click", () => {
         const idx = parseInt(btn.getAttribute("data-index"), 10);
@@ -462,7 +480,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // Remove single photo from gallery
+    // Hook up individual photo delete buttons
     container.querySelectorAll(".btn-remove-gallery-photo").forEach(btn => {
       btn.addEventListener("click", () => {
         const projIdx = parseInt(btn.getAttribute("data-proj-index"), 10);
@@ -474,7 +492,25 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // Cover Image Upload Handler
+    // Hook up Cover Upload Triggers
+    container.querySelectorAll(".btn-upload-cover-trigger").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = btn.getAttribute("data-index");
+        const fileInput = container.querySelector(`.port-cover-file[data-index="${idx}"]`);
+        if (fileInput) fileInput.click();
+      });
+    });
+
+    // Hook up Gallery Photos Upload Triggers
+    container.querySelectorAll(".btn-upload-photos-trigger").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = btn.getAttribute("data-index");
+        const fileInput = container.querySelector(`.port-photos-file[data-index="${idx}"]`);
+        if (fileInput) fileInput.click();
+      });
+    });
+
+    // Cover File Input Change Handler
     container.querySelectorAll(".port-cover-file").forEach(input => {
       input.addEventListener("change", async (e) => {
         const file = e.target.files[0];
@@ -488,12 +524,12 @@ document.addEventListener("DOMContentLoaded", () => {
           }
           renderPortfolioEditor();
         } catch (err) {
-          alert("Erro ao processar imagem: " + err.message);
+          alert("Erro ao processar imagem da capa: " + err.message);
         }
       });
     });
 
-    // Gallery Multi-Photo Upload Handler
+    // Gallery Photos Multi-File Input Change Handler
     container.querySelectorAll(".port-photos-file").forEach(input => {
       input.addEventListener("change", async (e) => {
         const files = Array.from(e.target.files);
@@ -513,7 +549,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
           renderPortfolioEditor();
         } catch (err) {
-          alert("Erro ao processar fotos: " + err.message);
+          alert("Erro ao processar fotos da galeria: " + err.message);
         }
       });
     });
