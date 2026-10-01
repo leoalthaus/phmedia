@@ -180,7 +180,7 @@ async function initPortfolioShowcase() {
     portfolioGrid.innerHTML = items.map((p, index) => {
       const photosCount = (p.photos && p.photos.length) || 1;
       return `
-        <div class="portfolio-card" data-index="${index}" role="button" tabindex="0" aria-label="Abrir galeria de ${escapeHtml(p.title)}">
+        <div class="portfolio-card" data-index="${index}" role="button" tabindex="0" aria-label="Abrir galeria de ${escapeHtml(p.title)}" style="cursor: pointer;">
           <div class="portfolio-img-wrap">
             <img src="${p.image}" alt="${p.title}" loading="lazy">
             <div class="portfolio-badge">${p.category || 'AUDIOVISUAL'}</div>
@@ -199,13 +199,18 @@ async function initPortfolioShowcase() {
       `;
     }).join("");
 
-    portfolioGrid.querySelectorAll(".portfolio-card").forEach(card => {
-      card.addEventListener("click", () => {
+    // Use delegated container click + direct listeners for 100% reliable trigger
+    portfolioGrid.addEventListener("click", (e) => {
+      const card = e.target.closest(".portfolio-card");
+      if (card) {
         const index = parseInt(card.getAttribute("data-index"), 10);
         if (items[index]) {
           openPortfolioModal(items[index]);
         }
-      });
+      }
+    });
+
+    portfolioGrid.querySelectorAll(".portfolio-card").forEach(card => {
       card.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
@@ -231,6 +236,7 @@ function escapeHtml(text) {
 }
 
 function openPortfolioModal(project) {
+  if (!project) return;
   currentModalProject = project;
   currentModalPhotoIndex = 0;
 
@@ -241,7 +247,10 @@ function openPortfolioModal(project) {
   const waBtn = document.getElementById("modalWhatsAppBtn");
   const thumbsContainer = document.getElementById("modalThumbnailsStrip");
 
-  if (!modal) return;
+  if (!modal) {
+    console.error("Portfolio modal element not found in DOM");
+    return;
+  }
 
   const photos = (project.photos && project.photos.length > 0) ? project.photos : [project.image];
 
@@ -276,11 +285,13 @@ function openPortfolioModal(project) {
     }
   }
 
-  showModalPhoto(0);
-
+  // Open modal explicitly
+  modal.style.display = "flex";
   modal.classList.remove("hidden");
   modal.setAttribute("aria-hidden", "false");
   document.body.classList.add("modal-open");
+
+  showModalPhoto(0);
 }
 
 function closePortfolioModal() {
@@ -288,6 +299,7 @@ function closePortfolioModal() {
   if (!modal) return;
 
   modal.classList.add("hidden");
+  modal.style.display = "none";
   modal.setAttribute("aria-hidden", "true");
   document.body.classList.remove("modal-open");
   currentModalProject = null;
@@ -303,7 +315,6 @@ function showModalPhoto(index) {
   const total = photos.length;
   if (total === 0) return;
 
-  // Handle cyclic index
   currentModalPhotoIndex = (index + total) % total;
 
   const mainImg = document.getElementById("modalMainImg");
@@ -327,17 +338,22 @@ function showModalPhoto(index) {
   }
 
   if (mainImg) {
-    mainImg.style.opacity = "0.3";
-    mainImg.style.transform = "scale(0.96)";
-    
     const nextSrc = photos[currentModalPhotoIndex];
     mainImg.src = nextSrc;
-    
-    mainImg.onload = () => {
-      mainImg.style.opacity = "1";
-      mainImg.style.transform = "scale(1)";
-    };
+    mainImg.style.opacity = "1";
+    mainImg.style.transform = "scale(1)";
   }
+
+  // Update active thumbnail
+  thumbs.forEach((th, idx) => {
+    if (idx === currentModalPhotoIndex) {
+      th.classList.add("active");
+      th.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    } else {
+      th.classList.remove("active");
+    }
+  });
+}
 
   // Update active thumbnail
   thumbs.forEach((th, idx) => {

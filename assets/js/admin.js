@@ -326,43 +326,123 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // =========================================================================
-  // 4. PORTFÓLIO & PASTAS DE VÍDEOS/FOTOS
+  // 4. PORTFÓLIO & PASTAS DE VÍDEOS/FOTOS COM UPLOAD DE IMAGENS
   // =========================================================================
   async function loadPortfolioData() {
     currentPortfolio = await getPortfolioItems();
     renderPortfolioEditor();
   }
 
+  // Image reader & compressor for fast client-side uploads (Base64 JPEG)
+  function readAndCompressImage(file, maxDimension = 1400, quality = 0.82) {
+    return new Promise((resolve, reject) => {
+      if (!file || !file.type.startsWith("image/")) {
+        return reject(new Error("Arquivo não é uma imagem válida"));
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > maxDimension || height > maxDimension) {
+            if (width > height) {
+              height = Math.round((height * maxDimension) / width);
+              width = maxDimension;
+            } else {
+              width = Math.round((width * maxDimension) / height);
+              height = maxDimension;
+            }
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL("image/jpeg", quality);
+          resolve(dataUrl);
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
   function renderPortfolioEditor() {
     const container = document.getElementById("portfolioEditGrid");
+    if (!container) return;
+
     container.innerHTML = currentPortfolio.map((item, index) => {
-      const photosText = (item.photos && item.photos.length > 0) ? item.photos.join("\n") : (item.image || "");
-      const count = (item.photos && item.photos.length) || 1;
+      const photos = (item.photos && item.photos.length > 0) ? item.photos : (item.image ? [item.image] : []);
+      const count = photos.length;
+
+      const galleryThumbsHtml = photos.map((ph, pIdx) => `
+        <div style="position: relative; width: 64px; height: 64px; border-radius: 8px; overflow: hidden; border: 1.5px solid #d4d4d8; background: #000; flex-shrink: 0;">
+          <img src="${ph}" alt="Foto ${pIdx + 1}" style="width: 100%; height: 100%; object-fit: cover;">
+          <button type="button" class="btn-remove-gallery-photo" data-proj-index="${index}" data-photo-index="${pIdx}" title="Remover Foto" style="position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; border-radius: 4px; background: rgba(185, 28, 28, 0.9); color: #fff; border: none; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      `).join("");
+
       return `
         <div class="admin-edit-card" data-index="${index}">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: 800; font-size: 13px;">Projeto #${index + 1} • <span style="color: var(--accent-green); font-weight: 700;">${count} foto(s)</span></span>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #e4e4e7;">
+            <span style="font-weight: 800; font-size: 14px;">Projeto #${index + 1} • <span style="color: var(--accent-green); font-weight: 700;">${count} foto(s)</span></span>
             <button type="button" class="btn-action btn-delete-portfolio" data-index="${index}" style="color: #b91c1c;">
-              <i class="fa-solid fa-trash"></i>
+              <i class="fa-solid fa-trash"></i> <span>Excluir Álbum</span>
             </button>
           </div>
+
           <div class="admin-input-group">
             <label>Título do Projeto / Campanha</label>
             <input type="text" class="port-title" value="${escapeHtml(item.title)}">
           </div>
+
           <div class="admin-input-group">
-            <label>Etiqueta / Categoria (Ex: AUDIOVISUAL, REELS, EVENTO)</label>
+            <label>Etiqueta / Categoria (Ex: AUDIOVISUAL, REELS, ENSAIO, EVENTO)</label>
             <input type="text" class="port-category" value="${escapeHtml(item.category || 'AUDIOVISUAL')}">
           </div>
+
+          <!-- Cover Image with Upload Button -->
           <div class="admin-input-group">
-            <label>Imagem da Capa do Card</label>
-            <input type="text" class="port-image" value="${escapeHtml(item.image)}">
+            <label>Imagem da Capa Principal</label>
+            <div style="display: flex; gap: 10px; align-items: center; margin-top: 4px;">
+              <div style="width: 70px; height: 50px; border-radius: 8px; overflow: hidden; background: #000; border: 1.5px solid #d4d4d8; flex-shrink: 0;">
+                <img src="${item.image || 'assets/images/reel-1.jpg'}" alt="Capa" class="cover-preview-${index}" style="width: 100%; height: 100%; object-fit: cover;">
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                <input type="text" class="port-image" value="${escapeHtml(item.image)}" placeholder="Link ou faça upload abaixo">
+                <label class="btn-action" style="cursor: pointer; align-self: flex-start;">
+                  <i class="fa-solid fa-upload"></i>
+                  <span>Upload da Capa</span>
+                  <input type="file" accept="image/*" class="port-cover-file" data-index="${index}" style="display: none;">
+                </label>
+              </div>
+            </div>
           </div>
-          <div class="admin-input-group">
-            <label>Fotos da Galeria / Popup (1 link ou caminho por linha)</label>
-            <textarea rows="4" class="port-photos" placeholder="assets/images/reel-1.jpg&#10;assets/images/reel-2.jpg">${escapeHtml(photosText)}</textarea>
-            <span style="font-size: 11px; color: var(--text-muted);">Adicione os links ou caminhos de todas as fotos que serão abertas no pop-up em tela cheia deste projeto.</span>
+
+          <!-- Gallery Photos with Multi-Upload Button & Live Thumbnails -->
+          <div class="admin-input-group" style="background: #ffffff; border: 1px solid #e4e4e7; padding: 12px; border-radius: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <label style="margin: 0; color: #000; font-weight: 700;">Fotos do Pop-up em Tela Cheia (${count})</label>
+              <label class="btn-action wa" style="cursor: pointer; font-size: 11.5px; padding: 5px 10px;">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <span>+ Upload Fotos</span>
+                <input type="file" accept="image/*" multiple class="port-photos-file" data-index="${index}" style="display: none;">
+              </label>
+            </div>
+
+            <!-- Thumbnails grid -->
+            <div style="display: flex; gap: 8px; overflow-x: auto; padding: 6px 0; min-height: 70px; align-items: center;">
+              ${galleryThumbsHtml.length > 0 ? galleryThumbsHtml : '<span style="font-size: 12px; color: var(--text-muted);">Nenhuma foto adicionada. Faça o upload acima!</span>'}
+            </div>
+
+            <label style="font-size: 11px; margin-top: 8px; color: var(--text-muted);">Links das fotos (1 por linha):</label>
+            <textarea rows="3" class="port-photos" placeholder="assets/images/reel-1.jpg&#10;assets/images/reel-2.jpg">${escapeHtml(photos.join("\n"))}</textarea>
           </div>
+
           <div class="admin-input-group">
             <label>Descrição do Projeto</label>
             <input type="text" class="port-desc" value="${escapeHtml(item.desc || '')}">
@@ -371,11 +451,70 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
     }).join("");
 
+    // Delete Album
     container.querySelectorAll(".btn-delete-portfolio").forEach(btn => {
       btn.addEventListener("click", () => {
-        const idx = parseInt(btn.getAttribute("data-index"));
-        currentPortfolio.splice(idx, 1);
-        renderPortfolioEditor();
+        const idx = parseInt(btn.getAttribute("data-index"), 10);
+        if (confirm(`Remover o projeto "${currentPortfolio[idx].title}"?`)) {
+          currentPortfolio.splice(idx, 1);
+          renderPortfolioEditor();
+        }
+      });
+    });
+
+    // Remove single photo from gallery
+    container.querySelectorAll(".btn-remove-gallery-photo").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const projIdx = parseInt(btn.getAttribute("data-proj-index"), 10);
+        const photoIdx = parseInt(btn.getAttribute("data-photo-index"), 10);
+        if (currentPortfolio[projIdx] && currentPortfolio[projIdx].photos) {
+          currentPortfolio[projIdx].photos.splice(photoIdx, 1);
+          renderPortfolioEditor();
+        }
+      });
+    });
+
+    // Cover Image Upload Handler
+    container.querySelectorAll(".port-cover-file").forEach(input => {
+      input.addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const idx = parseInt(input.getAttribute("data-index"), 10);
+        try {
+          const base64 = await readAndCompressImage(file, 1400, 0.85);
+          currentPortfolio[idx].image = base64;
+          if (!currentPortfolio[idx].photos || currentPortfolio[idx].photos.length === 0) {
+            currentPortfolio[idx].photos = [base64];
+          }
+          renderPortfolioEditor();
+        } catch (err) {
+          alert("Erro ao processar imagem: " + err.message);
+        }
+      });
+    });
+
+    // Gallery Multi-Photo Upload Handler
+    container.querySelectorAll(".port-photos-file").forEach(input => {
+      input.addEventListener("change", async (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+        const idx = parseInt(input.getAttribute("data-index"), 10);
+        
+        try {
+          if (!currentPortfolio[idx].photos) {
+            currentPortfolio[idx].photos = [];
+          }
+          for (const file of files) {
+            const base64 = await readAndCompressImage(file, 1600, 0.82);
+            currentPortfolio[idx].photos.push(base64);
+          }
+          if (!currentPortfolio[idx].image && currentPortfolio[idx].photos.length > 0) {
+            currentPortfolio[idx].image = currentPortfolio[idx].photos[0];
+          }
+          renderPortfolioEditor();
+        } catch (err) {
+          alert("Erro ao processar fotos: " + err.message);
+        }
       });
     });
   }
