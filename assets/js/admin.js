@@ -336,10 +336,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderPortfolioEditor() {
     const container = document.getElementById("portfolioEditGrid");
     container.innerHTML = currentPortfolio.map((item, index) => {
+      const photosText = (item.photos && item.photos.length > 0) ? item.photos.join("\n") : (item.image || "");
+      const count = (item.photos && item.photos.length) || 1;
       return `
         <div class="admin-edit-card" data-index="${index}">
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: 800; font-size: 13px;">Projeto #${index + 1}</span>
+            <span style="font-weight: 800; font-size: 13px;">Projeto #${index + 1} • <span style="color: var(--accent-green); font-weight: 700;">${count} foto(s)</span></span>
             <button type="button" class="btn-action btn-delete-portfolio" data-index="${index}" style="color: #b91c1c;">
               <i class="fa-solid fa-trash"></i>
             </button>
@@ -353,11 +355,16 @@ document.addEventListener("DOMContentLoaded", () => {
             <input type="text" class="port-category" value="${escapeHtml(item.category || 'AUDIOVISUAL')}">
           </div>
           <div class="admin-input-group">
-            <label>Caminho ou Link da Imagem / Capa</label>
+            <label>Imagem da Capa do Card</label>
             <input type="text" class="port-image" value="${escapeHtml(item.image)}">
           </div>
           <div class="admin-input-group">
-            <label>Descrição Curta</label>
+            <label>Fotos da Galeria / Popup (1 link ou caminho por linha)</label>
+            <textarea rows="4" class="port-photos" placeholder="assets/images/reel-1.jpg&#10;assets/images/reel-2.jpg">${escapeHtml(photosText)}</textarea>
+            <span style="font-size: 11px; color: var(--text-muted);">Adicione os links ou caminhos de todas as fotos que serão abertas no pop-up em tela cheia deste projeto.</span>
+          </div>
+          <div class="admin-input-group">
+            <label>Descrição do Projeto</label>
             <input type="text" class="port-desc" value="${escapeHtml(item.desc || '')}">
           </div>
         </div>
@@ -376,10 +383,15 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btnAddPortfolioItem").addEventListener("click", () => {
     currentPortfolio.push({
       id: "port_" + Date.now(),
-      title: "Novo Trabalho Audiovisual",
+      title: "Novo Álbum de Portfólio",
       category: "AUDIOVISUAL",
-      desc: "Direção de vídeo e produção de conteúdo",
-      image: "assets/images/reel-1.jpg"
+      desc: "Direção audiovisual e cobertura cinematográfica por PH Media",
+      image: "assets/images/reel-1.jpg",
+      photos: [
+        "assets/images/reel-1.jpg",
+        "assets/images/reel-2.jpg",
+        "assets/images/pedro.jpg"
+      ]
     });
     renderPortfolioEditor();
   });
@@ -394,18 +406,22 @@ document.addEventListener("DOMContentLoaded", () => {
       const category = card.querySelector(".port-category").value.trim().toUpperCase();
       const image = card.querySelector(".port-image").value.trim();
       const desc = card.querySelector(".port-desc").value.trim();
+      
+      const photosRaw = card.querySelector(".port-photos").value.split("\n").map(p => p.trim()).filter(p => p.length > 0);
+      const photos = photosRaw.length > 0 ? photosRaw : (image ? [image] : ["assets/images/reel-1.jpg"]);
 
       updated.push({
         ...original,
         title,
         category,
         image,
+        photos,
         desc
       });
     });
 
     await savePortfolioItems(updated);
-    alert("✅ Galeria de portfólio salva com sucesso! O site foi atualizado.");
+    alert("✅ Galeria de portfólio e fotos salvas com sucesso! O site principal foi atualizado.");
     await loadPortfolioData();
   });
 

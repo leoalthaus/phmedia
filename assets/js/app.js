@@ -167,28 +167,249 @@ async function initCalculator() {
 }
 
 /**
- * 3. Portfolio Showcase (Pastas & Projetos)
+ * 3. Portfolio Showcase (Pastas, Projetos & Fullscreen Lightbox Modal)
  */
+let currentModalProject = null;
+let currentModalPhotoIndex = 0;
+
 async function initPortfolioShowcase() {
   const portfolioGrid = document.querySelector(".portfolio-grid");
   const items = await getPortfolioItems();
 
   if (portfolioGrid && items && items.length > 0) {
-    portfolioGrid.innerHTML = items.map(p => `
-      <div class="portfolio-card">
-        <div class="portfolio-img-wrap">
-          <img src="${p.image}" alt="${p.title}" loading="lazy">
-          <div class="portfolio-badge">${p.category || 'AUDIOVISUAL'}</div>
-          <div class="play-overlay">
-            <i class="fa-solid fa-play"></i>
+    portfolioGrid.innerHTML = items.map((p, index) => {
+      const photosCount = (p.photos && p.photos.length) || 1;
+      return `
+        <div class="portfolio-card" data-index="${index}" role="button" tabindex="0" aria-label="Abrir galeria de ${escapeHtml(p.title)}">
+          <div class="portfolio-img-wrap">
+            <img src="${p.image}" alt="${p.title}" loading="lazy">
+            <div class="portfolio-badge">${p.category || 'AUDIOVISUAL'}</div>
+            <div class="play-overlay">
+              <i class="fa-solid fa-images"></i>
+            </div>
+          </div>
+          <div class="portfolio-info">
+            <h4>${p.title}</h4>
+            <p>${p.desc || ''}</p>
+            <span style="font-size: 11px; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 4px; margin-top: 6px;">
+              <i class="fa-solid fa-expand"></i> Ver fotos do projeto (${photosCount})
+            </span>
           </div>
         </div>
-        <div class="portfolio-info">
-          <h4>${p.title}</h4>
-          <p>${p.desc || ''}</p>
+      `;
+    }).join("");
+
+    portfolioGrid.querySelectorAll(".portfolio-card").forEach(card => {
+      card.addEventListener("click", () => {
+        const index = parseInt(card.getAttribute("data-index"), 10);
+        if (items[index]) {
+          openPortfolioModal(items[index]);
+        }
+      });
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          const index = parseInt(card.getAttribute("data-index"), 10);
+          if (items[index]) {
+            openPortfolioModal(items[index]);
+          }
+        }
+      });
+    });
+  }
+
+  initModalEvents();
+}
+
+function escapeHtml(text) {
+  if (!text) return "";
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function openPortfolioModal(project) {
+  currentModalProject = project;
+  currentModalPhotoIndex = 0;
+
+  const modal = document.getElementById("portfolioModal");
+  const badgeEl = document.getElementById("modalCategoryBadge");
+  const titleEl = document.getElementById("modalProjectTitle");
+  const descEl = document.getElementById("modalProjectDesc");
+  const waBtn = document.getElementById("modalWhatsAppBtn");
+  const thumbsContainer = document.getElementById("modalThumbnailsStrip");
+
+  if (!modal) return;
+
+  const photos = (project.photos && project.photos.length > 0) ? project.photos : [project.image];
+
+  if (badgeEl) badgeEl.textContent = project.category || "AUDIOVISUAL";
+  if (titleEl) titleEl.textContent = project.title || "Projeto";
+  if (descEl) descEl.textContent = project.desc || "Produção audiovisual e direção fotográfica por PH Media.";
+
+  if (waBtn) {
+    const waText = `Olá Pedro! Vi as fotos do projeto *${project.title}* no site da PH Media e gostaria de solicitar um orçamento similar para minha marca.`;
+    waBtn.href = `https://wa.me/${STUDIO_CONFIG.whatsappNumber}?text=${encodeURIComponent(waText)}`;
+  }
+
+  // Render Thumbnails
+  if (thumbsContainer) {
+    if (photos.length > 1) {
+      thumbsContainer.style.display = "flex";
+      thumbsContainer.innerHTML = photos.map((src, idx) => `
+        <div class="modal-thumb ${idx === 0 ? 'active' : ''}" data-thumb-idx="${idx}">
+          <img src="${src}" alt="Foto ${idx + 1}" loading="lazy">
         </div>
-      </div>
-    `).join("");
+      `).join("");
+
+      thumbsContainer.querySelectorAll(".modal-thumb").forEach(th => {
+        th.addEventListener("click", () => {
+          const idx = parseInt(th.getAttribute("data-thumb-idx"), 10);
+          showModalPhoto(idx);
+        });
+      });
+    } else {
+      thumbsContainer.style.display = "none";
+      thumbsContainer.innerHTML = "";
+    }
+  }
+
+  showModalPhoto(0);
+
+  modal.classList.remove("hidden");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+}
+
+function closePortfolioModal() {
+  const modal = document.getElementById("portfolioModal");
+  if (!modal) return;
+
+  modal.classList.add("hidden");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+  currentModalProject = null;
+}
+
+function showModalPhoto(index) {
+  if (!currentModalProject) return;
+
+  const photos = (currentModalProject.photos && currentModalProject.photos.length > 0)
+    ? currentModalProject.photos
+    : [currentModalProject.image];
+
+  const total = photos.length;
+  if (total === 0) return;
+
+  // Handle cyclic index
+  currentModalPhotoIndex = (index + total) % total;
+
+  const mainImg = document.getElementById("modalMainImg");
+  const counterEl = document.getElementById("modalCounterBadge");
+  const prevBtn = document.getElementById("modalBtnPrev");
+  const nextBtn = document.getElementById("modalBtnNext");
+  const thumbs = document.querySelectorAll(".modal-thumb");
+
+  if (counterEl) {
+    counterEl.textContent = `${currentModalPhotoIndex + 1} / ${total}`;
+  }
+
+  if (prevBtn && nextBtn) {
+    if (total <= 1) {
+      prevBtn.style.display = "none";
+      nextBtn.style.display = "none";
+    } else {
+      prevBtn.style.display = "flex";
+      nextBtn.style.display = "flex";
+    }
+  }
+
+  if (mainImg) {
+    mainImg.style.opacity = "0.3";
+    mainImg.style.transform = "scale(0.96)";
+    
+    const nextSrc = photos[currentModalPhotoIndex];
+    mainImg.src = nextSrc;
+    
+    mainImg.onload = () => {
+      mainImg.style.opacity = "1";
+      mainImg.style.transform = "scale(1)";
+    };
+  }
+
+  // Update active thumbnail
+  thumbs.forEach((th, idx) => {
+    if (idx === currentModalPhotoIndex) {
+      th.classList.add("active");
+      th.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    } else {
+      th.classList.remove("active");
+    }
+  });
+}
+
+function initModalEvents() {
+  const closeBtn = document.getElementById("btnClosePortfolioModal");
+  const backdrop = document.getElementById("modalBackdrop");
+  const prevBtn = document.getElementById("modalBtnPrev");
+  const nextBtn = document.getElementById("modalBtnNext");
+  const mainImg = document.getElementById("modalMainImg");
+
+  if (closeBtn) closeBtn.addEventListener("click", closePortfolioModal);
+  if (backdrop) backdrop.addEventListener("click", closePortfolioModal);
+
+  if (prevBtn) {
+    prevBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showModalPhoto(currentModalPhotoIndex - 1);
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showModalPhoto(currentModalPhotoIndex + 1);
+    });
+  }
+
+  // Keyboard navigation
+  window.addEventListener("keydown", (e) => {
+    const modal = document.getElementById("portfolioModal");
+    if (!modal || modal.classList.contains("hidden")) return;
+
+    if (e.key === "Escape") {
+      closePortfolioModal();
+    } else if (e.key === "ArrowLeft") {
+      showModalPhoto(currentModalPhotoIndex - 1);
+    } else if (e.key === "ArrowRight") {
+      showModalPhoto(currentModalPhotoIndex + 1);
+    }
+  });
+
+  // Mobile Touch Swipe support
+  if (mainImg) {
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    mainImg.addEventListener("touchstart", (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    mainImg.addEventListener("touchend", (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const swipeDistance = touchEndX - touchStartX;
+      if (Math.abs(swipeDistance) > 40) {
+        if (swipeDistance > 0) {
+          // Swiped Right -> Previous Photo
+          showModalPhoto(currentModalPhotoIndex - 1);
+        } else {
+          // Swiped Left -> Next Photo
+          showModalPhoto(currentModalPhotoIndex + 1);
+        }
+      }
+    }, { passive: true });
   }
 }
 

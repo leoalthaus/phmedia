@@ -279,32 +279,52 @@ export const DEFAULT_PORTFOLIO = [
     id: "port_1",
     title: "Campanha Comercial & Fashion",
     category: "AUDIOVISUAL",
-    desc: "Direção de cena, iluminação e captação multi-câmera",
-    image: "assets/images/reel-1.jpg"
+    desc: "Direção de cena, iluminação e captação multi-câmera para marcas de destaque.",
+    image: "assets/images/reel-1.jpg",
+    photos: [
+      "assets/images/reel-1.jpg",
+      "assets/images/reel-2.jpg",
+      "assets/images/pedro.jpg"
+    ]
   },
   {
     id: "port_2",
     title: "Comercial de Luxo & Produto",
     category: "CINEMATIC",
-    desc: "Estabilização gimbal Ronin e pós-produção avançada",
-    image: "assets/images/reel-2.jpg"
+    desc: "Estabilização gimbal Ronin, captação 4K em 60fps e pós-produção avançada.",
+    image: "assets/images/reel-2.jpg",
+    photos: [
+      "assets/images/reel-2.jpg",
+      "assets/images/reel-1.jpg",
+      "assets/images/pedro.jpg"
+    ]
   }
 ];
 
 export async function getPortfolioItems() {
+  let items = [];
   if (isFirebaseReady && db) {
     try {
       const snap = await getDocs(collection(db, "portfolio"));
-      const items = [];
       snap.forEach(d => items.push({ id: d.id, ...d.data() }));
-      if (items.length > 0) return items;
     } catch (e) {
       console.warn("Firestore portfolio fetch error:", e);
     }
   }
 
-  const local = localStorage.getItem("phmedia_portfolio");
-  return local ? JSON.parse(local) : DEFAULT_PORTFOLIO;
+  if (!items || items.length === 0) {
+    const local = localStorage.getItem("phmedia_portfolio");
+    items = local ? JSON.parse(local) : DEFAULT_PORTFOLIO;
+  }
+
+  // Ensure every item has a valid photos array
+  return (items || []).map(p => {
+    let photos = p.photos;
+    if (!Array.isArray(photos) || photos.length === 0) {
+      photos = p.image ? [p.image] : ["assets/images/reel-1.jpg"];
+    }
+    return { ...p, photos };
+  });
 }
 
 export async function savePortfolioItems(portfolioArray) {
