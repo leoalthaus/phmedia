@@ -51,6 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     initLeadForm();
     initScrollAnimations();
     initDateYear();
+    initIPhone18Experience();
   } catch (e) {
     console.error("Core animations init error:", e);
   }
@@ -881,4 +882,72 @@ function initDateYear() {
   if (yearEl) {
     yearEl.textContent = new Date().getFullYear();
   }
+}
+
+/**
+ * 7. iPhone 18 Pro Experience & Dynamic Island Orchestration
+ */
+function initIPhone18Experience() {
+  // Update Real-time Clock
+  const clockEl = document.getElementById("iphoneClock");
+  function updateClock() {
+    if (!clockEl) return;
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    clockEl.textContent = `${hours}:${minutes}`;
+  }
+  updateClock();
+  setInterval(updateClock, 10000);
+
+  // Dynamic Island Interactive Toggle
+  const island = document.getElementById("dynamicIsland");
+  if (island) {
+    island.addEventListener("click", () => {
+      // If still in boot animation, remove boot class immediately
+      island.classList.remove("expanding-boot");
+      island.classList.toggle("expanded");
+    });
+    
+    island.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        island.classList.remove("expanding-boot");
+        island.classList.toggle("expanded");
+      }
+    });
+
+    // Remove boot animation class cleanly after completion
+    setTimeout(() => {
+      island.classList.remove("expanding-boot");
+    }, 3300);
+  }
+
+  // Camera Zoom Pills Interactivity
+  const zoomPills = document.querySelectorAll(".cam-zoom-pills span");
+  const heroImg = document.getElementById("heroPortrait");
+  const telemetry = document.querySelector(".reticle-telemetry");
+
+  zoomPills.forEach(pill => {
+    pill.addEventListener("click", () => {
+      zoomPills.forEach(p => p.classList.remove("active"));
+      pill.classList.add("active");
+      const zoomText = pill.textContent.trim();
+      
+      let scale = 1;
+      let focal = "24MM";
+      if (zoomText === "0.5") { scale = 0.88; focal = "13MM ULTRA-WIDE"; }
+      else if (zoomText === "1×") { scale = 1.0; focal = "24MM MAIN"; }
+      else if (zoomText === "2") { scale = 1.18; focal = "48MM TELEPHOTO"; }
+      else if (zoomText === "5") { scale = 1.35; focal = "120MM PERISCOPE"; }
+
+      if (heroImg) {
+        heroImg.style.transition = "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)";
+        heroImg.style.transform = `scale(${scale})`;
+      }
+      if (telemetry) {
+        telemetry.textContent = `AF-C • ${focal} f/1.4`;
+      }
+    });
+  });
 }
