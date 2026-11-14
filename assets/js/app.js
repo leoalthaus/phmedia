@@ -51,7 +51,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     initLeadForm();
     initScrollAnimations();
     initDateYear();
-    initIPhone18Experience();
   } catch (e) {
     console.error("Core animations init error:", e);
   }
@@ -622,50 +621,5 @@ function initDateYear() {
   const yearEl = document.getElementById("currentYear");
   if (yearEl) {
     yearEl.textContent = new Date().getFullYear();
-  }
-}
-
-/**
- * 7. iPhone 18 Pro Experience & Dynamic Island Orchestration
- */
-function initIPhone18Experience() {
-  // Update Real-time Clock
-  const clockEl = document.getElementById("iphoneClock");
-  function updateClock() {
-    if (!clockEl) return;
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, "0");
-    const minutes = String(now.getMinutes()).padStart(2, "0");
-    clockEl.textContent = `${hours}:${minutes}`;
-  }
-  updateClock();
-  setInterval(updateClock, 30000);
-
-  // Dynamic Island Interactive Toggle
-  const island = document.getElementById("dynamicIsland");
-  const camHud = document.getElementById("iphoneCameraHud");
-  const edgeGlow = document.getElementById("iphoneEdgeGlow");
-
-  if (island) {
-    island.addEventListener("click", () => {
-      island.classList.remove("expanding-boot");
-      island.classList.toggle("expanded");
-    });
-
-    island.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        island.classList.remove("expanding-boot");
-        island.classList.toggle("expanded");
-      }
-    });
-
-    // Clean up boot animation classes and remove temporary overlays from rendering tree after initial boot
-    setTimeout(() => {
-      island.classList.remove("expanding-boot");
-      document.body.classList.remove("iphone-18-boot");
-      if (camHud) camHud.style.display = "none";
-      if (edgeGlow) edgeGlow.style.display = "none";
-    }, 2800);
   }
 }

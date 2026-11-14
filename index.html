@@ -28,77 +28,12 @@
 
   <!-- Font Awesome Icons & Custom Stylesheet -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="assets/css/style.css?v=3.3">
+  <link rel="stylesheet" href="assets/css/style.css?v=3.4">
 </head>
-<body class="light-theme iphone-18-boot">
+<body class="light-theme">
 
-  <!-- Background Ambient Glow & Mesh -->
-  <div class="ambient-glow glow-top" aria-hidden="true"></div>
-  <div class="ambient-glow glow-bottom" aria-hidden="true"></div>
-
-  <!-- Main Container (iPhone 18 Pro Spatial Chassis & Mobile-First Experience) -->
-  <div class="app-layout" id="iphoneChassis">
-    
-    <!-- iPhone 18 Pro Apple Intelligence Edge Aura (Plays on Initial Boot) -->
-    <div class="iphone-edge-glow" id="iphoneEdgeGlow" aria-hidden="true"></div>
-
-    <!-- iPhone 18 Pro Physical Titanium Buttons (Desktop Frame) -->
-    <div class="iphone-hw-btn hw-action" aria-hidden="true"></div>
-    <div class="iphone-hw-btn hw-vol-up" aria-hidden="true"></div>
-    <div class="iphone-hw-btn hw-vol-down" aria-hidden="true"></div>
-    <div class="iphone-hw-btn hw-power" aria-hidden="true"></div>
-    <div class="iphone-hw-btn hw-camera-ctrl" aria-hidden="true"></div>
-
-    <!-- Top & Bottom Soft Vignette Fade for Vertical Carousel Focus -->
-    <div class="carousel-fade-top" aria-hidden="true"></div>
-    <div class="carousel-fade-bottom" aria-hidden="true"></div>
-
-    <!-- iPhone 18 Pro Status Bar & Dynamic Island -->
-    <div class="iphone-status-bar" id="iphoneStatusBar">
-      <div class="status-left">
-        <span class="iphone-clock" id="iphoneClock">09:41</span>
-        <span class="iphone-carrier-tag">PH 5G</span>
-      </div>
-
-      <!-- Dynamic Island 18 Pro -->
-      <div class="dynamic-island expanding-boot" id="dynamicIsland" role="button" tabindex="0" aria-label="Dynamic Island iPhone 18 Pro - Clique para expandir">
-        <!-- Compact Pill View -->
-        <div class="island-compact">
-          <span class="island-lens" aria-hidden="true"></span>
-          <span class="island-privacy-dot" title="Câmera & Microfone ProRes Ativos"></span>
-          <div class="island-mini-wave" aria-hidden="true">
-            <span></span><span></span><span></span><span></span>
-          </div>
-        </div>
-
-        <!-- Expanded Boot / Interactive HUD View -->
-        <div class="island-expanded-content">
-          <div class="island-exp-left">
-            <div class="island-faceid-ring">
-              <i class="fa-solid fa-camera-retro" id="islandStatusIcon"></i>
-            </div>
-            <div class="island-exp-meta">
-              <span class="island-exp-kicker">iPHONE 18 PRO • PRORES</span>
-              <span class="island-exp-title" id="islandStatusText">PH Media Studio Ativo</span>
-            </div>
-          </div>
-          <div class="island-exp-right">
-            <div class="island-rec-pill">
-              <span class="rec-dot"></span>
-              <span>4K 120</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="status-right" aria-hidden="true">
-        <i class="fa-solid fa-signal"></i>
-        <i class="fa-solid fa-wifi"></i>
-        <div class="iphone-battery">
-          <span class="battery-level"></span>
-        </div>
-      </div>
-    </div>
+  <!-- Main Container (Clean Mobile-First Layout) -->
+  <div class="app-layout">
 
     <!-- Top Sticky Header -->
     <header class="main-header glass-header" id="mainHeader">
@@ -124,43 +59,12 @@
     <!-- Main Content Flow -->
     <main class="main-content">
 
-      <!-- HERO SECTION (Matches Reference 1) -->
+      <!-- HERO SECTION -->
       <section class="hero-section" id="hero">
         <div class="hero-portrait-container">
-          <!-- Portrait with radial / linear mask & iPhone 18 Pro Camera Viewfinder HUD -->
           <div class="portrait-wrapper">
-            <img src="assets/images/pedro.jpg?v=3.3" alt="Pedro Henrique - PH Media" class="portrait-img" id="heroPortrait" loading="eager" fetchpriority="high" decoding="async" width="599" height="900">
+            <img src="assets/images/pedro.jpg?v=3.4" alt="Pedro Henrique - PH Media" class="portrait-img" id="heroPortrait" loading="eager" fetchpriority="high" decoding="async" width="599" height="900">
             <div class="portrait-overlay-gradient"></div>
-
-            <!-- iPhone 18 Pro Camera Viewfinder Intro HUD -->
-            <div class="iphone-camera-hud" id="iphoneCameraHud" aria-hidden="true">
-              <div class="cam-hud-top">
-                <span class="cam-badge yellow">PRORAW MAX</span>
-                <span class="cam-badge">4K • 120 FPS</span>
-                <span class="cam-badge">LOG 2</span>
-              </div>
-
-              <!-- Spatial Autofocus Lock Reticle -->
-              <div class="cam-focus-reticle" id="iphoneFocusReticle">
-                <span class="reticle-corner tl"></span>
-                <span class="reticle-corner tr"></span>
-                <span class="reticle-corner bl"></span>
-                <span class="reticle-corner br"></span>
-                <div class="reticle-exposure">
-                  <i class="fa-solid fa-sun"></i>
-                </div>
-                <span class="reticle-telemetry">AF-C LOCKED • 24MM f/1.4</span>
-              </div>
-
-              <div class="cam-hud-bottom">
-                <div class="cam-zoom-pills">
-                  <span>0.5</span>
-                  <span class="active">1×</span>
-                  <span>2</span>
-                  <span>5</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -507,11 +411,6 @@
       <span class="floating-tooltip">Fale com o Pedro</span>
     </a>
 
-    <!-- iPhone 18 Pro Bottom Home Indicator Bar -->
-    <div class="iphone-home-bar" id="iphoneHomeBar" aria-hidden="true">
-      <span class="home-pill"></span>
-    </div>
-
   </div>
 
   <!-- FULLSCREEN PORTFOLIO GALLERY LIGHTBOX MODAL -->
@@ -570,7 +469,7 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- Scripts -->
-  <script type="module" src="assets/js/firebase-config.js?v=3.3"></script>
-  <script type="module" src="assets/js/app.js?v=3.3"></script>
+  <script type="module" src="assets/js/firebase-config.js?v=3.4"></script>
+  <script type="module" src="assets/js/app.js?v=3.4"></script>
 </body>
 </html>
