@@ -585,293 +585,34 @@ export function showToast(message, type = "info") {
 }
 
 /**
- * 5. Full-Site Dynamic Scroll Kinetic & Physics Engine
+ * 5. Ultra-Lightweight 120fps Scroll Handler (Zero Layout Thrashing)
  */
 function initScrollAnimations() {
   const header = document.getElementById("mainHeader");
-  const logoImg = document.querySelector(".logo-img");
-  const heroPortrait = document.getElementById("heroPortrait");
-  const heroContent = document.querySelector(".hero-content");
-  const heroName = document.querySelector(".hero-name");
-  const heroCtaBtn = document.querySelector(".hero-cta-btn");
-  const locationBadge = document.querySelector(".location-badge");
-  const servicePills = document.querySelectorAll(".service-pill-btn");
-  const serviceCard = document.getElementById("serviceCard");
-  const calcCard = document.getElementById("orcamento");
-  const servicePrice = document.getElementById("servicePrice");
-  const serviceBadge = document.getElementById("serviceIconBadge");
-  const sectionHeaders = document.querySelectorAll(".section-header");
-  const calcOptions = document.querySelectorAll(".calc-option-box");
-  const floatingWa = document.getElementById("floatingWhatsapp");
-  const portfolioCards = document.querySelectorAll(".portfolio-card");
-
-  let lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
+  let isHeaderScrolled = false;
   let ticking = false;
 
-  function onFullSiteScroll() {
-    const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-    const windowHeight = window.innerHeight;
-    const scrollDelta = scrollY - lastScrollY;
-    const scrollSpeed = Math.min(Math.abs(scrollDelta), 50);
-    const scrollDir = scrollDelta >= 0 ? 1 : -1; // 1 = down, -1 = up
+  function onScroll() {
+    const scrollY = window.scrollY || window.pageYOffset;
+    const shouldBeScrolled = scrollY > 24;
 
-    // 1. TOP HEADER & LOGO REACTIVITY
-    if (header) {
-      if (scrollY > 30) {
-        header.classList.add("scrolled");
-      } else {
-        header.classList.remove("scrolled");
+    if (shouldBeScrolled !== isHeaderScrolled) {
+      isHeaderScrolled = shouldBeScrolled;
+      if (header) {
+        header.classList.toggle("scrolled", isHeaderScrolled);
       }
     }
-    if (logoImg) {
-      const logoScale = 1 + Math.min(scrollSpeed * 0.002, 0.08);
-      logoImg.style.transform = `scale(${logoScale.toFixed(3)})`;
-    }
-
-    // 2. HERO PORTRAIT: Pronounced Dynamic Cinematic Zoom (from 1.0x up to 1.55x)
-    if (heroPortrait) {
-      const progress = Math.min(Math.max(scrollY / 420, 0), 1);
-      const scale = 1 + Math.pow(progress, 0.8) * 0.55;
-      const translateY = progress * 30;
-      heroPortrait.style.transform = `scale(${scale.toFixed(4)}) translateY(${translateY.toFixed(1)}px)`;
-    }
-
-    // 3. HERO TEXTS & MAIN BUTTON: Kinetic Parallax & Float
-    if (heroContent) {
-      const heroOffset = Math.min(scrollY * 0.18, 90);
-      const heroOpacity = Math.max(1 - scrollY / 650, 0);
-      heroContent.style.transform = `translateY(${heroOffset.toFixed(1)}px)`;
-      heroContent.style.opacity = heroOpacity.toFixed(3);
-
-      if (heroName) {
-        const letterSpacing = -0.5 + Math.min(scrollY * 0.004, 3);
-        heroName.style.letterSpacing = `${letterSpacing.toFixed(2)}px`;
-      }
-      if (heroCtaBtn) {
-        const btnScale = 1 + Math.min(scrollY * 0.0003, 0.05);
-        heroCtaBtn.style.transform = `scale(${btnScale.toFixed(3)})`;
-      }
-      if (locationBadge) {
-        const pinRotate = scrollDir * Math.min(scrollSpeed * 0.4, 12);
-        locationBadge.style.transform = `rotate(${pinRotate.toFixed(1)}deg)`;
-      }
-    }
-
-    // 4. SIMULTANEOUS OPPOSING LATERAL SURGE FOR BUTTONS & CONTROLS
-    // (Even items surge from Left-to-Right, Odd items surge from Right-to-Left simultaneously as you scroll)
-    const currentServicePills = document.querySelectorAll(".service-pill-btn");
-    currentServicePills.forEach((pill, idx) => {
-      const rect = pill.getBoundingClientRect();
-      if (rect.bottom >= -60 && rect.top <= windowHeight + 60) {
-        const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
-        const normDist = centerOffset / (windowHeight / 2);
-        const clampedNorm = Math.min(Math.max(normDist, -1.2), 1.2);
-        const absDist = Math.abs(clampedNorm);
-
-        // Direction: Even (0, 2) comes from Left (-), Odd (1, 3) comes from Right (+)
-        const direction = (idx % 2 === 0) ? -1 : 1;
-        const maxShift = 46;
-        const translateX = direction * clampedNorm * maxShift;
-        const scale = pill.classList.contains("active") ? 1.02 : (1.03 - absDist * 0.05);
-
-        pill.style.transform = `translateX(${translateX.toFixed(1)}px) scale(${scale.toFixed(3)})`;
-      }
-    });
-
-    // 5. HIGH-IMPACT 3D CARD PHYSICS (Quadro 1 & Quadro 2)
-    function applyHighImpactPhysics(cardElement, isServiceShowcase = false) {
-      if (!cardElement) return;
-      const rect = cardElement.getBoundingClientRect();
-      
-      if (rect.bottom >= -80 && rect.top <= windowHeight + 80) {
-        const cardCenter = rect.top + rect.height / 2;
-        const screenCenter = windowHeight / 2;
-        const offset = (cardCenter - screenCenter) / (windowHeight / 2);
-        const clampedOffset = Math.min(Math.max(offset, -1.2), 1.2);
-        const absOffset = Math.abs(clampedOffset);
-
-        const inertiaTilt = scrollDir * Math.min(scrollSpeed * 0.15, 3);
-        const rotateX = (clampedOffset * -8.5) + inertiaTilt;
-        const scale = 1.065 - absOffset * 0.085;
-        const translateZ = (1 - absOffset) * 22;
-
-        const shadowBlur = Math.max(50 - absOffset * 30, 10);
-        const shadowY = Math.max(25 - absOffset * 15, 6);
-        const shadowOpacity = Math.max(0.18 - absOffset * 0.12, 0.03);
-        const borderColor = `rgba(0, 0, 0, ${Math.max(0.35 - absOffset * 0.25, 0.08).toFixed(2)})`;
-
-        const sheenX = ((1 - clampedOffset) * 50 + 25).toFixed(1) + "%";
-        const sheenY = ((clampedOffset + 1) * 40 + 10).toFixed(1) + "%";
-        const sheenOpacity = Math.max(0.65 - absOffset * 0.45, 0.1).toFixed(2);
-
-        cardElement.style.setProperty("--mouse-x", sheenX);
-        cardElement.style.setProperty("--mouse-y", sheenY);
-        cardElement.style.setProperty("--sheen-opacity", sheenOpacity);
-
-        cardElement.style.transform = `perspective(900px) rotateX(${rotateX.toFixed(2)}deg) translateZ(${translateZ.toFixed(1)}px) scale(${scale.toFixed(4)})`;
-        cardElement.style.boxShadow = `0 ${shadowY}px ${shadowBlur}px rgba(0, 0, 0, ${shadowOpacity.toFixed(3)})`;
-        cardElement.style.borderColor = borderColor;
-
-        if (isServiceShowcase) {
-          if (servicePrice) {
-            const pricePop = 1 + (1 - absOffset) * 0.10;
-            servicePrice.style.transform = `scale(${Math.max(pricePop, 1).toFixed(3)})`;
-          }
-          if (serviceBadge) {
-            const badgeRotate = clampedOffset * -18;
-            const badgePop = 35 + (1 - absOffset) * 18;
-            serviceBadge.style.transform = `translateZ(${badgePop}px) rotate(${badgeRotate.toFixed(1)}deg)`;
-          }
-        }
-      }
-    }
-
-    applyHighImpactPhysics(serviceCard, true);
-    applyHighImpactPhysics(calcCard, false);
-
-    // 6. CALCULATOR OPTIONS: 3D Depth Wave & Kinetic Elevation Pop (No lateral translation)
-    const currentCalcOptions = document.querySelectorAll(".calc-option-box");
-    currentCalcOptions.forEach((optBox, idx) => {
-      const rect = optBox.getBoundingClientRect();
-      if (rect.bottom >= -60 && rect.top <= windowHeight + 60) {
-        const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
-        const normDist = centerOffset / (windowHeight / 2);
-        const clampedNorm = Math.min(Math.max(normDist, -1.2), 1.2);
-        const absDist = Math.abs(clampedNorm);
-
-        // 3D Perspective Tilt and Smooth Elevation Pop (Kept centered without lateral shift)
-        const tiltX = clampedNorm * -4.0;
-        const elevationZ = (1 - absDist) * 14;
-        const optScale = 1.03 - absDist * 0.035;
-        const shadowY = Math.max(8 - absDist * 5, 2);
-        const shadowBlur = Math.max(20 - absDist * 12, 4);
-        const shadowOpacity = Math.max(0.12 - absDist * 0.08, 0.02);
-
-        optBox.style.transform = `perspective(600px) rotateX(${tiltX.toFixed(2)}deg) translateZ(${elevationZ.toFixed(1)}px) scale(${optScale.toFixed(3)})`;
-        optBox.style.boxShadow = `0 ${shadowY}px ${shadowBlur}px rgba(0, 0, 0, ${shadowOpacity.toFixed(3)})`;
-      }
-    });
-
-    // 7. SECTION HEADERS & TITLES: Dynamic Tracking Expansion
-    sectionHeaders.forEach((sh) => {
-      const rect = sh.getBoundingClientRect();
-      if (rect.bottom >= 0 && rect.top <= windowHeight) {
-        const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
-        const normDist = Math.abs(centerOffset) / (windowHeight / 2);
-        const clampedDist = Math.min(Math.max(normDist, 0), 1);
-        
-        const titleTag = sh.querySelector(".section-tag");
-        const titleH2 = sh.querySelector(".section-title");
-        
-        if (titleTag) {
-          const letterSpacing = 2.5 + (1 - clampedDist) * 1.5;
-          titleTag.style.letterSpacing = `${letterSpacing.toFixed(1)}px`;
-        }
-        if (titleH2) {
-          const titleScale = 1.03 - clampedDist * 0.04;
-          titleH2.style.transform = `scale(${titleScale.toFixed(3)})`;
-        }
-      }
-    });
-
-    // 8. PORTFOLIO CARDS & IMAGE BUTTONS / BADGES: Simultaneous Lateral Surge & Zoom
-    const currentPortfolioCards = document.querySelectorAll(".portfolio-card");
-    currentPortfolioCards.forEach((card, idx) => {
-      const rect = card.getBoundingClientRect();
-      if (rect.bottom >= -80 && rect.top <= windowHeight + 80) {
-        const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
-        const normDist = centerOffset / (windowHeight / 2);
-        const clampedNorm = Math.min(Math.max(normDist, -1.2), 1.2);
-        const absDist = Math.abs(clampedNorm);
-
-        const direction = (idx % 2 === 0) ? -1 : 1;
-        const cardShift = direction * clampedNorm * 18;
-        const badge = card.querySelector(".portfolio-badge");
-        const playBtn = card.querySelector(".play-overlay");
-        const img = card.querySelector("img");
-
-        if (img) {
-          const cardZoom = 1.20 - absDist * 0.16;
-          img.style.transform = `scale(${cardZoom.toFixed(4)})`;
-        }
-
-        const cardTilt = clampedNorm * -4;
-        card.style.transform = `perspective(800px) rotateX(${cardTilt.toFixed(1)}deg) translateX(${cardShift.toFixed(1)}px)`;
-
-        // Image badge & play button surge simultaneously from opposite sides
-        if (badge) {
-          const badgeX = direction * clampedNorm * 42;
-          badge.style.transform = `translateX(${badgeX.toFixed(1)}px)`;
-        }
-        if (playBtn) {
-          const playX = (-direction) * clampedNorm * 38;
-          playBtn.style.transform = `translate(-50%, -50%) translateX(${playX.toFixed(1)}px) scale(${Math.max(1 - absDist * 0.3, 0.75).toFixed(2)})`;
-        }
-      }
-    });
-
-    // 8.1. KEEP THE TWO PRICING PACKAGE BUTTONS FIXED / CENTERED (No lateral shift)
-    const serviceWaBtn = document.getElementById("serviceWhatsappBtn");
-    if (serviceWaBtn) {
-      serviceWaBtn.style.transform = "";
-    }
-
-    const applyComboBtn = document.getElementById("btnApplyCombo");
-    if (applyComboBtn) {
-      applyComboBtn.style.transform = "";
-    }
-
-    // 9. FLOATING WHATSAPP BUTTON: Reactive Velocity Pulse
-    if (floatingWa) {
-      const waPulse = 1 + Math.min(scrollSpeed * 0.005, 0.18);
-      const waRotate = scrollDir * Math.min(scrollSpeed * 0.35, 15);
-      floatingWa.style.transform = `scale(${waPulse.toFixed(3)}) rotate(${waRotate.toFixed(1)}deg)`;
-    }
-
-    // 10. VERTICAL CAROUSEL CENTER-STAGE SPOTLIGHT (Wider focus, subtle edge transition)
-    const mainSections = document.querySelectorAll(".main-content > section, .main-footer");
-    mainSections.forEach((sec) => {
-      const rect = sec.getBoundingClientRect();
-      if (rect.bottom >= -100 && rect.top <= windowHeight + 100) {
-        // Keep hero crystal-clear when user is at the top
-        if (sec.id === "hero" && scrollY < 120) {
-          sec.style.opacity = "1";
-          sec.style.transform = "scale(1)";
-          sec.style.filter = "none";
-          return;
-        }
-
-        const secCenter = rect.top + rect.height / 2;
-        const screenCenter = windowHeight / 2;
-        const distNorm = Math.abs(secCenter - screenCenter) / (windowHeight / 2);
-
-        // Core spotlight focus: wide center zone (up to 0.55), only smooth softening near borders (min 0.55)
-        let focusOpacity = 1;
-        if (distNorm > 0.55) {
-          focusOpacity = Math.max(1 - (distNorm - 0.55) * 1.0, 0.55);
-        }
-
-        // Subtly scale down towards top & bottom borders (1.0 -> 0.97)
-        const stageScale = Math.max(1 - Math.min(distNorm * 0.03, 0.03), 0.97);
-
-        sec.style.opacity = focusOpacity.toFixed(3);
-        sec.style.transform = `scale(${stageScale.toFixed(3)})`;
-        sec.style.filter = "none";
-      }
-    });
-
-    lastScrollY = scrollY;
     ticking = false;
   }
 
   window.addEventListener("scroll", () => {
     if (!ticking) {
-      window.requestAnimationFrame(onFullSiteScroll);
+      window.requestAnimationFrame(onScroll);
       ticking = true;
     }
   }, { passive: true });
 
-  onFullSiteScroll();
+  onScroll();
 }
 
 /**
@@ -898,17 +639,19 @@ function initIPhone18Experience() {
     clockEl.textContent = `${hours}:${minutes}`;
   }
   updateClock();
-  setInterval(updateClock, 10000);
+  setInterval(updateClock, 30000);
 
   // Dynamic Island Interactive Toggle
   const island = document.getElementById("dynamicIsland");
+  const camHud = document.getElementById("iphoneCameraHud");
+  const edgeGlow = document.getElementById("iphoneEdgeGlow");
+
   if (island) {
     island.addEventListener("click", () => {
-      // If still in boot animation, remove boot class immediately
       island.classList.remove("expanding-boot");
       island.classList.toggle("expanded");
     });
-    
+
     island.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
@@ -917,37 +660,12 @@ function initIPhone18Experience() {
       }
     });
 
-    // Remove boot animation class cleanly after completion
+    // Clean up boot animation classes and remove temporary overlays from rendering tree after initial boot
     setTimeout(() => {
       island.classList.remove("expanding-boot");
-    }, 3300);
+      document.body.classList.remove("iphone-18-boot");
+      if (camHud) camHud.style.display = "none";
+      if (edgeGlow) edgeGlow.style.display = "none";
+    }, 2800);
   }
-
-  // Camera Zoom Pills Interactivity
-  const zoomPills = document.querySelectorAll(".cam-zoom-pills span");
-  const heroImg = document.getElementById("heroPortrait");
-  const telemetry = document.querySelector(".reticle-telemetry");
-
-  zoomPills.forEach(pill => {
-    pill.addEventListener("click", () => {
-      zoomPills.forEach(p => p.classList.remove("active"));
-      pill.classList.add("active");
-      const zoomText = pill.textContent.trim();
-      
-      let scale = 1;
-      let focal = "24MM";
-      if (zoomText === "0.5") { scale = 0.88; focal = "13MM ULTRA-WIDE"; }
-      else if (zoomText === "1×") { scale = 1.0; focal = "24MM MAIN"; }
-      else if (zoomText === "2") { scale = 1.18; focal = "48MM TELEPHOTO"; }
-      else if (zoomText === "5") { scale = 1.35; focal = "120MM PERISCOPE"; }
-
-      if (heroImg) {
-        heroImg.style.transition = "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)";
-        heroImg.style.transform = `scale(${scale})`;
-      }
-      if (telemetry) {
-        telemetry.textContent = `AF-C • ${focal} f/1.4`;
-      }
-    });
-  });
 }
