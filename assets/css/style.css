@@ -5,7 +5,7 @@
 
 :root {
   /* Color Palette - Seamless Studio Backdrop System */
-  --bg-main: #8d8690;
+  --bg-main: #7f7880;
   --bg-app: #9b959f;
   --bg-surface: rgba(255, 255, 255, 0.28);
   --bg-surface-elevated: rgba(255, 255, 255, 0.72);
@@ -66,7 +66,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  background: #7f7882;
+  background: #7f7880;
   overflow-x: hidden;
   position: relative;
 }
@@ -85,13 +85,14 @@ body {
   z-index: 1;
   background: linear-gradient(
     180deg,
-    #867e8b 0px,
-    #938c97 260px,
-    #9b959f 650px,
+    #7f7880 0px,
+    #88808d 180px,
+    #938c97 380px,
+    #9b959f 720px,
     #968f9a 1400px,
     #918a95 100%
   );
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   overflow-x: clip;
@@ -124,14 +125,16 @@ body {
   }
 }
 
-/* Header (Floating Transparent Over Hero Photo) */
+/* Header (Ultra-Discreet, Non-Sticky, Zero Bar Look) */
 .main-header {
-  position: sticky;
+  position: absolute;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 50;
   width: 100%;
   background: transparent;
-  border-bottom: none;
+  border: none;
   box-shadow: none;
   pointer-events: none;
 }
@@ -139,14 +142,14 @@ body {
 .main-header.scrolled {
   background: transparent;
   box-shadow: none;
-  border-bottom: none;
+  border: none;
 }
 
 .header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 20px;
+  padding: 6px 16px;
 }
 
 .brand-logo,
@@ -159,10 +162,16 @@ body {
   align-items: center;
   text-decoration: none;
   position: relative;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.brand-logo:hover {
+  opacity: 1;
 }
 
 .logo-img {
-  height: 42px;
+  height: 32px;
   width: auto;
   object-fit: contain;
   background: transparent;
@@ -171,28 +180,27 @@ body {
 }
 
 .brand-logo:hover .logo-img {
-  transform: scale(1.05);
+  transform: scale(1.04);
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .icon-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: var(--bg-surface);
-  border: 1.5px solid var(--border-subtle);
-  color: var(--text-primary);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  color: rgba(0, 0, 0, 0.78);
   display: flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  font-size: 15px;
-  will-change: transform;
+  font-size: 14px;
   transition: all var(--transition-fast);
 }
 
@@ -200,29 +208,27 @@ body {
   background: #000000;
   color: #ffffff;
   border-color: #000000;
-  transform: translateY(-2px) scale(1.06);
-}
-
-.admin-link {
-  color: var(--text-muted);
+  transform: translateY(-1px);
 }
 
 .btn-glass {
-  padding: 8px 16px;
-  border-radius: var(--radius-md);
-  background: #000000;
-  border: 1px solid #000000;
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.14);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  color: #000000;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
   text-decoration: none;
-  will-change: transform;
   transition: all var(--transition-fast);
 }
 
 .btn-glass:hover {
-  background: #27272a;
-  transform: translateY(-1px) scale(1.04);
+  background: #000000;
+  border-color: #000000;
+  color: #ffffff;
+  transform: translateY(-1px);
 }
 
 /* Main Content */
@@ -364,7 +370,7 @@ body {
 
 .hero-portrait-container {
   width: calc(100% + 32px);
-  margin: 12px -16px 0;
+  margin: 36px -16px 0;
   max-width: none;
   position: relative;
   display: flex;
@@ -551,7 +557,7 @@ body {
   inset: 0;
   background:
     radial-gradient(ellipse 98% 90% at 50% 35%, transparent 55%, rgba(147, 140, 151, 0.5) 85%, rgba(155, 149, 159, 0.95) 100%),
-    linear-gradient(to bottom, #88808d 0%, rgba(136, 128, 141, 0.28) 12%, transparent 24%, transparent 54%, rgba(155, 149, 159, 0.82) 80%, #9b959f 99%);
+    linear-gradient(to bottom, #7f7880 0%, rgba(132, 125, 136, 0.32) 12%, transparent 24%, transparent 54%, rgba(155, 149, 159, 0.82) 80%, #9b959f 99%);
   pointer-events: none;
   z-index: 2;
 }
@@ -1377,6 +1383,15 @@ body {
   background: #000000;
   color: #ffffff;
   transform: translateY(-2px);
+}
+
+.footer-socials a.footer-admin-link {
+  opacity: 0.45;
+  font-size: 13px;
+}
+
+.footer-socials a.footer-admin-link:hover {
+  opacity: 1;
 }
 
 .footer-bottom {
