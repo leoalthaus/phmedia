@@ -157,9 +157,11 @@ body {
 }
 
 .logo-img {
-  height: 46px;
+  height: 42px;
   width: auto;
   object-fit: contain;
+  background: transparent;
+  mix-blend-mode: multiply;
   transition: transform 0.2s ease;
 }
 
