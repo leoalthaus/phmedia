@@ -28,7 +28,7 @@
 
   <!-- Font Awesome Icons & Custom Stylesheet -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="assets/css/style.css?v=3.7">
+  <link rel="stylesheet" href="assets/css/style.css?v=3.8">
 </head>
 <body class="light-theme">
 
@@ -65,6 +65,21 @@
           <div class="portrait-wrapper">
             <img src="assets/images/pedro.jpg?v=3.4" alt="Pedro Henrique - PH Media" class="portrait-img" id="heroPortrait" loading="eager" fetchpriority="high" decoding="async" width="599" height="900">
             <div class="portrait-overlay-gradient"></div>
+            <!-- Camera Viewfinder & Studio Flash Entrance Overlay -->
+            <div class="camera-viewfinder" aria-hidden="true">
+              <div class="vf-top-hud">
+                <span class="vf-rec"><span class="vf-rec-dot"></span>RAW</span>
+                <span class="vf-exif">35MM &nbsp; f/1.4 &nbsp; ISO 100</span>
+              </div>
+              <div class="vf-focus-box">
+                <span class="vf-corner vf-tl"></span>
+                <span class="vf-corner vf-tr"></span>
+                <span class="vf-corner vf-bl"></span>
+                <span class="vf-corner vf-br"></span>
+                <span class="vf-crosshair"></span>
+              </div>
+              <div class="vf-shutter-flash"></div>
+            </div>
           </div>
         </div>
 
