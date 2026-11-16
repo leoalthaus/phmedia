@@ -158,26 +158,29 @@ async function initPortfolioShowcase() {
 
   if (portfolioGrid && items && items.length > 0) {
     portfolioGrid.innerHTML = items.map((p, index) => {
-      const photosCount = (p.photos && p.photos.length) || 1;
       return `
-        <div class="portfolio-card" data-index="${index}" role="button" tabindex="0" aria-label="Abrir galeria de ${escapeHtml(p.title)}" style="cursor: pointer;">
+        <div class="portfolio-card portfolio-slide" data-index="${index}" role="button" tabindex="0" aria-label="Abrir galeria de ${escapeHtml(p.title)}">
           <div class="portfolio-img-wrap">
-            <img src="${p.image}" alt="${p.title}" loading="lazy">
-            <div class="portfolio-badge">${p.category || 'AUDIOVISUAL'}</div>
-            <div class="play-overlay">
-              <i class="fa-solid fa-images"></i>
-            </div>
-          </div>
-          <div class="portfolio-info">
-            <h4>${p.title}</h4>
-            <p>${p.desc || ''}</p>
-            <span style="font-size: 11px; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 4px; margin-top: 6px;">
-              <i class="fa-solid fa-expand"></i> Ver fotos do projeto (${photosCount})
-            </span>
+            <img src="${p.image}" alt="${escapeHtml(p.title)}" loading="lazy">
           </div>
         </div>
       `;
     }).join("");
+
+    // Carousel Next Arrow Button
+    const nextSlideBtn = document.getElementById("portfolioNextBtn");
+    if (nextSlideBtn) {
+      nextSlideBtn.onclick = (e) => {
+        e.stopPropagation();
+        const slideWidth = portfolioGrid.querySelector(".portfolio-slide")?.offsetWidth || 280;
+        const maxScroll = portfolioGrid.scrollWidth - portfolioGrid.clientWidth;
+        if (portfolioGrid.scrollLeft >= maxScroll - 20) {
+          portfolioGrid.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          portfolioGrid.scrollBy({ left: slideWidth + 14, behavior: "smooth" });
+        }
+      };
+    }
 
     // Delegated container click
     portfolioGrid.addEventListener("click", (e) => {

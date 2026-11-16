@@ -30,7 +30,7 @@
 
   <!-- Font Awesome Icons & Custom Stylesheet -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="assets/css/style.css?v=4.7">
+  <link rel="stylesheet" href="assets/css/style.css?v=4.8">
 </head>
 <body class="light-theme">
 
@@ -146,65 +146,97 @@
         </div>
       </section>
 
-      <!-- PORTFOLIO SHOWCASE -->
+      <!-- PORTFOLIO SHOWCASE (Horizontal Peek Carousel Matches Reference) -->
       <section class="portfolio-section" id="portfolio">
-        <div class="section-header">
-          <span class="section-tag">TRABALHOS RECENTES</span>
-          <h2 class="section-title">Portfólio & Bastidores</h2>
-          <p class="section-subtitle">Estética cinematográfica pensada para encantar e converter</p>
+        <div class="section-header portfolio-editorial-header">
+          <h2 class="editorial-display-title">UM POUCO DO<br>MEU OLHAR.</h2>
+          <p class="editorial-serif-subtitle">Projetos, ideias e histórias que tive o prazer<br>de transformar em imagens.</p>
         </div>
 
-        <div class="portfolio-grid">
-          <div class="portfolio-card" data-index="0" onclick="window.openPortfolioModalByIndex && window.openPortfolioModalByIndex(0)" role="button" tabindex="0" aria-label="Abrir galeria de Campanha Comercial & Fashion" style="cursor: pointer;">
-            <div class="portfolio-img-wrap">
-              <img src="assets/images/reel-1.jpg" alt="Produção Audiovisual PH Media" loading="lazy">
-              <div class="portfolio-badge">AUDIOVISUAL</div>
-              <div class="play-overlay">
-                <i class="fa-solid fa-images"></i>
+        <div class="portfolio-carousel-wrapper">
+          <div class="portfolio-grid portfolio-carousel-track" id="portfolioCarouselTrack">
+            <div class="portfolio-card portfolio-slide" data-index="0" onclick="window.openPortfolioModalByIndex && window.openPortfolioModalByIndex(0)" role="button" tabindex="0" aria-label="Abrir galeria de Campanha Comercial & Fashion">
+              <div class="portfolio-img-wrap">
+                <img src="assets/images/reel-1.jpg" alt="Produção Audiovisual PH Media" loading="lazy">
               </div>
             </div>
-            <div class="portfolio-info">
-              <h4>Campanha Comercial & Fashion</h4>
-              <p>Direção de cena, iluminação e captação multi-câmera</p>
-              <span style="font-size: 11px; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 4px; margin-top: 6px;">
-                <i class="fa-solid fa-expand"></i> Ver fotos do projeto
-              </span>
+
+            <div class="portfolio-card portfolio-slide" data-index="1" onclick="window.openPortfolioModalByIndex && window.openPortfolioModalByIndex(1)" role="button" tabindex="0" aria-label="Abrir galeria de Comercial de Luxo & Produto">
+              <div class="portfolio-img-wrap">
+                <img src="assets/images/reel-2.jpg" alt="Videomaker com Gimbal 4K" loading="lazy">
+              </div>
+            </div>
+
+            <div class="portfolio-card portfolio-slide" data-index="2" onclick="window.openPortfolioModalByIndex && window.openPortfolioModalByIndex(2)" role="button" tabindex="0" aria-label="Abrir galeria de Cobertura de Eventos & Storymaker">
+              <div class="portfolio-img-wrap">
+                <img src="assets/images/pedro.jpg" alt="Cobertura de Eventos & Storymaker" loading="lazy">
+              </div>
             </div>
           </div>
 
-          <div class="portfolio-card" data-index="1" onclick="window.openPortfolioModalByIndex && window.openPortfolioModalByIndex(1)" role="button" tabindex="0" aria-label="Abrir galeria de Comercial de Luxo & Produto" style="cursor: pointer;">
-            <div class="portfolio-img-wrap">
-              <img src="assets/images/reel-2.jpg" alt="Videomaker com Gimbal 4K" loading="lazy">
-              <div class="portfolio-badge">CINEMATIC</div>
-              <div class="play-overlay">
-                <i class="fa-solid fa-images"></i>
-              </div>
-            </div>
-            <div class="portfolio-info">
-              <h4>Comercial de Luxo & Produto</h4>
-              <p>Estabilização gimbal Ronin e pós-produção avançada</p>
-              <span style="font-size: 11px; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 4px; margin-top: 6px;">
-                <i class="fa-solid fa-expand"></i> Ver fotos do projeto
-              </span>
-            </div>
-          </div>
+          <button type="button" class="portfolio-carousel-next" id="portfolioNextBtn" aria-label="Próximo Projeto">
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </section>
 
-          <div class="portfolio-card" data-index="2" onclick="window.openPortfolioModalByIndex && window.openPortfolioModalByIndex(2)" role="button" tabindex="0" aria-label="Abrir galeria de Cobertura de Eventos & Storymaker" style="cursor: pointer;">
-            <div class="portfolio-img-wrap">
-              <img src="assets/images/pedro.jpg" alt="Cobertura de Eventos & Storymaker" loading="lazy">
-              <div class="portfolio-badge">REELS & SOCIAL</div>
-              <div class="play-overlay">
-                <i class="fa-solid fa-images"></i>
+      <!-- FEEDBACKS SHOWCASE (Horizontal Peek Testimonials Matches Reference) -->
+      <section class="feedbacks-section" id="feedbacks">
+        <div class="section-header feedbacks-editorial-header">
+          <h2 class="editorial-display-title feedbacks-title">FEEDBACKS</h2>
+        </div>
+
+        <div class="feedbacks-carousel-track" id="feedbacksCarouselTrack">
+          <article class="feedback-card">
+            <div class="feedback-card-top">
+              <h3 class="feedback-title">Um trabalho incrível!</h3>
+              <div class="feedback-stars" aria-label="5 estrelas">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
               </div>
             </div>
-            <div class="portfolio-info">
-              <h4>Cobertura de Eventos & Storymaker</h4>
-              <p>Captação dinâmica em tempo real para eventos corporativos e marcas</p>
-              <span style="font-size: 11px; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 4px; margin-top: 6px;">
-                <i class="fa-solid fa-expand"></i> Ver fotos do projeto
-              </span>
+            <p class="feedback-text">
+              Fiquei muito satisfeita com o resultado. Tudo foi feito com muito cuidado, atenção aos detalhes e profissionalismo. Recomendo de olhos fechados!
+            </p>
+            <span class="feedback-author">Fulana de Tal</span>
+          </article>
+
+          <article class="feedback-card">
+            <div class="feedback-card-top">
+              <h3 class="feedback-title">Superou as expectativas!</h3>
+              <div class="feedback-stars" aria-label="5 estrelas">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+              </div>
             </div>
-          </div>
+            <p class="feedback-text">
+              A qualidade dos vídeos e a direção durante a gravação fizeram toda a diferença para a nossa marca. Entrega super rápida e estética impecável!
+            </p>
+            <span class="feedback-author">Cliente Parceiro</span>
+          </article>
+
+          <article class="feedback-card">
+            <div class="feedback-card-top">
+              <h3 class="feedback-title">Olhar único e criativo!</h3>
+              <div class="feedback-stars" aria-label="5 estrelas">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+              </div>
+            </div>
+            <p class="feedback-text">
+              Registrou cada momento do nosso evento com muita sensibilidade e agilidade. Os stories em tempo real engajaram demais o nosso perfil!
+            </p>
+            <span class="feedback-author">Cliente Satisfeita</span>
+          </article>
         </div>
       </section>
 
@@ -389,7 +421,7 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- Scripts -->
-  <script type="module" src="assets/js/firebase-config.js?v=4.7"></script>
-  <script type="module" src="assets/js/app.js?v=4.7"></script>
+  <script type="module" src="assets/js/firebase-config.js?v=4.8"></script>
+  <script type="module" src="assets/js/app.js?v=4.8"></script>
 </body>
 </html>
