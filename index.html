@@ -30,7 +30,7 @@
 
   <!-- Font Awesome Icons & Custom Stylesheet -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="assets/css/style.css?v=4.6">
+  <link rel="stylesheet" href="assets/css/style.css?v=4.7">
 </head>
 <body class="light-theme">
 
@@ -48,7 +48,7 @@
           <a href="https://www.instagram.com/phmedia.br?stkn=bnYxbzBpYTVlNGl6" target="_blank" rel="noopener noreferrer" class="icon-btn" title="Instagram" aria-label="Instagram">
             <i class="fa-brands fa-instagram"></i>
           </a>
-          <a href="#orcamento" class="btn-sm btn-glass">
+          <a href="#contato" class="btn-sm btn-glass">
             <span>Orçamento</span>
           </a>
           <a href="admin.html" class="icon-btn admin-link" title="Painel Admin" aria-label="Painel Administrativo">
@@ -91,179 +91,58 @@
           <p class="hero-bio">
             Diretor audiovisual e criador de conteúdo à frente da <strong>PH Media</strong>. Trabalho com produção audiovisual, conteúdo para redes sociais, fotografia mobile e cobertura de momentos especiais, buscando unir criatividade, estética e profissionalismo em cada projeto.
           </p>
-
-          <div class="hero-cta-wrapper">
-            <a href="#servicos" class="hero-cta-btn" id="btnServicos">
-              <span>SERVIÇOS E VALORES</span>
-              <i class="fa-solid fa-arrow-down"></i>
-            </a>
-          </div>
-
-          <div class="location-badge">
-            <i class="fa-solid fa-location-dot"></i>
-            <span>PONTA GROSSA – PARANÁ</span>
-          </div>
         </div>
       </section>
 
-      <!-- SERVICES SELECTOR & CARDS (Editorial Dark Redirect Cards + Detail View) -->
+      <!-- SERVICES SELECTOR & CARDS (Direct WhatsApp Redirect Cards) -->
       <section class="services-section" id="servicos">
         <div class="section-header">
           <span class="section-tag">SOLUÇÕES AUDIOVISUAIS</span>
           <h2 class="section-title">Serviços & Pacotes</h2>
-          <p class="section-subtitle">Toque em uma especialidade abaixo para acessar os detalhes e investimentos:</p>
+          <p class="section-subtitle">Toque em uma especialidade abaixo para solicitar seu orçamento:</p>
         </div>
 
         <!-- Editorial Service Cards List (Matches Reference Screenshot) -->
-        <div class="service-pills-nav" role="tablist" id="servicesNav">
-          <button class="service-pill-btn active" role="tab" aria-selected="true" data-service="social-media" id="tab-social-media">
+        <div class="service-pills-nav" id="servicesNav">
+          <a href="https://wa.me/5542988640610?text=Ol%C3%A1%20Pedro!%20Tenho%20interesse%20no%20servi%C3%A7o%20de%20*Gest%C3%A3o%20de%20Instagram*%20para%20minha%20marca.%20Como%20podemos%20iniciar%3F" target="_blank" rel="noopener noreferrer" class="service-pill-btn" data-service="social-media" id="tab-social-media">
             <div class="service-btn-header">
               <span class="service-btn-title">Gestão de Instagram</span>
               <span class="service-btn-arrow" aria-hidden="true">↗</span>
             </div>
             <p class="service-btn-desc">Planejamento, criação e gerenciamento de conteúdo.</p>
-          </button>
+          </a>
 
-          <button class="service-pill-btn" role="tab" aria-selected="false" data-service="storymaker" id="tab-storymaker">
+          <a href="https://wa.me/5542988640610?text=Ol%C3%A1%20Pedro!%20Gostaria%20de%20contratar%20a%20cobertura%20*Story%20Maker*%20para%20o%20meu%20evento.%20Est%C3%A1%20com%20a%20agenda%20aberta%3F" target="_blank" rel="noopener noreferrer" class="service-pill-btn" data-service="storymaker" id="tab-storymaker">
             <div class="service-btn-header">
               <span class="service-btn-title">Story Maker</span>
               <span class="service-btn-arrow" aria-hidden="true">↗</span>
             </div>
             <p class="service-btn-desc">Registros espontâneos de eventos e momentos especiais.</p>
-          </button>
+          </a>
 
-          <button class="service-pill-btn" role="tab" aria-selected="false" data-service="videomaker" id="tab-videomaker">
+          <a href="https://wa.me/5542988640610?text=Ol%C3%A1%20Pedro!%20Gostaria%20de%20um%20or%C3%A7amento%20para%20*Produ%C3%A7%C3%A3o%20de%20v%C3%ADdeos*%20profissionais.%20Podemos%20conversar%3F" target="_blank" rel="noopener noreferrer" class="service-pill-btn" data-service="videomaker" id="tab-videomaker">
             <div class="service-btn-header">
               <span class="service-btn-title">Produção de vídeos</span>
               <span class="service-btn-arrow" aria-hidden="true">↗</span>
             </div>
             <p class="service-btn-desc">Captação e edição de vídeos profissionais.</p>
-          </button>
+          </a>
 
-          <button class="service-pill-btn" role="tab" aria-selected="false" data-service="captacao-imobiliaria" id="tab-captacao-imobiliaria">
+          <a href="https://wa.me/5542988640610?text=Ol%C3%A1%20Pedro!%20Tenho%20interesse%20no%20servi%C3%A7o%20de%20*Capta%C3%A7%C3%A3o%20imobili%C3%A1ria*%20para%20apresenta%C3%A7%C3%A3o%20de%20im%C3%B3veis.%20Podemos%20conversar%3F" target="_blank" rel="noopener noreferrer" class="service-pill-btn" data-service="captacao-imobiliaria" id="tab-captacao-imobiliaria">
             <div class="service-btn-header">
               <span class="service-btn-title">Captação imobiliária</span>
               <span class="service-btn-arrow" aria-hidden="true">↗</span>
             </div>
             <p class="service-btn-desc">Vídeos e imagens para apresentação de imóveis.</p>
-          </button>
+          </a>
 
-          <button class="service-pill-btn" role="tab" aria-selected="false" data-service="fotografia" id="tab-fotografia">
+          <a href="https://wa.me/5542988640610?text=Ol%C3%A1%20Pedro!%20Tenho%20interesse%20em%20agendar%20um%20*Ensaio%20mobile*.%20Quais%20s%C3%A3o%20as%20pr%C3%B3ximas%20datas%20dispon%C3%ADveis%3F" target="_blank" rel="noopener noreferrer" class="service-pill-btn" data-service="fotografia" id="tab-fotografia">
             <div class="service-btn-header">
               <span class="service-btn-title">Ensaios mobile</span>
               <span class="service-btn-arrow" aria-hidden="true">↗</span>
             </div>
             <p class="service-btn-desc">Vídeo e fotografias criativas com olhar profissional.</p>
-          </button>
-        </div>
-
-        <!-- Dynamic Service Showcase Card (Reference 3) -->
-        <div class="service-display-card glass-card" id="serviceCard">
-          <div class="card-ambient-backdrop" id="cardBackdrop"></div>
-          
-          <div class="service-card-body">
-            <div class="service-icon-badge" id="serviceIconBadge">
-              <i class="fa-solid fa-hashtag"></i>
-            </div>
-            <h3 class="service-card-title" id="serviceTitle">Gestão de Instagram</h3>
-            <p class="service-card-desc" id="serviceDescription">
-              Criação e gestão de conteúdo para redes sociais, do planejamento à produção, unindo estratégia, audiovisual e criatividade para transformar ideias em conteúdo que comunica.
-            </p>
-
-            <div class="service-features" id="serviceFeatures">
-              <div class="feature-item"><i class="fa-solid fa-check"></i> Planejamento estratégico mensal</div>
-              <div class="feature-item"><i class="fa-solid fa-check"></i> Roteirização e captação de vídeos dinâmicos</div>
-              <div class="feature-item"><i class="fa-solid fa-check"></i> Edição com sound design e legendas dinâmicas</div>
-              <div class="feature-item"><i class="fa-solid fa-check"></i> Relatório de métricas e alcance</div>
-            </div>
-
-            <div class="service-pricing-box">
-              <span class="pricing-label" id="pricingType">Investimento mensal</span>
-              <div class="pricing-value-row">
-                <span class="currency">R$</span>
-                <span class="price-number" id="servicePrice">400,00</span>
-              </div>
-              <span class="pricing-sub" id="pricingSubtext">ou sob demanda personalizada</span>
-            </div>
-
-            <div class="service-cta-container">
-              <span class="contact-hint">Entre em contato</span>
-              <a href="#" target="_blank" rel="noopener noreferrer" class="whatsapp-cta-btn" id="serviceWhatsappBtn">
-                <i class="fa-brands fa-whatsapp"></i>
-                <span>Clique aqui</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- INTERACTIVE BUDGET CALCULATOR -->
-      <section class="calculator-section glass-card" id="orcamento">
-        <div class="section-header">
-          <span class="section-tag">SIMULE ONLINE</span>
-          <h2 class="section-title">Calculadora de Investimento</h2>
-          <p class="section-subtitle">Monte seu combo ideal e receba uma proposta personalizada na hora:</p>
-        </div>
-
-        <div class="calculator-grid">
-          <div class="calc-options-group">
-            <label class="calc-option">
-              <input type="checkbox" name="calc-addon" value="400" data-name="Social Media Completo" checked>
-              <div class="calc-option-box">
-                <div class="option-info">
-                  <span class="option-title">Social Media Mensal</span>
-                  <span class="option-desc">Gestão, roteiro, postagens & reels semanais</span>
-                </div>
-                <span class="option-price">+ R$ 400</span>
-              </div>
-            </label>
-
-            <label class="calc-option">
-              <input type="checkbox" name="calc-addon" value="350" data-name="Storymaker em Eventos">
-              <div class="calc-option-box">
-                <div class="option-info">
-                  <span class="option-title">Cobertura Storymaker (Evento)</span>
-                  <span class="option-desc">Cobertura em tempo real com entrega imediata</span>
-                </div>
-                <span class="option-price">+ R$ 350</span>
-              </div>
-            </label>
-
-            <label class="calc-option">
-              <input type="checkbox" name="calc-addon" value="300" data-name="Vídeo Comercial 4K">
-              <div class="calc-option-box">
-                <div class="option-info">
-                  <span class="option-title">Reel / Comercial Cinematográfico 4K</span>
-                  <span class="option-desc">Captação com gimbal, iluminação de estúdio & drone</span>
-                </div>
-                <span class="option-price">+ R$ 300</span>
-              </div>
-            </label>
-
-            <label class="calc-option">
-              <input type="checkbox" name="calc-addon" value="250" data-name="Ensaio Fotográfico Mobile/Pro">
-              <div class="calc-option-box">
-                <div class="option-info">
-                  <span class="option-title">Ensaio Fotográfico de Marca/Perfil</span>
-                  <span class="option-desc">20 fotos tratadas em alta resolução</span>
-                </div>
-                <span class="option-price">+ R$ 250</span>
-              </div>
-            </label>
-          </div>
-
-          <div class="calc-summary-card">
-            <span class="summary-label">Estimativa do Combo</span>
-            <div class="summary-total">
-              <span class="currency">R$</span>
-              <span class="total-value" id="calcTotalValue">400,00</span>
-            </div>
-            <p class="summary-note">*Valores base sujeitos a ajuste de deslocamento e escopo detalhado.</p>
-            <button type="button" class="btn-primary full-width" id="btnApplyCombo">
-              <i class="fa-brands fa-whatsapp"></i>
-              <span>Solicitar Este Combo no WhatsApp</span>
-            </button>
-          </div>
+          </a>
         </div>
       </section>
 
@@ -510,7 +389,7 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- Scripts -->
-  <script type="module" src="assets/js/firebase-config.js?v=4.6"></script>
-  <script type="module" src="assets/js/app.js?v=4.6"></script>
+  <script type="module" src="assets/js/firebase-config.js?v=4.7"></script>
+  <script type="module" src="assets/js/app.js?v=4.7"></script>
 </body>
 </html>

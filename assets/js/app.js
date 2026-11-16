@@ -57,87 +57,28 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 /**
- * 1. Dynamic Services Showcase & Pill Navigation (Quadro 1)
+ * 1. Dynamic Services Showcase (Editorial Cards -> Direct Redirect)
  */
 async function initServicesShowcase() {
   const navContainer = document.getElementById("servicesNav");
-  const card = document.getElementById("serviceCard");
-  const titleEl = document.getElementById("serviceTitle");
-  const descEl = document.getElementById("serviceDescription");
-  const iconBadgeEl = document.getElementById("serviceIconBadge");
-  const featuresEl = document.getElementById("serviceFeatures");
-  const priceTypeEl = document.getElementById("pricingType");
-  const priceEl = document.getElementById("servicePrice");
-  const subtextEl = document.getElementById("pricingSubtext");
-  const waBtn = document.getElementById("serviceWhatsappBtn");
+  if (!navContainer) return;
 
   const services = await getServicesConfig();
   if (!services || services.length === 0) return;
 
-  // Render Editorial Card Buttons dynamically
-  if (navContainer) {
-    navContainer.innerHTML = services.map((s, idx) => `
-      <button class="service-pill-btn ${idx === 0 ? 'active' : ''}" role="tab" aria-selected="${idx === 0}" data-service="${s.id}" id="tab-${s.id}">
+  navContainer.innerHTML = services.map((s) => {
+    const msg = s.whatsappText || `Olá Pedro! Tenho interesse no serviço de *${s.title}*. Podemos conversar?`;
+    const url = s.redirectUrl || `https://wa.me/${STUDIO_CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+    return `
+      <a href="${url}" target="_blank" rel="noopener noreferrer" class="service-pill-btn" data-service="${s.id}" id="tab-${s.id}">
         <div class="service-btn-header">
           <span class="service-btn-title">${s.title}</span>
           <span class="service-btn-arrow" aria-hidden="true">↗</span>
         </div>
         <p class="service-btn-desc">${s.shortDesc || s.description || ''}</p>
-      </button>
-    `).join("");
-  }
-
-  function renderService(serviceKey, shouldScroll = false) {
-    const data = services.find(s => s.id === serviceKey) || services[0];
-    if (!data) return;
-
-    // Smooth card transition
-    card.style.opacity = "0.4";
-    card.style.transform = "translateY(8px)";
-
-    setTimeout(() => {
-      titleEl.textContent = data.title;
-      descEl.textContent = data.description;
-      iconBadgeEl.innerHTML = `<i class="fa-solid ${data.icon || 'fa-star'}"></i>`;
-      priceTypeEl.textContent = data.pricingType || "Investimento";
-      priceEl.textContent = data.price;
-      subtextEl.textContent = data.subtext || "";
-
-      featuresEl.innerHTML = (data.features || [])
-        .map(feat => `<div class="feature-item"><i class="fa-solid fa-check"></i> ${feat}</div>`)
-        .join("");
-
-      const msg = data.whatsappText || `Olá Pedro! Tenho interesse no serviço de *${data.title}* (R$ ${data.price}). Podemos conversar?`;
-      const waUrl = `https://wa.me/${STUDIO_CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`;
-      waBtn.href = waUrl;
-
-      card.style.opacity = "1";
-      card.style.transform = "translateY(0)";
-
-      if (shouldScroll && card) {
-        card.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    }, 150);
-  }
-
-  const pills = navContainer.querySelectorAll(".service-pill-btn");
-  pills.forEach(pill => {
-    pill.addEventListener("click", () => {
-      pills.forEach(p => {
-        p.classList.remove("active");
-        p.setAttribute("aria-selected", "false");
-      });
-
-      pill.classList.add("active");
-      pill.setAttribute("aria-selected", "true");
-
-      const serviceId = pill.getAttribute("data-service");
-      renderService(serviceId, true);
-    });
-  });
-
-  // Render first item without auto-scrolling
-  renderService(services[0].id, false);
+      </a>
+    `;
+  }).join("");
 }
 
 /**
