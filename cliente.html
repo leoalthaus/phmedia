@@ -203,15 +203,28 @@
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       accounts = await getClientAccounts();
-      const code = codeInput.value.trim().toUpperCase();
+      const rawAccess = codeInput.value.trim();
+      const accessLower = rawAccess.toLowerCase();
       const pass = passInput.value.trim();
 
+      const customAdminEmail = (localStorage.getItem("phmedia_custom_admin_email") || "").trim().toLowerCase();
+      const customPin = localStorage.getItem("phmedia_custom_pin");
+      const defaultAdmins = ["admin@phmedia.com", "admin", "pedro@phmedia.com", "phmedia"];
+      if ((defaultAdmins.includes(accessLower) || (customAdminEmail && accessLower === customAdminEmail)) && (pass === "1234" || (customPin && pass === customPin))) {
+        sessionStorage.setItem("phmedia_admin_auth", "true");
+        window.location.href = "admin.html";
+        return;
+      }
+
       const match = accounts.find(
-        a => (a.accessCode || "").toUpperCase() === code && String(a.password || "") === pass
+        a => (
+          ((a.clientEmail || "").trim().toLowerCase() === accessLower && accessLower.length > 0) ||
+          ((a.accessCode || "").trim().toLowerCase() === accessLower && accessLower.length > 0)
+        ) && String(a.password || "") === pass
       );
 
       if (!match) {
-        alert("Código do ensaio ou senha inválidos. Verifique os dados enviados pelo Pedro.");
+        alert("E-mail/código ou senha inválidos. Verifique os dados enviados pelo Pedro.");
         return;
       }
 

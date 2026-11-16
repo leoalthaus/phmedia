@@ -622,6 +622,7 @@ export const DEFAULT_CLIENT_ACCOUNTS = [
   {
     id: "cli_demo",
     clientName: "Cliente Exemplo",
+    clientEmail: "cliente@email.com",
     accessCode: "ENSAIO2026",
     password: "123",
     galleryTitle: "Ensaio Editorial Exclusivo",

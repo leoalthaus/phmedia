@@ -17,13 +17,17 @@ import {
 } from "./firebase-config.js";
 
 const DEFAULT_PIN = "1234";
+const DEFAULT_ADMIN_EMAILS = ["admin@phmedia.com", "admin", "pedro@phmedia.com", "phmedia"];
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const loginView = document.getElementById("adminLoginView");
   const dashboardView = document.getElementById("adminDashboardView");
+  const clientPortalView = document.getElementById("clientPortalDashboardView");
   const loginForm = document.getElementById("adminLoginForm");
+  const accessInput = document.getElementById("loginAccessInput");
   const pinInput = document.getElementById("adminPin");
   const logoutBtn = document.getElementById("adminLogoutBtn");
+  const clientLogoutBtn = document.getElementById("portalClientLogoutBtn");
 
   let currentServices = [];
   let currentPortfolio = [];
@@ -31,32 +35,119 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentFaqs = [];
   let currentClientAccounts = [];
 
-  // Check login session
+  // Preload client accounts for instant login check
+  currentClientAccounts = await getClientAccounts();
+
+  // Check active session (Admin or Client)
   if (sessionStorage.getItem("phmedia_admin_auth") === "true") {
     showDashboard();
+  } else if (sessionStorage.getItem("phmedia_client_auth_id")) {
+    const savedId = sessionStorage.getItem("phmedia_client_auth_id");
+    const matchedClient = currentClientAccounts.find(c => c.id === savedId);
+    if (matchedClient) {
+      showClientPortal(matchedClient);
+    }
   }
 
   if (loginForm) {
-    loginForm.addEventListener("submit", (e) => {
+    loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const pin = pinInput.value.trim();
+      const rawAccess = (accessInput?.value || "").trim();
+      const accessLower = rawAccess.toLowerCase();
+      const pin = (pinInput?.value || "").trim();
+
+      const customAdminEmail = (localStorage.getItem("phmedia_custom_admin_email") || "").trim().toLowerCase();
       const customPin = localStorage.getItem("phmedia_custom_pin");
-      if (pin === DEFAULT_PIN || (customPin && pin === customPin)) {
+
+      const isAdminUser =
+        DEFAULT_ADMIN_EMAILS.includes(accessLower) ||
+        (customAdminEmail && accessLower === customAdminEmail);
+      const isValidAdminPin = pin === DEFAULT_PIN || (customPin && pin === customPin);
+
+      // 1. Check Admin Login
+      if (isAdminUser && isValidAdminPin) {
+        sessionStorage.removeItem("phmedia_client_auth_id");
         sessionStorage.setItem("phmedia_admin_auth", "true");
         showDashboard();
-      } else {
-        alert("Senha incorreta! A senha padrão é 1234.");
-        pinInput.value = "";
+        return;
       }
+
+      // 2. Check Client Account Login (by E-mail or Access Code)
+      currentClientAccounts = await getClientAccounts();
+      const matchedClient = currentClientAccounts.find(c => {
+        const emailMatch = (c.clientEmail || "").trim().toLowerCase() === accessLower && accessLower.length > 0;
+        const codeMatch = (c.accessCode || "").trim().toLowerCase() === accessLower && accessLower.length > 0;
+        const passMatch = String(c.password || "").trim() === pin;
+        return (emailMatch || codeMatch) && passMatch;
+      });
+
+      if (matchedClient) {
+        sessionStorage.removeItem("phmedia_admin_auth");
+        sessionStorage.setItem("phmedia_client_auth_id", matchedClient.id);
+        showClientPortal(matchedClient);
+        return;
+      }
+
+      alert("E-mail/Acesso ou senha incorretos! Verifique seus dados e tente novamente.");
+      pinInput.value = "";
     });
   }
 
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
       sessionStorage.removeItem("phmedia_admin_auth");
-      loginView.classList.remove("hidden");
       dashboardView.classList.add("hidden");
+      if (clientPortalView) clientPortalView.classList.add("hidden");
+      loginView.classList.remove("hidden");
     });
+  }
+
+  if (clientLogoutBtn) {
+    clientLogoutBtn.addEventListener("click", () => {
+      sessionStorage.removeItem("phmedia_client_auth_id");
+      if (clientPortalView) clientPortalView.classList.add("hidden");
+      dashboardView.classList.add("hidden");
+      loginView.classList.remove("hidden");
+      if (accessInput) accessInput.value = "";
+      if (pinInput) pinInput.value = "";
+    });
+  }
+
+  function showClientPortal(account) {
+    loginView.classList.add("hidden");
+    dashboardView.classList.add("hidden");
+    if (!clientPortalView) return;
+    clientPortalView.classList.remove("hidden");
+
+    document.getElementById("portalClientDate").textContent = account.eventDate || "ENSAIO EXCLUSIVO";
+    document.getElementById("portalClientGalleryTitle").textContent = account.galleryTitle || "Seu Ensaio Fotográfico";
+    document.getElementById("portalClientWelcome").textContent = `Olá, ${account.clientName}! Confira e baixe suas fotos em alta resolução abaixo.`;
+
+    const dlAllBtn = document.getElementById("portalClientDownloadAllBtn");
+    if (dlAllBtn) {
+      if (account.downloadUrl && account.downloadUrl.trim().length > 0) {
+        dlAllBtn.href = account.downloadUrl;
+        dlAllBtn.classList.remove("hidden");
+      } else {
+        dlAllBtn.classList.add("hidden");
+      }
+    }
+
+    const grid = document.getElementById("portalClientPhotosGrid");
+    const photos = Array.isArray(account.photos) ? account.photos : [];
+    if (grid) {
+      grid.innerHTML = photos.map((src, idx) => `
+        <div style="position: relative; border-radius: 14px; overflow: hidden; background: #18181b; aspect-ratio: 4/5; box-shadow: 0 8px 22px rgba(0,0,0,0.12);">
+          <img src="${src}" alt="Foto ${idx + 1}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+          <div style="position: absolute; inset: auto 0 0 0; padding: 12px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); display: flex; justify-content: flex-end;">
+            <a href="${src}" download="PHMedia-${(account.accessCode || 'Ensaio')}-${idx + 1}.jpg" style="padding: 7px 12px; border-radius: 8px; background: #ffffff; color: #000000; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-download"></i>
+              <span>Baixar Foto #${idx + 1}</span>
+            </a>
+          </div>
+        </div>
+      `).join("");
+    }
   }
 
   // Tab switching
@@ -638,6 +729,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cards.forEach((card, index) => {
       if (!currentClientAccounts[index]) return;
       currentClientAccounts[index].clientName = card.querySelector(".cli-name")?.value.trim() || "Cliente";
+      currentClientAccounts[index].clientEmail = (card.querySelector(".cli-email")?.value.trim() || "").toLowerCase();
       currentClientAccounts[index].galleryTitle = card.querySelector(".cli-title")?.value.trim() || "Ensaio Fotográfico";
       currentClientAccounts[index].eventDate = card.querySelector(".cli-date")?.value.trim() || "";
       currentClientAccounts[index].accessCode = (card.querySelector(".cli-code")?.value.trim() || "").toUpperCase();
@@ -672,11 +764,11 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="admin-edit-card" data-index="${index}" style="background: #ffffff; border: 2px solid #e4e4e7; border-radius: 16px; padding: 20px;">
           <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1.5px solid #f0f0f2;">
             <div>
-              <span style="font-weight: 800; font-size: 15px; color: #000;">Conta Cliente #${index + 1}</span>
+              <span style="font-weight: 800; font-size: 15px; color: #000;">Acesso Cliente #${index + 1}</span>
               <span style="display: inline-block; margin-left: 8px; padding: 2px 8px; background: #dbeafe; color: #1e40af; border-radius: 6px; font-weight: 700; font-size: 11.5px;">${count} foto(s) no ensaio</span>
             </div>
             <button type="button" class="btn-action btn-delete-client" data-index="${index}" style="color: #dc2626; border-color: #fecaca; background: #fef2f2;">
-              <i class="fa-solid fa-trash"></i> <span>Excluir Conta</span>
+              <i class="fa-solid fa-trash"></i> <span>Excluir Acesso</span>
             </button>
           </div>
 
@@ -696,14 +788,20 @@ document.addEventListener("DOMContentLoaded", () => {
             <input type="text" class="cli-title" value="${escapeHtml(cli.galleryTitle)}" placeholder="Ex: Ensaio Pessoal & Retratos">
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f8f9fa; padding: 12px; border-radius: 10px; border: 1px solid #e4e4e7;">
+          <div style="display: flex; flex-direction: column; gap: 10px; background: #f8f9fa; padding: 12px; border-radius: 10px; border: 1px solid #e4e4e7;">
             <div class="admin-input-group">
-              <label style="color: #000;"><i class="fa-solid fa-user-tag"></i> Login / Código de Acesso</label>
-              <input type="text" class="cli-code" value="${escapeHtml(cli.accessCode)}" placeholder="Ex: ANA2026" style="font-weight: 800; text-transform: uppercase;">
+              <label style="color: #000;"><i class="fa-solid fa-envelope"></i> E-mail de Login do Cliente</label>
+              <input type="email" class="cli-email" value="${escapeHtml(cli.clientEmail || '')}" placeholder="Ex: cliente@email.com" style="font-weight: 700;">
             </div>
-            <div class="admin-input-group">
-              <label style="color: #000;"><i class="fa-solid fa-lock"></i> Senha do Cliente</label>
-              <input type="text" class="cli-pass" value="${escapeHtml(cli.password)}" placeholder="Ex: 1234" style="font-weight: 700;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div class="admin-input-group">
+                <label style="color: #000;"><i class="fa-solid fa-user-tag"></i> Código Alternativo</label>
+                <input type="text" class="cli-code" value="${escapeHtml(cli.accessCode)}" placeholder="Ex: ANA2026" style="font-weight: 800; text-transform: uppercase;">
+              </div>
+              <div class="admin-input-group">
+                <label style="color: #000;"><i class="fa-solid fa-lock"></i> Senha do Cliente</label>
+                <input type="text" class="cli-pass" value="${escapeHtml(cli.password)}" placeholder="Ex: 1234" style="font-weight: 700;">
+              </div>
             </div>
           </div>
 
@@ -789,6 +887,7 @@ document.addEventListener("DOMContentLoaded", () => {
       currentClientAccounts.push({
         id: "cli_" + Date.now(),
         clientName: "Novo Cliente",
+        clientEmail: `cliente${randomNum}@email.com`,
         accessCode: `ENSAIO${randomNum}`,
         password: "1234",
         galleryTitle: "Ensaio Fotográfico PH Media",
@@ -806,26 +905,38 @@ document.addEventListener("DOMContentLoaded", () => {
     btnSaveClients.addEventListener("click", async () => {
       syncClientsInputsFromDOM();
       await saveClientAccounts(currentClientAccounts);
-      alert("✅ Contas de clientes e ensaios salvos com sucesso! Os clientes já podem acessar em cliente.html.");
+      alert("✅ Acessos de clientes e ensaios salvos com sucesso! O cliente já pode entrar pelo mesmo botão de login do site.");
       await loadClientsData();
     });
   }
 
   // =========================================================================
-  // 6. ALTERAR SENHA DO ADMINISTRADOR
+  // 6. ALTERAR CREDENCIAIS DO ADMINISTRADOR (E-MAIL + SENHA)
   // =========================================================================
+  const newAdminEmailInput = document.getElementById("newAdminEmailInput");
+  if (newAdminEmailInput) {
+    newAdminEmailInput.value = localStorage.getItem("phmedia_custom_admin_email") || "admin@phmedia.com";
+  }
+
   const btnSaveNewPin = document.getElementById("btnSaveNewPin");
   if (btnSaveNewPin) {
     btnSaveNewPin.addEventListener("click", () => {
+      const emailVal = (document.getElementById("newAdminEmailInput")?.value || "").trim().toLowerCase();
       const newPinInput = document.getElementById("newAdminPinInput");
       const newPin = newPinInput?.value.trim() || "";
-      if (newPin.length < 3) {
-        alert("Digite uma senha com pelo menos 3 caracteres.");
-        return;
+
+      if (emailVal) {
+        localStorage.setItem("phmedia_custom_admin_email", emailVal);
       }
-      localStorage.setItem("phmedia_custom_pin", newPin);
-      newPinInput.value = "";
-      alert("✅ Nova senha de administrador salva com sucesso!");
+      if (newPin.length > 0) {
+        if (newPin.length < 3) {
+          alert("A nova senha deve ter pelo menos 3 caracteres.");
+          return;
+        }
+        localStorage.setItem("phmedia_custom_pin", newPin);
+        newPinInput.value = "";
+      }
+      alert("✅ Credenciais de Administrador atualizadas com sucesso!");
     });
   }
 

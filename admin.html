@@ -191,23 +191,39 @@
 </head>
 <body class="light-theme">
 
-  <!-- Admin Login Screen -->
-  <div class="login-box glass-card" id="adminLoginView">
-    <div class="brand-logo" style="justify-content: center; margin-bottom: 20px;">
-      <img src="assets/images/logo.png" alt="PH Media" style="height: 48px;">
+  <!-- Unified Login Screen (Admin or Client by E-mail/Access) -->
+  <div class="login-box glass-card" id="adminLoginView" style="max-width: 410px; margin: 64px auto; padding: 30px 24px;">
+    <div class="brand-logo" style="justify-content: center; margin-bottom: 18px;">
+      <img src="assets/images/logo.png?v=3.6" alt="PH Media" style="height: 44px; mix-blend-mode: multiply;">
     </div>
-    <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 6px; color: #000;">Painel de Controle</h3>
-    <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">Digite a senha de administrador (Padrão: 1234):</p>
+    <h3 style="font-family: var(--font-heading); font-size: 22px; font-weight: 800; margin-bottom: 6px; color: #000;">Portal de Acesso</h3>
+    <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">Digite seu <strong>E-mail / Acesso</strong> e sua <strong>Senha</strong> para entrar (Cliente ou Administrador):</p>
     
-    <form id="adminLoginForm">
-      <div class="input-wrap" style="margin-bottom: 16px;">
-        <i class="fa-solid fa-key"></i>
-        <input type="password" id="adminPin" placeholder="Senha do Administrador" required autocomplete="current-password">
+    <form id="adminLoginForm" style="display: flex; flex-direction: column; gap: 12px; text-align: left;">
+      <div class="form-group">
+        <label for="loginAccessInput">E-mail ou Código de Acesso</label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-envelope"></i>
+          <input type="text" id="loginAccessInput" placeholder="Ex: seuemail@email.com ou admin@phmedia.com" required autocomplete="username">
+        </div>
       </div>
-      <button type="submit" class="btn-primary full-width">
+
+      <div class="form-group">
+        <label for="adminPin">Senha</label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-key"></i>
+          <input type="password" id="adminPin" placeholder="Sua senha de acesso" required autocomplete="current-password">
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary full-width" style="margin-top: 6px;">
         <i class="fa-solid fa-arrow-right-to-bracket"></i>
-        <span>Entrar no Painel</span>
+        <span>Entrar na Conta</span>
       </button>
+
+      <a href="index.html" style="text-align: center; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); text-decoration: none; margin-top: 6px;">
+        ← Voltar para o site principal
+      </a>
     </form>
   </div>
 
@@ -364,17 +380,17 @@
       <div id="clientsView" class="admin-tab-content hidden">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
           <div>
-            <h3 style="font-size: 18px; font-weight: 800; color: #000;">Contas de Clientes • Entrega de Ensaios Privados</h3>
-            <p style="font-size: 13px; color: var(--text-secondary);">Crie logins exclusivos (código + senha) para seus clientes acessarem e baixarem as fotos dos ensaios em <strong>cliente.html</strong></p>
+            <h3 style="font-size: 18px; font-weight: 800; color: #000;">Contas de Clientes • Criar, Editar ou Excluir Acessos</h3>
+            <p style="font-size: 13px; color: var(--text-secondary);">Cadastre o <strong>E-mail (ou código de acesso)</strong> e a <strong>Senha</strong> de cada cliente. Quando ele fizer login no mesmo botão de acesso do site, será levado automaticamente para o ensaio dele.</p>
           </div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button id="btnAddClientAccount" class="btn-action">
               <i class="fa-solid fa-user-plus"></i>
-              <span>Nova Conta / Ensaio de Cliente</span>
+              <span>Criar Novo Acesso de Cliente</span>
             </button>
             <button id="btnSaveClients" class="btn-primary">
               <i class="fa-solid fa-floppy-disk"></i>
-              <span>Salvar Contas de Clientes</span>
+              <span>Salvar Acessos de Clientes</span>
             </button>
           </div>
         </div>
@@ -384,19 +400,23 @@
         </div>
       </div>
 
-      <!-- TAB 6: SENHA ADMIN -->
+      <!-- TAB 6: CREDENCIAIS DO ADMIN -->
       <div id="securityView" class="admin-tab-content hidden">
-        <div style="max-width: 460px;">
-          <h3 style="font-size: 18px; font-weight: 800; color: #000; margin-bottom: 6px;">Alterar Senha do Administrador</h3>
-          <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">Defina uma nova senha personalizada para acessar este painel:</p>
+        <div style="max-width: 480px;">
+          <h3 style="font-size: 18px; font-weight: 800; color: #000; margin-bottom: 6px;">Credenciais do Administrador</h3>
+          <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">Configure o seu E-mail de Administrador (Padrão: <strong>admin@phmedia.com</strong> ou <strong>admin</strong>) e sua Senha (Padrão: <strong>1234</strong>):</p>
           <div class="admin-edit-card">
             <div class="admin-input-group">
-              <label>Nova Senha de Acesso</label>
+              <label>E-mail / Login do Administrador</label>
+              <input type="text" id="newAdminEmailInput" placeholder="Ex: pedro@phmedia.com">
+            </div>
+            <div class="admin-input-group">
+              <label>Nova Senha do Administrador</label>
               <input type="password" id="newAdminPinInput" placeholder="Digite a nova senha">
             </div>
             <button type="button" id="btnSaveNewPin" class="btn-primary">
               <i class="fa-solid fa-key"></i>
-              <span>Atualizar Senha</span>
+              <span>Salvar Credenciais de Admin</span>
             </button>
           </div>
         </div>
@@ -406,6 +426,37 @@
 
   </div>
 
-  <script type="module" src="assets/js/admin.js?v=5.0"></script>
+  <!-- Client Gallery View Inside Unified Portal -->
+  <div class="admin-container hidden" id="clientPortalDashboardView">
+    <div class="admin-card">
+      <div class="admin-header" style="flex-wrap: wrap; gap: 14px;">
+        <div>
+          <span id="portalClientDate" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted);">ENSAIO EXCLUSIVO</span>
+          <h1 class="admin-title" id="portalClientGalleryTitle" style="margin-top: 2px;">Galeria do Cliente</h1>
+          <p id="portalClientWelcome" style="font-size: 13.5px; color: var(--text-secondary);">Olá! Confira e baixe as fotos do seu ensaio abaixo.</p>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <a id="portalClientDownloadAllBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn-primary hidden">
+            <i class="fa-solid fa-cloud-arrow-down"></i>
+            <span>Baixar Ensaio Completo (Alta Resolução)</span>
+          </a>
+          <a href="index.html" class="btn-action">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Voltar ao Site</span>
+          </a>
+          <button type="button" id="portalClientLogoutBtn" class="btn-action" style="color: #b91c1c;">
+            <i class="fa-solid fa-power-off"></i>
+            <span>Sair da Conta</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="portalClientPhotosGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-top: 16px;">
+        <!-- Client photos rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="assets/js/admin.js?v=5.1"></script>
 </body>
 </html>
