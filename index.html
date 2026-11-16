@@ -30,7 +30,7 @@
 
   <!-- Font Awesome Icons & Custom Stylesheet -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="assets/css/style.css?v=4.8">
+  <link rel="stylesheet" href="assets/css/style.css?v=4.9">
 </head>
 <body class="light-theme">
 
@@ -48,7 +48,7 @@
           <a href="https://www.instagram.com/phmedia.br?stkn=bnYxbzBpYTVlNGl6" target="_blank" rel="noopener noreferrer" class="icon-btn" title="Instagram" aria-label="Instagram">
             <i class="fa-brands fa-instagram"></i>
           </a>
-          <a href="#contato" class="btn-sm btn-glass">
+          <a href="#servicos" class="btn-sm btn-glass">
             <span>Orçamento</span>
           </a>
           <a href="admin.html" class="icon-btn admin-link" title="Painel Admin" aria-label="Painel Administrativo">
@@ -238,62 +238,6 @@
             <span class="feedback-author">Cliente Satisfeita</span>
           </article>
         </div>
-      </section>
-
-      <!-- CONTACT & LEAD CAPTURE (Integrated with Firebase Firestore) -->
-      <section class="contact-section glass-card" id="contato">
-        <div class="section-header">
-          <span class="section-tag">VAMOS CRIAR JUNTOS?</span>
-          <h2 class="section-title">Solicitar Proposta</h2>
-          <p class="section-subtitle">Preencha os dados abaixo que entraremos em contato com você o quanto antes:</p>
-        </div>
-
-        <form class="lead-form" id="leadForm">
-          <div class="form-group">
-            <label for="leadName">Seu Nome / Marca</label>
-            <div class="input-wrap">
-              <i class="fa-solid fa-user"></i>
-              <input type="text" id="leadName" name="name" placeholder="Ex: João da Silva / Loja XYZ" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="leadPhone">Seu WhatsApp (com DDD)</label>
-            <div class="input-wrap">
-              <i class="fa-brands fa-whatsapp"></i>
-              <input type="tel" id="leadPhone" name="phone" placeholder="(42) 99999-9999" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="leadService">Serviço Desejado</label>
-            <div class="input-wrap">
-              <i class="fa-solid fa-layer-group"></i>
-              <select id="leadService" name="service" required>
-                <option value="Social Media Mensal">Social Media Mensal (a partir de R$ 400)</option>
-                <option value="Videomaker / Comercial">Videomaker / Comercial 4K (a partir de R$ 650)</option>
-                <option value="Storymaker em Eventos">Storymaker em Eventos (a partir de R$ 350)</option>
-                <option value="Fotografia / Ensaio">Fotografia / Ensaio Profissional (a partir de R$ 300)</option>
-                <option value="Pacote Personalizado">Pacote Personalizado / Outros</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="leadMessage">Detalhes do Projeto (Opcional)</label>
-            <div class="input-wrap textarea-wrap">
-              <i class="fa-solid fa-comment-dots"></i>
-              <textarea id="leadMessage" name="message" rows="3" placeholder="Conte um pouco sobre sua ideia, datas ou necessidades..."></textarea>
-            </div>
-          </div>
-
-          <button type="submit" class="btn-primary full-width submit-lead-btn" id="submitLeadBtn">
-            <i class="fa-solid fa-paper-plane"></i>
-            <span>Enviar Solicitação</span>
-          </button>
-        </form>
-
-        <div class="form-feedback hidden" id="formFeedback"></div>
       </section>
 
       <!-- FAQ & DIFFERENTIALS ACCORDION -->
