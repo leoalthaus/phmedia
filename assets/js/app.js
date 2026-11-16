@@ -74,17 +74,20 @@ async function initServicesShowcase() {
   const services = await getServicesConfig();
   if (!services || services.length === 0) return;
 
-  // Render Pill Navigation dynamically
+  // Render Editorial Card Buttons dynamically
   if (navContainer) {
     navContainer.innerHTML = services.map((s, idx) => `
       <button class="service-pill-btn ${idx === 0 ? 'active' : ''}" role="tab" aria-selected="${idx === 0}" data-service="${s.id}" id="tab-${s.id}">
-        <i class="fa-solid ${s.icon || 'fa-star'}"></i>
-        <span>${s.title}</span>
+        <div class="service-btn-header">
+          <span class="service-btn-title">${s.title}</span>
+          <span class="service-btn-arrow" aria-hidden="true">↗</span>
+        </div>
+        <p class="service-btn-desc">${s.shortDesc || s.description || ''}</p>
       </button>
     `).join("");
   }
 
-  function renderService(serviceKey) {
+  function renderService(serviceKey, shouldScroll = false) {
     const data = services.find(s => s.id === serviceKey) || services[0];
     if (!data) return;
 
@@ -110,6 +113,10 @@ async function initServicesShowcase() {
 
       card.style.opacity = "1";
       card.style.transform = "translateY(0)";
+
+      if (shouldScroll && card) {
+        card.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
     }, 150);
   }
 
@@ -125,12 +132,12 @@ async function initServicesShowcase() {
       pill.setAttribute("aria-selected", "true");
 
       const serviceId = pill.getAttribute("data-service");
-      renderService(serviceId);
+      renderService(serviceId, true);
     });
   });
 
-  // Render first item
-  renderService(services[0].id);
+  // Render first item without auto-scrolling
+  renderService(services[0].id, false);
 }
 
 /**

@@ -138,7 +138,8 @@ export async function deleteLead(id) {
 export const DEFAULT_SERVICES = [
   {
     id: "social-media",
-    title: "SOCIAL MEDIA",
+    title: "Gestão de Instagram",
+    shortDesc: "Planejamento, criação e gerenciamento de conteúdo.",
     icon: "fa-hashtag",
     description: "Criação e gestão de conteúdo para redes sociais, do planejamento à produção, unindo estratégia, audiovisual e criatividade para transformar ideias em conteúdo que comunica.",
     features: [
@@ -150,27 +151,12 @@ export const DEFAULT_SERVICES = [
     pricingType: "Investimento mensal",
     price: "400,00",
     subtext: "ou pacote trimestral com condições especiais",
-    whatsappText: "Olá Pedro! Tenho interesse no serviço de *Social Media Mensal* (R$ 400,00) para minha marca. Como podemos iniciar?"
-  },
-  {
-    id: "videomaker",
-    title: "VIDEOMAKER",
-    icon: "fa-video",
-    description: "Captação, direção e edição de vídeos cinematográficos em alta definição (4K), comerciais para marcas, cobertura de lançamentos e reels com alta retenção.",
-    features: [
-      "Captação 4K com estabilização gimbal profissional",
-      "Iluminação de estúdio e captação de áudio sem fio",
-      "Color grading cinematográfico & efeitos visuais",
-      "Formatos otimizados para Reels, TikTok e YouTube"
-    ],
-    pricingType: "Investimento por projeto",
-    price: "650,00",
-    subtext: "diária de gravação inclusa",
-    whatsappText: "Olá Pedro! Gostaria de um orçamento para produção de vídeo *Videomaker Cinematográfico 4K*. Podemos conversar?"
+    whatsappText: "Olá Pedro! Tenho interesse no serviço de *Gestão de Instagram* (R$ 400,00) para minha marca. Como podemos iniciar?"
   },
   {
     id: "storymaker",
-    title: "STORYMAKER",
+    title: "Story Maker",
+    shortDesc: "Registros espontâneos de eventos e momentos especiais.",
     icon: "fa-bolt",
     description: "Cobertura em tempo real para eventos, inaugurações, bastidores e lançamentos de produtos com fotos e vídeos verticais dinâmicos e entrega imediata.",
     features: [
@@ -182,23 +168,58 @@ export const DEFAULT_SERVICES = [
     pricingType: "Investimento por evento",
     price: "350,00",
     subtext: "pacote base de até 4 horas de evento",
-    whatsappText: "Olá Pedro! Gostaria de contratar a cobertura *Storymaker em Tempo Real* para o meu evento. Está com a agenda aberta?"
+    whatsappText: "Olá Pedro! Gostaria de contratar a cobertura *Story Maker* para o meu evento. Está com a agenda aberta?"
+  },
+  {
+    id: "videomaker",
+    title: "Produção de vídeos",
+    shortDesc: "Captação e edição de vídeos profissionais.",
+    icon: "fa-video",
+    description: "Captação, direção e edição de vídeos cinematográficos em alta definição (4K), comerciais para marcas, cobertura de lançamentos e reels com alta retenção.",
+    features: [
+      "Captação 4K com estabilização gimbal profissional",
+      "Iluminação de estúdio e captação de áudio sem fio",
+      "Color grading cinematográfico & efeitos visuais",
+      "Formatos otimizados para Reels, TikTok e YouTube"
+    ],
+    pricingType: "Investimento por projeto",
+    price: "650,00",
+    subtext: "diária de gravação inclusa",
+    whatsappText: "Olá Pedro! Gostaria de um orçamento para *Produção de vídeos* profissionais. Podemos conversar?"
+  },
+  {
+    id: "captacao-imobiliaria",
+    title: "Captação imobiliária",
+    shortDesc: "Vídeos e imagens para apresentação de imóveis.",
+    icon: "fa-building",
+    description: "Produção audiovisual especializada para o mercado imobiliário, corretores, construtoras e arquitetos, destacando amplitude, iluminação e detalhes de alto padrão.",
+    features: [
+      "Tour dinâmico com estabilização fluida em 4K",
+      "Fotografia de arquitetura e interiores tratada",
+      "Edição rítmica para anúncios e Reels de alta conversão",
+      "Entrega ágil pronta para portais e redes sociais"
+    ],
+    pricingType: "Investimento por imóvel",
+    price: "450,00",
+    subtext: "pacote completo de vídeo + fotos do imóvel",
+    whatsappText: "Olá Pedro! Tenho interesse no serviço de *Captação imobiliária* para apresentação de imóveis. Podemos conversar?"
   },
   {
     id: "fotografia",
-    title: "FOTOGRAFIA & ENSAIOS",
+    title: "Ensaios mobile",
+    shortDesc: "Vídeo e fotografias criativas com olhar profissional.",
     icon: "fa-camera",
-    description: "Ensaios fotográficos conceituais para profissionais, marcas, produtos e eventos. Direção de poses e pós-produção refinada com identidade visual marcante.",
+    description: "Ensaios fotográficos e vídeos criativos para profissionais, marcas, produtos e retratos pessoais. Direção de poses e pós-produção refinada com estética autêntica.",
     features: [
       "Direção de poses e enquadramentos modernos",
-      "Até 25 fotos selecionadas com tratamento premium",
-      "Ensaio em estúdio ou locação externa",
-      "Galeria digital privada para download em alta resolução"
+      "Fotos selecionadas com tratamento de cor autoral",
+      "Reels de bastidores ou retrato em movimento incluso",
+      "Galeria digital privada em alta resolução"
     ],
     pricingType: "Investimento a partir de",
     price: "300,00",
-    subtext: "com pós-produção inclusa",
-    whatsappText: "Olá Pedro! Tenho interesse em agendar um *Ensaio Fotográfico / Fotos de Marca*. Quais são as próximas datas?"
+    subtext: "com direção e pós-produção inclusas",
+    whatsappText: "Olá Pedro! Tenho interesse em agendar um *Ensaio mobile*. Quais são as próximas datas disponíveis?"
   }
 ];
 
@@ -216,7 +237,7 @@ export async function getServicesConfig() {
     }
   }
 
-  const local = localStorage.getItem("phmedia_services");
+  const local = localStorage.getItem("phmedia_services_v2");
   return local ? JSON.parse(local) : DEFAULT_SERVICES;
 }
 
@@ -232,7 +253,7 @@ export async function saveServicesConfig(servicesArray) {
       console.warn("Firestore services save error:", e);
     }
   }
-  localStorage.setItem("phmedia_services", JSON.stringify(servicesArray));
+  localStorage.setItem("phmedia_services_v2", JSON.stringify(servicesArray));
   return true;
 }
 

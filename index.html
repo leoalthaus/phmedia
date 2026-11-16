@@ -25,12 +25,12 @@
   <link rel="preload" as="image" href="assets/images/logo.png?v=3.6" fetchpriority="high">
   <link rel="preload" as="image" href="assets/images/pedro.jpg?v=3.4" fetchpriority="high">
 
-  <!-- Google Fonts: Plus Jakarta Sans & Space Grotesk -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Plus Jakarta Sans, Space Grotesk & Cormorant Garamond -->
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 
   <!-- Font Awesome Icons & Custom Stylesheet -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="assets/css/style.css?v=4.5">
+  <link rel="stylesheet" href="assets/css/style.css?v=4.6">
 </head>
 <body class="light-theme">
 
@@ -106,31 +106,54 @@
         </div>
       </section>
 
-      <!-- SERVICES SELECTOR & CARDS (Matches Reference 2 & 3 with Dynamic Tabs & Animations) -->
+      <!-- SERVICES SELECTOR & CARDS (Editorial Dark Redirect Cards + Detail View) -->
       <section class="services-section" id="servicos">
         <div class="section-header">
           <span class="section-tag">SOLUÇÕES AUDIOVISUAIS</span>
           <h2 class="section-title">Serviços & Pacotes</h2>
-          <p class="section-subtitle">Selecione uma especialidade abaixo para conferir os detalhes e investimentos:</p>
+          <p class="section-subtitle">Toque em uma especialidade abaixo para acessar os detalhes e investimentos:</p>
         </div>
 
-        <!-- Service Category Pill Buttons (Reference 2) -->
+        <!-- Editorial Service Cards List (Matches Reference Screenshot) -->
         <div class="service-pills-nav" role="tablist" id="servicesNav">
           <button class="service-pill-btn active" role="tab" aria-selected="true" data-service="social-media" id="tab-social-media">
-            <i class="fa-solid fa-hashtag"></i>
-            <span>SOCIAL MEDIA</span>
+            <div class="service-btn-header">
+              <span class="service-btn-title">Gestão de Instagram</span>
+              <span class="service-btn-arrow" aria-hidden="true">↗</span>
+            </div>
+            <p class="service-btn-desc">Planejamento, criação e gerenciamento de conteúdo.</p>
           </button>
-          <button class="service-pill-btn" role="tab" aria-selected="false" data-service="videomaker" id="tab-videomaker">
-            <i class="fa-solid fa-video"></i>
-            <span>VIDEOMAKER</span>
-          </button>
+
           <button class="service-pill-btn" role="tab" aria-selected="false" data-service="storymaker" id="tab-storymaker">
-            <i class="fa-solid fa-bolt"></i>
-            <span>STORYMAKER</span>
+            <div class="service-btn-header">
+              <span class="service-btn-title">Story Maker</span>
+              <span class="service-btn-arrow" aria-hidden="true">↗</span>
+            </div>
+            <p class="service-btn-desc">Registros espontâneos de eventos e momentos especiais.</p>
           </button>
+
+          <button class="service-pill-btn" role="tab" aria-selected="false" data-service="videomaker" id="tab-videomaker">
+            <div class="service-btn-header">
+              <span class="service-btn-title">Produção de vídeos</span>
+              <span class="service-btn-arrow" aria-hidden="true">↗</span>
+            </div>
+            <p class="service-btn-desc">Captação e edição de vídeos profissionais.</p>
+          </button>
+
+          <button class="service-pill-btn" role="tab" aria-selected="false" data-service="captacao-imobiliaria" id="tab-captacao-imobiliaria">
+            <div class="service-btn-header">
+              <span class="service-btn-title">Captação imobiliária</span>
+              <span class="service-btn-arrow" aria-hidden="true">↗</span>
+            </div>
+            <p class="service-btn-desc">Vídeos e imagens para apresentação de imóveis.</p>
+          </button>
+
           <button class="service-pill-btn" role="tab" aria-selected="false" data-service="fotografia" id="tab-fotografia">
-            <i class="fa-solid fa-camera"></i>
-            <span>FOTOGRAFIA & ENSAIOS</span>
+            <div class="service-btn-header">
+              <span class="service-btn-title">Ensaios mobile</span>
+              <span class="service-btn-arrow" aria-hidden="true">↗</span>
+            </div>
+            <p class="service-btn-desc">Vídeo e fotografias criativas com olhar profissional.</p>
           </button>
         </div>
 
@@ -142,7 +165,7 @@
             <div class="service-icon-badge" id="serviceIconBadge">
               <i class="fa-solid fa-hashtag"></i>
             </div>
-            <h3 class="service-card-title" id="serviceTitle">SOCIAL MEDIA</h3>
+            <h3 class="service-card-title" id="serviceTitle">Gestão de Instagram</h3>
             <p class="service-card-desc" id="serviceDescription">
               Criação e gestão de conteúdo para redes sociais, do planejamento à produção, unindo estratégia, audiovisual e criatividade para transformar ideias em conteúdo que comunica.
             </p>
@@ -487,7 +510,7 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- Scripts -->
-  <script type="module" src="assets/js/firebase-config.js?v=3.4"></script>
-  <script type="module" src="assets/js/app.js?v=3.4"></script>
+  <script type="module" src="assets/js/firebase-config.js?v=4.6"></script>
+  <script type="module" src="assets/js/app.js?v=4.6"></script>
 </body>
 </html>
