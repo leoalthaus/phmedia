@@ -7,7 +7,8 @@ import {
   getServicesConfig, 
   getCalcOptions, 
   getPortfolioItems,
-  getFaqs
+  getFaqs,
+  getFeedbacks
 } from "./firebase-config.js";
 
 // Configurable Studio Phone & Data
@@ -32,11 +33,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Services init error:", e);
   }
 
-  // 3. Calculator Quadro 2
+  // 3. Feedbacks
   try {
-    await initCalculator();
+    await initFeedbacksShowcase();
   } catch (e) {
-    console.error("Calculator init error:", e);
+    console.error("Feedbacks init error:", e);
   }
 
   // 4. FAQ
@@ -434,6 +435,34 @@ function initModalEvents() {
       }
     }, { passive: true });
   }
+}
+
+/**
+ * 3.5. Feedbacks / Depoimentos Dinâmicos
+ */
+async function initFeedbacksShowcase() {
+  const track = document.getElementById("feedbacksCarouselTrack");
+  if (!track) return;
+
+  const feedbacks = await getFeedbacks();
+  if (!feedbacks || feedbacks.length === 0) return;
+
+  track.innerHTML = feedbacks.map(f => {
+    const starCount = Math.max(1, Math.min(5, parseInt(f.stars || 5, 10)));
+    const starsHtml = Array.from({ length: starCount }).map(() => `<i class="fa-solid fa-star"></i>`).join("");
+    return `
+      <article class="feedback-card">
+        <div class="feedback-card-top">
+          <h3 class="feedback-title">${escapeHtml(f.title || "Excelente trabalho!")}</h3>
+          <div class="feedback-stars" aria-label="${starCount} estrelas">
+            ${starsHtml}
+          </div>
+        </div>
+        <p class="feedback-text">${escapeHtml(f.text || "")}</p>
+        <span class="feedback-author">${escapeHtml(f.author || "Cliente")}</span>
+      </article>
+    `;
+  }).join("");
 }
 
 /**

@@ -217,10 +217,14 @@
     <div class="admin-card">
       <div class="admin-header">
         <div>
-          <h1 class="admin-title">PH Media • Gestão Completa</h1>
-          <p style="font-size: 13px; color: var(--text-secondary);">Gerencie leads, preços, pacotes e portfólio</p>
+          <h1 class="admin-title">PH Media • Painel Administrativo</h1>
+          <p style="font-size: 13px; color: var(--text-secondary);">Gerencie serviços, portfólio, feedbacks, dúvidas frequentes e ensaios de clientes</p>
         </div>
-        <div style="display: flex; gap: 10px;">
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <a href="cliente.html" class="btn-action" title="Área do Cliente">
+            <i class="fa-solid fa-camera-retro"></i>
+            <span>Área do Cliente</span>
+          </a>
           <a href="index.html" class="btn-action">
             <i class="fa-solid fa-arrow-left"></i>
             <span>Ver Site</span>
@@ -234,100 +238,49 @@
 
       <!-- Navigation Tabs -->
       <nav class="admin-nav-tabs">
-        <button class="admin-tab-btn active" data-tab="leadsView">
-          <i class="fa-solid fa-users"></i>
-          <span>Leads & Orçamentos</span>
-        </button>
-        <button class="admin-tab-btn" data-tab="servicesView">
+        <button class="admin-tab-btn active" data-tab="servicesView">
           <i class="fa-solid fa-layer-group"></i>
-          <span>Quadro 1 • Serviços & Preços</span>
-        </button>
-        <button class="admin-tab-btn" data-tab="calcView">
-          <i class="fa-solid fa-calculator"></i>
-          <span>Quadro 2 • Calculadora de Combos</span>
+          <span>Serviços & Pacotes</span>
         </button>
         <button class="admin-tab-btn" data-tab="portfolioView">
           <i class="fa-solid fa-images"></i>
-          <span>Portfólio & Pastas de Vídeos</span>
+          <span>Portfólio & Pastas</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="feedbacksView">
+          <i class="fa-solid fa-star"></i>
+          <span>Feedbacks</span>
         </button>
         <button class="admin-tab-btn" data-tab="faqsView">
           <i class="fa-solid fa-circle-question"></i>
-          <span>Dúvidas Frequentes (FAQ)</span>
+          <span>Dúvidas Frequentes</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="clientsView">
+          <i class="fa-solid fa-user-lock"></i>
+          <span>Contas de Clientes (Ensaios)</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="securityView">
+          <i class="fa-solid fa-key"></i>
+          <span>Senha Admin</span>
         </button>
       </nav>
 
-      <!-- TAB 1: LEADS & ORÇAMENTOS -->
-      <div id="leadsView" class="admin-tab-content">
-        <!-- Quick Metrics -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px;">
-          <div class="glass-card" style="padding: 16px; text-align: center;">
-            <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Total de Leads</span>
-            <h3 style="font-size: 32px; font-weight: 800; margin-top: 4px; color: #000;" id="metricTotal">0</h3>
-          </div>
-          <div class="glass-card" style="padding: 16px; text-align: center;">
-            <span style="font-size: 11px; color: #2563eb; text-transform: uppercase; font-weight: 700;">Novos / Pendentes</span>
-            <h3 style="font-size: 32px; font-weight: 800; margin-top: 4px; color: #2563eb;" id="metricNovos">0</h3>
-          </div>
-          <div class="glass-card" style="padding: 16px; text-align: center;">
-            <span style="font-size: 11px; color: #15803d; text-transform: uppercase; font-weight: 700;">Propostas Fechadas</span>
-            <h3 style="font-size: 32px; font-weight: 800; margin-top: 4px; color: #15803d;" id="metricFechados">0</h3>
-          </div>
-        </div>
-
-        <!-- Actions Bar -->
+      <!-- TAB 1: SERVIÇOS & PACOTES -->
+      <div id="servicesView" class="admin-tab-content">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
-          <div style="display: flex; gap: 8px;">
-            <button id="btnFilterAll" class="btn-action">Todos</button>
-            <button id="btnFilterNovos" class="btn-action">Novos</button>
-            <button id="btnFilterFechados" class="btn-action">Fechados</button>
-          </div>
           <div>
-            <button id="btnExportCsv" class="btn-action">
-              <i class="fa-solid fa-file-csv"></i>
-              <span>Exportar CSV</span>
+            <h3 style="font-size: 18px; font-weight: 800; color: #000;">Serviços & Pacotes</h3>
+            <p style="font-size: 13px; color: var(--text-secondary);">Adicione, edite ou apague os cards de serviços e configure a mensagem/link de redirecionamento</p>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button id="btnAddService" class="btn-action">
+              <i class="fa-solid fa-plus"></i>
+              <span>Adicionar Serviço</span>
             </button>
-            <button id="btnRefreshLeads" class="btn-action">
-              <i class="fa-solid fa-rotate"></i>
-              <span>Atualizar</span>
+            <button id="btnSaveServices" class="btn-primary">
+              <i class="fa-solid fa-floppy-disk"></i>
+              <span>Salvar Serviços</span>
             </button>
           </div>
-        </div>
-
-        <!-- Leads Table -->
-        <div class="leads-table-wrap">
-          <table class="leads-table">
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Nome / Cliente</th>
-                <th>WhatsApp</th>
-                <th>Serviço</th>
-                <th>Status</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="leadsTableBody">
-              <tr>
-                <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">
-                  Carregando registros...
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- TAB 2: SERVIÇOS & PREÇOS (QUADRO 1) -->
-      <div id="servicesView" class="admin-tab-content hidden">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <div>
-            <h3 style="font-size: 18px; font-weight: 800; color: #000;">Quadro 1 • Botões de Serviços & Valores</h3>
-            <p style="font-size: 13px; color: var(--text-secondary);">Edite os títulos dos botões, descrições, preços e entregáveis exibidos no site</p>
-          </div>
-          <button id="btnSaveServices" class="btn-primary">
-            <i class="fa-solid fa-floppy-disk"></i>
-            <span>Salvar Alterações de Serviços</span>
-          </button>
         </div>
 
         <div class="admin-item-grid" id="servicesEditGrid">
@@ -335,41 +288,17 @@
         </div>
       </div>
 
-      <!-- TAB 3: CALCULADORA DE COMBOS (QUADRO 2) -->
-      <div id="calcView" class="admin-tab-content hidden">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <div>
-            <h3 style="font-size: 18px; font-weight: 800; color: #000;">Quadro 2 • Itens da Calculadora de Orçamento</h3>
-            <p style="font-size: 13px; color: var(--text-secondary);">Gerencie os adicionais e valores somados na simulação do combo</p>
-          </div>
-          <div style="display: flex; gap: 8px;">
-            <button id="btnAddCalcOption" class="btn-action">
-              <i class="fa-solid fa-plus"></i>
-              <span>Adicionar Opção</span>
-            </button>
-            <button id="btnSaveCalc" class="btn-primary">
-              <i class="fa-solid fa-floppy-disk"></i>
-              <span>Salvar Calculadora</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="admin-item-grid" id="calcEditGrid">
-          <!-- Rendered dynamically via JS -->
-        </div>
-      </div>
-
-      <!-- TAB 4: PORTFÓLIO & PASTAS -->
+      <!-- TAB 2: PORTFÓLIO & PASTAS -->
       <div id="portfolioView" class="admin-tab-content hidden">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
           <div>
-            <h3 style="font-size: 18px; font-weight: 800; color: #000;">Portfólio • Pastas de Projetos & Vídeos</h3>
-            <p style="font-size: 13px; color: var(--text-secondary);">Adicione novos trabalhos, categorias e fotos que aparecem na galeria</p>
+            <h3 style="font-size: 18px; font-weight: 800; color: #000;">Portfólio • Pastas & Fotos ("Um Pouco do Meu Olhar")</h3>
+            <p style="font-size: 13px; color: var(--text-secondary);">Adicione, edite ou exclua pastas do portfólio e faça upload das fotos de cada pasta</p>
           </div>
-          <div style="display: flex; gap: 8px;">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button id="btnAddPortfolioItem" class="btn-action">
               <i class="fa-solid fa-plus"></i>
-              <span>Adicionar Projeto</span>
+              <span>Nova Pasta de Portfólio</span>
             </button>
             <button id="btnSavePortfolio" class="btn-primary">
               <i class="fa-solid fa-floppy-disk"></i>
@@ -383,14 +312,38 @@
         </div>
       </div>
 
-      <!-- TAB 5: DÚVIDAS FREQUENTES (FAQ) -->
+      <!-- TAB 3: FEEDBACKS -->
+      <div id="feedbacksView" class="admin-tab-content hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h3 style="font-size: 18px; font-weight: 800; color: #000;">Feedbacks & Depoimentos</h3>
+            <p style="font-size: 13px; color: var(--text-secondary);">Adicione, edite ou apague os depoimentos e avaliações exibidos no carrossel</p>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button id="btnAddFeedback" class="btn-action">
+              <i class="fa-solid fa-plus"></i>
+              <span>Adicionar Feedback</span>
+            </button>
+            <button id="btnSaveFeedbacks" class="btn-primary">
+              <i class="fa-solid fa-floppy-disk"></i>
+              <span>Salvar Feedbacks</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-item-grid" id="feedbacksEditGrid">
+          <!-- Rendered dynamically via JS -->
+        </div>
+      </div>
+
+      <!-- TAB 4: DÚVIDAS FREQUENTES (FAQ) -->
       <div id="faqsView" class="admin-tab-content hidden">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
           <div>
             <h3 style="font-size: 18px; font-weight: 800; color: #000;">Dúvidas Frequentes • FAQ</h3>
-            <p style="font-size: 13px; color: var(--text-secondary);">Personalize as perguntas e respostas exibidas na sanfona do site</p>
+            <p style="font-size: 13px; color: var(--text-secondary);">Adicione, edite ou apague as perguntas e respostas exibidas na sanfona do site</p>
           </div>
-          <div style="display: flex; gap: 8px;">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button id="btnAddFaq" class="btn-action">
               <i class="fa-solid fa-plus"></i>
               <span>Adicionar Pergunta</span>
@@ -407,10 +360,52 @@
         </div>
       </div>
 
+      <!-- TAB 5: CONTAS DE CLIENTES & ENSAIOS PRIVADOS -->
+      <div id="clientsView" class="admin-tab-content hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h3 style="font-size: 18px; font-weight: 800; color: #000;">Contas de Clientes • Entrega de Ensaios Privados</h3>
+            <p style="font-size: 13px; color: var(--text-secondary);">Crie logins exclusivos (código + senha) para seus clientes acessarem e baixarem as fotos dos ensaios em <strong>cliente.html</strong></p>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button id="btnAddClientAccount" class="btn-action">
+              <i class="fa-solid fa-user-plus"></i>
+              <span>Nova Conta / Ensaio de Cliente</span>
+            </button>
+            <button id="btnSaveClients" class="btn-primary">
+              <i class="fa-solid fa-floppy-disk"></i>
+              <span>Salvar Contas de Clientes</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-item-grid" id="clientsEditGrid">
+          <!-- Rendered dynamically via JS -->
+        </div>
+      </div>
+
+      <!-- TAB 6: SENHA ADMIN -->
+      <div id="securityView" class="admin-tab-content hidden">
+        <div style="max-width: 460px;">
+          <h3 style="font-size: 18px; font-weight: 800; color: #000; margin-bottom: 6px;">Alterar Senha do Administrador</h3>
+          <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">Defina uma nova senha personalizada para acessar este painel:</p>
+          <div class="admin-edit-card">
+            <div class="admin-input-group">
+              <label>Nova Senha de Acesso</label>
+              <input type="password" id="newAdminPinInput" placeholder="Digite a nova senha">
+            </div>
+            <button type="button" id="btnSaveNewPin" class="btn-primary">
+              <i class="fa-solid fa-key"></i>
+              <span>Atualizar Senha</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </div>
 
-  <script type="module" src="assets/js/admin.js?v=3.0"></script>
+  <script type="module" src="assets/js/admin.js?v=5.0"></script>
 </body>
 </html>

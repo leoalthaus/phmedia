@@ -551,3 +551,159 @@ export async function saveFaqs(faqsArray) {
   localStorage.setItem("phmedia_faqs", JSON.stringify(faqsArray));
   return true;
 }
+
+// ==========================================
+// 6. FEEDBACKS / DEPOIMENTOS DE CLIENTES
+// ==========================================
+
+export const DEFAULT_FEEDBACKS = [
+  {
+    id: "fb_1",
+    title: "Um trabalho incrível!",
+    stars: 5,
+    text: "Fiquei muito satisfeita com o resultado. Tudo foi feito com muito cuidado, atenção aos detalhes e profissionalismo. Recomendo de olhos fechados!",
+    author: "Fulana de Tal"
+  },
+  {
+    id: "fb_2",
+    title: "Superou as expectativas!",
+    stars: 5,
+    text: "A qualidade dos vídeos e a direção durante a gravação fizeram toda a diferença para a nossa marca. Entrega super rápida e estética impecável!",
+    author: "Cliente Parceiro"
+  },
+  {
+    id: "fb_3",
+    title: "Olhar único e criativo!",
+    stars: 5,
+    text: "Registrou cada momento do nosso evento com muita sensibilidade e agilidade. Os stories em tempo real engajaram demais o nosso perfil!",
+    author: "Cliente Satisfeita"
+  }
+];
+
+export async function getFeedbacks() {
+  const fbConn = await getFirestoreDB();
+  if (fbConn) {
+    try {
+      const { db, fb } = fbConn;
+      const snap = await fb.getDocs(fb.collection(db, "feedbacks"));
+      const items = [];
+      snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+      if (items.length > 0) return items;
+    } catch (e) {
+      console.warn("Firestore feedbacks fetch error:", e);
+    }
+  }
+
+  const local = localStorage.getItem("phmedia_feedbacks");
+  return local ? JSON.parse(local) : DEFAULT_FEEDBACKS;
+}
+
+export async function saveFeedbacks(feedbacksArray) {
+  const fbConn = await getFirestoreDB();
+  if (fbConn) {
+    try {
+      const { db, fb } = fbConn;
+      for (const f of feedbacksArray) {
+        await fb.setDoc(fb.doc(db, "feedbacks", f.id), f);
+      }
+    } catch (e) {
+      console.warn("Firestore feedbacks save error:", e);
+    }
+  }
+  localStorage.setItem("phmedia_feedbacks", JSON.stringify(feedbacksArray));
+  return true;
+}
+
+// ==========================================
+// 7. CONTAS DE CLIENTES & ENSAIOS PRIVADOS (IndexedDB + Firestore + LocalStorage)
+// ==========================================
+
+export const DEFAULT_CLIENT_ACCOUNTS = [
+  {
+    id: "cli_demo",
+    clientName: "Cliente Exemplo",
+    accessCode: "ENSAIO2026",
+    password: "123",
+    galleryTitle: "Ensaio Editorial Exclusivo",
+    eventDate: "Novembro 2026",
+    downloadUrl: "",
+    coverImage: "assets/images/reel-1.jpg",
+    photos: [
+      "assets/images/reel-1.jpg",
+      "assets/images/reel-2.jpg"
+    ]
+  }
+];
+
+export async function getClientAccounts() {
+  let items = null;
+
+  try {
+    const idbData = await idbGet("client_accounts");
+    if (Array.isArray(idbData) && idbData.length > 0) {
+      items = idbData;
+    }
+  } catch (e) {
+    console.warn("IndexedDB client_accounts read error:", e);
+  }
+
+  if (!items || items.length === 0) {
+    const fbConn = await getFirestoreDB();
+    if (fbConn) {
+      try {
+        const { db, fb } = fbConn;
+        const snap = await fb.getDocs(fb.collection(db, "client_accounts"));
+        const fsItems = [];
+        snap.forEach(d => fsItems.push({ id: d.id, ...d.data() }));
+        if (fsItems.length > 0) items = fsItems;
+      } catch (e) {
+        console.warn("Firestore client_accounts fetch error:", e);
+      }
+    }
+  }
+
+  if (!items || items.length === 0) {
+    try {
+      const local = localStorage.getItem("phmedia_client_accounts");
+      if (local) {
+        const parsed = JSON.parse(local);
+        if (Array.isArray(parsed) && parsed.length > 0) items = parsed;
+      }
+    } catch (e) {}
+  }
+
+  if (!items || items.length === 0) {
+    items = DEFAULT_CLIENT_ACCOUNTS;
+  }
+
+  return items.map(c => ({
+    ...c,
+    photos: Array.isArray(c.photos) && c.photos.length > 0 ? c.photos : (c.coverImage ? [c.coverImage] : [])
+  }));
+}
+
+export async function saveClientAccounts(accountsArray) {
+  try {
+    await idbSet("client_accounts", accountsArray);
+  } catch (e) {
+    console.warn("IndexedDB client_accounts save error:", e);
+  }
+
+  const fbConn = await getFirestoreDB();
+  if (fbConn) {
+    try {
+      const { db, fb } = fbConn;
+      for (const c of accountsArray) {
+        await fb.setDoc(fb.doc(db, "client_accounts", c.id), c);
+      }
+    } catch (e) {
+      console.warn("Firestore client_accounts save error:", e);
+    }
+  }
+
+  try {
+    localStorage.setItem("phmedia_client_accounts", JSON.stringify(accountsArray));
+  } catch (e) {}
+
+  return true;
+}
